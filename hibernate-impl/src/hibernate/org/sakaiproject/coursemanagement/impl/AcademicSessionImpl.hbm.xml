@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
+
+    <class name="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl"
+        table="CM_ACADEMIC_SESSION_T">
+
+        <id name="key" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">CM_ACADEMIC_SESSION_S</param>
+            </generator>
+        </id>
+
+        <version name="version" type="integer" column="VERSION"/>
+
+        <property name="id" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
+        <property name="title" column="TITLE" type="string" not-null="true" />
+        <property name="description" column="DESCRIPTION" type="string" not-null="true" />
+
+    </class>
+    
+    <query name="findAcademicSessions">
+        <![CDATA[
+        from AcademicSessionImpl as term
+        ]]>
+    </query>
+
+    <query name="findAcademicSessionById">
+        <![CDATA[
+        from AcademicSessionImpl as term where term.id=:id
+        ]]>
+    </query>
+
+</hibernate-mapping>
