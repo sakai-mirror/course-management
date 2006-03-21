@@ -21,13 +21,11 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import java.util.Set;
-
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 
-public class CourseOfferingImpl implements CourseOffering {
+public class CourseOfferingImpl implements CourseOffering, CrossListable {
 	/**
 	 * The DB's primary key for this object / record.
 	 */
@@ -43,8 +41,6 @@ public class CourseOfferingImpl implements CourseOffering {
 	private String description;
 	private CanonicalCourse canonicalCourse;
 	private AcademicSession academicSession;
-	private Set equivalentCourseOfferings;
-	private Set courseSets;
 	
 	public long getKey() {
 		return key;
@@ -88,19 +84,6 @@ public class CourseOfferingImpl implements CourseOffering {
 		this.academicSession = academicSession;
 	}
 
-	public Set getEquivalentCourseOfferings() {
-		return equivalentCourseOfferings;
-	}
-	public void setEquivalentCourseOfferings(Set equivalentCourseOfferings) {
-		this.equivalentCourseOfferings = equivalentCourseOfferings;
-	}
-	
-	public Set getCourseSets() {
-		return courseSets;
-	}
-	public void setCourseSets(Set courseSets) {
-		this.courseSets = courseSets;
-	}
 	public int getVersion() {
 		return version;
 	}

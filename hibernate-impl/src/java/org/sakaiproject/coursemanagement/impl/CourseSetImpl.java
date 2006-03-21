@@ -21,15 +21,14 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import org.sakaiproject.coursemanagement.api.CanonicalCourse;
+import java.util.Set;
 
-public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
-	
+public class CourseSetImpl implements MembershipContainer {
 	/**
 	 * The DB's primary key for this object / record.
 	 */
 	private long key;
-
+	
 	/**
 	 * The object instance version for optimistic locking.
 	 */
@@ -38,6 +37,29 @@ public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
 	private String id;
 	private String title;
 	private String description;
+	private CourseSetImpl parent;
+	private Set courseOfferings;
+	
+	public long getKey() {
+		return key;
+	}
+	public void setKey(long key) {
+		this.key = key;
+	}
+
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	public String getDescription() {
 		return description;
@@ -45,23 +67,19 @@ public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getId() {
-		return id;
+	
+	public CourseSetImpl getParent() {
+		return parent;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setParent(CourseSetImpl parent) {
+		this.parent = parent;
 	}
-	public long getKey() {
-		return key;
+	
+	public Set getCourseOfferings() {
+		return courseOfferings;
 	}
-	public void setKey(long key) {
-		this.key = key;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
+	public void setCourseOfferings(Set courseOfferings) {
+		this.courseOfferings = courseOfferings;
 	}
 	public int getVersion() {
 		return version;
@@ -70,5 +88,4 @@ public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
 		this.version = version;
 	}
 
-	
 }

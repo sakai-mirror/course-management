@@ -25,15 +25,7 @@ public class IdNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = -8588237050380289434L;
 
-	public IdNotFoundException() {
-		super("The ID provided is not currently in use for this class of object.");
-	}
-	
-	public IdNotFoundException(String message) {
-		super(message);
-	}
-
-	public IdNotFoundException(Throwable t) {
-		super(t);
+	public IdNotFoundException(String id, String className) {
+		super("No " + className + " found with id " + id);
 	}
 }

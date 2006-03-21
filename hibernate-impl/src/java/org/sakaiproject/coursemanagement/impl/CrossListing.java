@@ -23,22 +23,32 @@ package org.sakaiproject.coursemanagement.impl;
 
 import java.util.Set;
 
-public class CourseSet implements MembershipContainer {
+/**
+ * Models a cross listing between two CrossListable entities.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ */
+public class CrossListing {
 	/**
 	 * The DB's primary key for this object / record.
 	 */
 	private long key;
-	
+
 	/**
 	 * The object instance version for optimistic locking.
 	 */
 	private int version;
 
-	private String id;
-	private String title;
-	private String description;
-	private CourseSet parent;
-	private Set courseOfferings;
+	/**
+	 * The set of entities that are associated together in this CrossListing
+	 */
+	private Set crossListables;
+	
+	/**
+	 * Whether this CrossListing is defined by the enterprise
+	 */
+	private boolean enterpriseManaged;
+
 	
 	public long getKey() {
 		return key;
@@ -46,46 +56,22 @@ public class CourseSet implements MembershipContainer {
 	public void setKey(long key) {
 		this.key = key;
 	}
-
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public CourseSet getParent() {
-		return parent;
-	}
-	public void setParent(CourseSet parent) {
-		this.parent = parent;
-	}
-	
-	public Set getCourseOfferings() {
-		return courseOfferings;
-	}
-	public void setCourseOfferings(Set courseOfferings) {
-		this.courseOfferings = courseOfferings;
-	}
 	public int getVersion() {
 		return version;
 	}
 	public void setVersion(int version) {
 		this.version = version;
 	}
-
+	public Set getCrossListables() {
+		return crossListables;
+	}
+	public void setCrossListables(Set crossListables) {
+		this.crossListables = crossListables;
+	}
+	public boolean isEnterpriseManaged() {
+		return enterpriseManaged;
+	}
+	public void setEnterpriseManaged(boolean enterpriseManaged) {
+		this.enterpriseManaged = enterpriseManaged;
+	}
 }

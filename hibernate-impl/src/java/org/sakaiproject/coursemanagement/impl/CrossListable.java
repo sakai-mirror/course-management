@@ -21,54 +21,9 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import org.sakaiproject.coursemanagement.api.CanonicalCourse;
-
-public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
-	
-	/**
-	 * The DB's primary key for this object / record.
-	 */
-	private long key;
-
-	/**
-	 * The object instance version for optimistic locking.
-	 */
-	private int version;
-
-	private String id;
-	private String title;
-	private String description;
-
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public long getKey() {
-		return key;
-	}
-	public void setKey(long key) {
-		this.key = key;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
-	
+/**
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ */
+public interface CrossListable extends MembershipContainer {
 }

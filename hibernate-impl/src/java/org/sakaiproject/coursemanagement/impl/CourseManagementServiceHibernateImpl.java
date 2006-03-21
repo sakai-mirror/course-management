@@ -90,7 +90,12 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findAcademicSessionById");
-				return q.setParameter("id", id).uniqueResult();
+				q.setParameter("id", id);
+				Object result = q.uniqueResult();
+				if(result == null) {
+					throw new IdNotFoundException(id, AcademicSession.class.getName());
+				}
+				return result;
 			}
 		};
 		return (AcademicSession)getHibernateTemplate().execute(hc);

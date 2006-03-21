@@ -22,5 +22,18 @@
 package org.sakaiproject.coursemanagement.impl;
 
 public interface MembershipContainer {
+	public long getKey();
+	public void setKey(long key);
+	
+	public String getId();
+	public void setId(String id);
 
+	public int getVersion();
+	public void setVersion(int version);
+
+	public String getTitle();
+	public void setTitle(String title);
+	
+	public String getDescription();
+	public void setDescription(String description);
 }

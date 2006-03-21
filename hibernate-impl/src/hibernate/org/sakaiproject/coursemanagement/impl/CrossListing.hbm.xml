@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
+
+	<class name="org.sakaiproject.coursemanagement.impl.CrossListing" table="CM_CROSS_LISTING_T">
+
+		<id name="key" column="ID" type="long">
+			<generator class="native">
+				<param name="sequence">CM_CROSS_LISTING_S</param>
+			</generator>
+		</id>
+
+		<version name="version" type="integer" column="VERSION" />
+
+		<set name="crossListables">
+			<key column="ID" />
+			<one-to-many class="org.sakaiproject.coursemanagement.impl.CrossListable"/>
+		</set>
+
+	</class>
+	
+</hibernate-mapping>
