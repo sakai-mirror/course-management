@@ -2,7 +2,7 @@
 
 <project>
 	<pomVersion>3</pomVersion>
-    <extend>../../master/project.xml</extend>
+    <extend>../master/project.xml</extend>
 	<name>Sakai Course Management Project</name>
 	<groupId>sakaiproject</groupId>
     <id>sakai-coursemanagement</id>
