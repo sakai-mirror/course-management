@@ -32,4 +32,16 @@
         ]]>
     </query>
 
+    <query name="findTopLevelCourseSets">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.parent is null
+        ]]>
+    </query>
+
+    <query name="findChildCourseSets">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.parent.eid=:parentEid
+        ]]>
+    </query>
+
 </hibernate-mapping>

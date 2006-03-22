@@ -46,7 +46,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	
 	/**
 	 * A generic approach to finding objects by their eid.  This is "coding by convention",
-	 * since it expects the parameterized query to use "eid" as the named parameter.
+	 * since it expects the parameterized query to use "eid" as the single named parameter.
 	 * 
 	 * @param eid The eid of the object we're trying to load
 	 * @param className The name of the class / interface we're looking for
@@ -74,14 +74,29 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (CourseSet)getObjectByEid(eid, CourseSet.class.getName(), "findCourseSetByEid");
 	}
 
-	public Set getChildCourseSets(String parentCourseSetEid) {
-		// TODO Auto-generated method stub
-		return null;
+	public Set getChildCourseSets(final String parentCourseSetEid) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findChildCourseSets");
+				q.setParameter("parentEid", parentCourseSetEid);
+				return q.list();
+			}
+		};
+		try {
+			return new HashSet(getHibernateTemplate().executeFind(hc));
+		} catch (Exception e) {
+			throw new IdNotFoundException(parentCourseSetEid, CourseSet.class.getName());
+		}
 	}
 
 	public Set getCourseSets() {
-		// TODO Auto-generated method stub
-		return null;
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findTopLevelCourseSets");
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
 	public Set getCourseSetMembers(String courseSetEid) throws IdNotFoundException {

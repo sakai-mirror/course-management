@@ -51,5 +51,5 @@ public interface CourseSet {
 	 * 
 	 * @return
 	 */
-	public Section getParent();
+	public CourseSet getParent();
 }

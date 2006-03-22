@@ -25,14 +25,19 @@ import junit.framework.Assert;
 
 import net.sf.hibernate.SessionFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.impl.AcademicSessionImpl;
 import org.sakaiproject.coursemanagement.impl.CourseSetImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 public class CourseManagementServiceTest extends CourseManagementTestBase {
+	private Log log = LogFactory.getLog(CourseManagementServiceTest.class);
+	
 	private CourseManagementService cm;
 	
 	protected void onSetUpBeforeTransaction() throws Exception {
@@ -53,6 +58,18 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		AcademicSession term = cm.getAcademicSession("F2006");
 		Assert.assertEquals(term.getTitle(), "Fall 2006");
 	}
+	
+	public void testGetCourseSets() throws Exception {
+		Assert.assertEquals(cm.getCourseSets().size(), 1);		
+	}
+
+	public void testGetChildCourseSets() throws Exception {
+		Object obj = cm.getCourseSets().iterator().next();
+		log.debug(obj);
+		CourseSet parent = (CourseSet)obj;
+		Assert.assertEquals(cm.getChildCourseSets(parent.getEid()).size(), 1);		
+	}
+	
 	
 }
 
@@ -75,5 +92,12 @@ class DataLoader extends HibernateDaoSupport {
 		cSet.setTitle("Biology Department");
 		cSet.setDescription("Department of Biology");
 		getHibernateTemplate().save(cSet);
+		
+		CourseSetImpl cSetChild = new CourseSetImpl();
+		cSetChild.setEid("BIO_CHEM_GROUP");
+		cSetChild.setTitle("Biochem Group");
+		cSetChild.setDescription("Biochemistry group, Department of Biology");
+		cSetChild.setParent(cSet);
+		getHibernateTemplate().save(cSetChild);
 	}
 }

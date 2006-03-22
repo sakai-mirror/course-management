@@ -23,7 +23,9 @@ package org.sakaiproject.coursemanagement.impl;
 
 import java.util.Set;
 
-public class CourseSetImpl implements MembershipContainer {
+import org.sakaiproject.coursemanagement.api.CourseSet;
+
+public class CourseSetImpl implements CourseSet, MembershipContainer {
 	/**
 	 * The DB's primary key for this object / record.
 	 */
@@ -37,7 +39,7 @@ public class CourseSetImpl implements MembershipContainer {
 	private String eid;
 	private String title;
 	private String description;
-	private CourseSetImpl parent;
+	private CourseSet parent;
 	private Set courseOfferings;
 	
 	public long getKey() {
@@ -68,7 +70,7 @@ public class CourseSetImpl implements MembershipContainer {
 		this.description = description;
 	}
 	
-	public CourseSetImpl getParent() {
+	public CourseSet getParent() {
 		return parent;
 	}
 	public void setParent(CourseSetImpl parent) {

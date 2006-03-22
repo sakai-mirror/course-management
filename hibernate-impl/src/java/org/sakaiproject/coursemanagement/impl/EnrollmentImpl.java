@@ -21,9 +21,10 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 
-public class EnrollmentImpl {
+public class EnrollmentImpl implements Enrollment {
 
 	/**
 	 * The DB's primary key for this object / record.
