@@ -26,9 +26,9 @@
 
 	</class>
 
-    <query name="findCourseSetById">
+    <query name="findCourseSetByEid">
         <![CDATA[
-        from CourseSetImpl as courseSet where courseSet.id=:id
+        from CourseSetImpl as courseSet where courseSet.eid=:eid
         ]]>
     </query>
 

@@ -54,7 +54,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	 * @return The object, if found
 	 * @throws IdNotFoundException
 	 */
-	private Object getObjectById(final String eid, final String className, final String namedQuery) throws IdNotFoundException {
+	private Object getObjectByEid(final String eid, final String className, final String namedQuery) throws IdNotFoundException {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery(namedQuery);
@@ -71,10 +71,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public CourseSet getCourseSet(String eid) throws IdNotFoundException {
-		return (CourseSet)getObjectById(eid, CourseSet.class.getName(), "findCourseSetById");
+		return (CourseSet)getObjectByEid(eid, CourseSet.class.getName(), "findCourseSetByEid");
 	}
 
-	public Set getChildCourseSets(String parentCourseSetId) {
+	public Set getChildCourseSets(String parentCourseSetEid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -84,7 +84,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return null;
 	}
 
-	public Set getCourseSetMembers(String courseSetId) throws IdNotFoundException {
+	public Set getCourseSetMembers(String courseSetEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -94,12 +94,12 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return null;
 	}
 
-	public Set getEquivalentCanonicalCourses(String canonicalCourseId) {
+	public Set getEquivalentCanonicalCourses(String canonicalCourseEid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set getCanonicalCourses(String courseSetId) throws IdNotFoundException {
+	public Set getCanonicalCourses(String courseSetEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -115,7 +115,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public AcademicSession getAcademicSession(final String eid) throws IdNotFoundException {
-		return (AcademicSession)getObjectById(eid, AcademicSession.class.getName(), "findAcademicSessionById");
+		return (AcademicSession)getObjectByEid(eid, AcademicSession.class.getName(), "findAcademicSessionByEid");
 	}
 	
 	public CourseOffering getCourseOffering(String eid) throws IdNotFoundException {
@@ -123,12 +123,12 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return null;
 	}
 
-	public Set getEquivalentCourseOfferings(String courseOfferingId) throws IdNotFoundException {
+	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set getCourseOfferingMembers(String courseOfferingId) throws IdNotFoundException {
+	public Set getCourseOfferingMembers(String courseOfferingEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -138,17 +138,17 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return null;
 	}
 
-	public Set getSections(String courseOfferingId) throws IdNotFoundException {
+	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set getChildSections(String parentSectionId) {
+	public Set getChildSections(String parentSectionEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set getSectionMembers(String sectionId) throws IdNotFoundException {
+	public Set getSectionMembers(String sectionEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -158,17 +158,17 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return null;
 	}
 
-	public Set getEnrollmentSets(String courseOfferingId) throws IdNotFoundException {
+	public Set getEnrollmentSets(String courseOfferingEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set getEnrollments(String enrollmentSetId) throws IdNotFoundException {
+	public Set getEnrollments(String enrollmentSetEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set getOfficialGraderIds(String enrollmentSetId) throws IdNotFoundException {
+	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}

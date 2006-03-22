@@ -26,7 +26,7 @@
         ]]>
     </query>
 
-    <query name="findAcademicSessionById">
+    <query name="findAcademicSessionByEid">
         <![CDATA[
         from AcademicSessionImpl as term where term.eid=:eid
         ]]>
