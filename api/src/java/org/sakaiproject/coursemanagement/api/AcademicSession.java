@@ -35,10 +35,10 @@ package org.sakaiproject.coursemanagement.api;
  */
 public interface AcademicSession {
 	/**
-	 * A unique id
+	 * A unique enterprise id
 	 * @return
 	 */
-	public String getId();
+	public String getEid();
 
 	/**
 	 * The title

@@ -34,21 +34,21 @@ import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 public interface CourseManagementService {
 
 	/**
-	 * Gets a CourseSet by its id.
+	 * Gets a CourseSet by its eid.
 	 * 
-	 * @param id The CourseSet's unique id
+	 * @param eid The CourseSet's unique eid
 	 * @return The CourseSet
-	 * @throws IdNotFoundException If the id is not associated with any CourseSet
+	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
 	 */
-	public CourseSet getCourseSet(String id) throws IdNotFoundException;
+	public CourseSet getCourseSet(String eid) throws IdNotFoundException;
 	
 	/**
 	 * Gets the child CourseSet from a parent CourseSet.
 	 * 
-	 * @param parentCourseSetId The parent CourseSet id
+	 * @param parentCourseSetEid The parent CourseSet eid
 	 * @return The Set of child CourseSets
 	 */
-	public Set getChildCourseSets(String parentCourseSetId);
+	public Set getChildCourseSets(String parentCourseSetEid);
 
 	/**
 	 * Gets all of the top level CourseSets
@@ -63,23 +63,23 @@ public interface CourseManagementService {
 	 * @param courseSetId
 	 * @return The set of members in this CourseSet.  This is not a transitive
 	 * set.
-	 * @throws IdNotFoundException If the id is not associated with any CourseSet
+	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
 	 */
 	public Set getCourseSetMembers(String courseSetId) throws IdNotFoundException;
 
 	/**
-	 * Gets a CanonicalCourse by its id.
+	 * Gets a CanonicalCourse by its eid.
 	 * 
-	 * @param id
+	 * @param eid
 	 * @return The CanonicalCourse
-	 * @throws IdNotFoundException If the id is not associated with any CanonicalCourse
+	 * @throws IdNotFoundException If the eid is not associated with any CanonicalCourse
 	 */
-	public CanonicalCourse getCanonicalCourse(String id) throws IdNotFoundException;
+	public CanonicalCourse getCanonicalCourse(String eid) throws IdNotFoundException;
 	
 	/**
 	 * Gets the equivalent CanonicalCourses.
 	 * 
-	 * @param canonicalCourseId The id of the CanonicalCourse to use in finding equivalents
+	 * @param canonicalCourseId The eid of the CanonicalCourse to use in finding equivalents
 	 * @return The set of CanonicalCourses that are equivalent (in the Enterprise
 	 * view, not in the Java view -- this is independent of CanonicalCourse.equals()).
 	 */
@@ -88,9 +88,9 @@ public interface CourseManagementService {
 	/**
 	 * Gets the CanonicalCourses in a CourseSet.
 	 * 
-	 * @param courseSetId The id of the CourseSet
+	 * @param courseSetId The eid of the CourseSet
 	 * @return The set of CanonicalCourses in the CourseSet
-	 * @throws IdNotFoundException If the id is not associated with any CourseSet
+	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
 	 */
 	public Set getCanonicalCourses(String courseSetId) throws IdNotFoundException;
 
@@ -102,29 +102,29 @@ public interface CourseManagementService {
 	public Set getAcademicSessions();
 	
 	/**
-	 * Gets a AcademicSession by its id.
-	 * @param id
+	 * Gets a AcademicSession by its eid.
+	 * @param eid
 	 * @return The AcademicSession
-	 * @throws IdNotFoundException If the id is not associated with any AcademicSession
+	 * @throws IdNotFoundException If the eid is not associated with any AcademicSession
 	 */
-	public AcademicSession getAcademicSession(String id) throws IdNotFoundException;
+	public AcademicSession getAcademicSession(String eid) throws IdNotFoundException;
 	
 	/**
-	 * Gets a CourseOffering by its id.
+	 * Gets a CourseOffering by its eid.
 	 * 
-	 * @param id
+	 * @param eid
 	 * @return The CourseOffering
-	 * @throws IdNotFoundException If the id is not associated with any CourseOffering
+	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
-	public CourseOffering getCourseOffering(String id) throws IdNotFoundException;
+	public CourseOffering getCourseOffering(String eid) throws IdNotFoundException;
 
 	/**
 	 * Gets any equivalent CourseOfferings.
 	 * 
-	 * @param courseOfferingId The id of the CourseOffering to use in finding equivalents
+	 * @param courseOfferingId The eid of the CourseOffering to use in finding equivalents
 	 * @return The set of CourseOfferings that are equivalent (in the Enterprise
 	 * view, not in the Java view -- this is independent of CourseOffering.equals()).
-	 * @throws IdNotFoundException If the id is not associated with any CourseOffering
+	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
 	public Set getEquivalentCourseOfferings(String courseOfferingId) throws IdNotFoundException;
 
@@ -134,32 +134,32 @@ public interface CourseManagementService {
 	 * @param courseOfferingId
 	 * @return The set of members in this CourseOffering.  This is not a transitive
 	 * set.
-	 * @throws IdNotFoundException If the id is not associated with any CourseOffering
+	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
 	public Set getCourseOfferingMembers(String courseOfferingId) throws IdNotFoundException;
 
 	/**
-	 * Gets a Section by its id.
+	 * Gets a Section by its eid.
 	 * 
-	 * @param id
+	 * @param eid
 	 * @return The Section
-	 * @throws IdNotFoundException If the id is not associated with any Section
+	 * @throws IdNotFoundException If the eid is not associated with any Section
 	 */
-	public Section getSection(String id) throws IdNotFoundException;
+	public Section getSection(String eid) throws IdNotFoundException;
 
 	/**
 	 * Gets the Sections associated with a CourseOffering
 	 * 
 	 * @param courseOfferingId
 	 * @return The Set of Sections
-	 * @throws IdNotFoundException If the id is not associated with any CourseOffering
+	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
 	public Set getSections(String courseOfferingId) throws IdNotFoundException;
 
 	/**
 	 * Gets the child Sections from a parent Section.
 	 * 
-	 * @param parentSectionId The parent Section id
+	 * @param parentSectionId The parent Section eid
 	 * @return The Set of child Sections
 	 */
 	public Set getChildSections(String parentSectionId);
@@ -170,25 +170,25 @@ public interface CourseManagementService {
 	 * @param sectionId
 	 * @return The set of members in this Section.  This is not a transitive
 	 * set.
-	 * @throws IdNotFoundException If the id is not associated with any Section
+	 * @throws IdNotFoundException If the eid is not associated with any Section
 	 */
 	public Set getSectionMembers(String sectionId) throws IdNotFoundException;
 	
 	/**
-	 * Gets an EnrollmentSet by its id.
+	 * Gets an EnrollmentSet by its eid.
 	 * 
-	 * @param id
+	 * @param eid
 	 * @return The EnrollmentSet
-	 * @throws IdNotFoundException If the id is not associated with any EnrollmentSet
+	 * @throws IdNotFoundException If the eid is not associated with any EnrollmentSet
 	 */
-	public EnrollmentSet getEnrollmentSet(String id) throws IdNotFoundException;
+	public EnrollmentSet getEnrollmentSet(String eid) throws IdNotFoundException;
 
 	/**
 	 * Gets the EnrollmentSets associated with a CourseOffering
 	 * 
 	 * @param courseOfferingId
 	 * @return The Set of EnrollmentSets
-	 * @throws IdNotFoundException If the id is not associated with any CourseOffering
+	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
 	public Set getEnrollmentSets(String courseOfferingId) throws IdNotFoundException;
 
@@ -197,17 +197,17 @@ public interface CourseManagementService {
 	 * 
 	 * @param enrollmentSetId
 	 * @return The Set of Enrollments
-	 * @throws IdNotFoundException If the id is not associated with any EnrollmentSet
+	 * @throws IdNotFoundException If the eid is not associated with any EnrollmentSet
 	 */
 	public Set getEnrollments(String enrollmentSetId) throws IdNotFoundException;
 
 	/**
-	 * Gets the set of user ids that are sanctioned by the enterprise to grade
+	 * Gets the set of user eids that are sanctioned by the enterprise to grade
 	 * students enrolled in this EnrollmentSet.
 	 * 
 	 * @param enrollmentSetId
 	 * @return The set of users who can grade students in this EnrollmentSet
-	 * @throws IdNotFoundException If the id is not associated with any EnrollmentSet
+	 * @throws IdNotFoundException If the eid is not associated with any EnrollmentSet
 	 */
 	public Set getOfficialGraderIds(String enrollmentSetId) throws IdNotFoundException;
 }

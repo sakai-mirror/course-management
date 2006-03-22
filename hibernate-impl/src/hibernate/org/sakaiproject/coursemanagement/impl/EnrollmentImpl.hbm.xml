@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
+
+	<class name="org.sakaiproject.coursemanagement.impl.EnrollmentImpl" table="CM_ENROLLMENT_T">
+
+		<id name="key" column="ENROLLMENT_ID" type="long">
+			<generator class="native">
+				<param name="sequence">CM_ENROLLMENT_S</param>
+			</generator>
+		</id>
+
+		<version name="version" type="integer" column="VERSION" />
+
+		<property name="userId" column="USER_ID" type="string" not-null="true" />
+		<property name="enrollmentStatus" column="STATUS" type="string" not-null="true" />
+		<property name="credits" column="CREDITS" type="string" not-null="true" />
+		<property name="gradingScheme" column="GRADING_SCHEME" type="string" not-null="true" />
+
+		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
+
+	</class>
+	
+</hibernate-mapping>

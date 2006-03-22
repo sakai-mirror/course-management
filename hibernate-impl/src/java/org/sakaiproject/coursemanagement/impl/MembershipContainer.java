@@ -25,8 +25,8 @@ public interface MembershipContainer {
 	public long getKey();
 	public void setKey(long key);
 	
-	public String getId();
-	public void setId(String id);
+	public String getEid();
+	public void setEid(String eid);
 
 	public int getVersion();
 	public void setVersion(int version);

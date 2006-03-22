@@ -34,7 +34,7 @@ public class CourseSetImpl implements MembershipContainer {
 	 */
 	private int version;
 
-	private String id;
+	private String eid;
 	private String title;
 	private String description;
 	private CourseSetImpl parent;
@@ -47,11 +47,11 @@ public class CourseSetImpl implements MembershipContainer {
 		this.key = key;
 	}
 
-	public String getId() {
-		return id;
+	public String getEid() {
+		return eid;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setEid(String eid) {
+		this.eid = eid;
 	}
 	
 	public String getTitle() {

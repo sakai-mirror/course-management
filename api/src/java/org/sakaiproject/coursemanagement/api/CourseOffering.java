@@ -27,11 +27,12 @@ package org.sakaiproject.coursemanagement.api;
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
 public interface CourseOffering {
+
 	/**
-	 * A unique id
+	 * A unique enterprise id
 	 * @return
 	 */
-	public String getId();
+	public String getEid();
 
 	/**
 	 * The title

@@ -3,49 +3,20 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 
-	<class name="org.sakaiproject.coursemanagement.impl.MembershipImpl" table="CM_MEMBERSHIP_T" discriminator-value="0">
+	<class name="org.sakaiproject.coursemanagement.impl.MembershipImpl" table="CM_MEMBERSHIP_T">
 
-		<id name="key" column="ID" type="long">
+		<id name="key" column="MEMBER_ID" type="long">
 			<generator class="native">
-				<param name="sequence">CM_MEMBER_CONTAINER_S</param>
+				<param name="sequence">CM_MEMBERSHIP_S</param>
 			</generator>
 		</id>
-		<discriminator type="byte" />
+
 		<version name="version" type="integer" column="VERSION" />
 
-		<property name="id" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
-		<property name="title" column="TITLE" type="string" not-null="true" />
-		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
+		<property name="userId" column="USER_ID" type="string" not-null="true" />
+		<property name="role" column="ROLE" type="string" not-null="true" />
 
-		<subclass
-			name="org.sakaiproject.coursemanagement.impl.CrossListable"
-			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
-			discriminator-value="1">
-			
-			<subclass
-				name="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl"
-				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
-				discriminator-value="2">
-			</subclass>
-	
-			<subclass
-				name="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl"
-				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
-				discriminator-value="3">
-					<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
-					<many-to-one name="academicSession" column="ACADEMIC_SESSION" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
-			</subclass>
-		</subclass>
-
-		<subclass
-			name="org.sakaiproject.coursemanagement.impl.SectionImpl"
-			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
-			discriminator-value="4">
-				<property name="category" column="CATEGORY" type="string" />
-				<many-to-one name="courseOffering" column="COURSE_OFFERING" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
-				<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
-				<many-to-one name="parent" column="PARENT_SECTION" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
-		</subclass>
+		<many-to-one name="association" column="MEMBERSHIP_ASSOC" class="org.sakaiproject.coursemanagement.impl.MembershipContainer" />
 
 	</class>
 	

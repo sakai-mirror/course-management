@@ -5,7 +5,7 @@
 
 	<class name="org.sakaiproject.coursemanagement.impl.CourseSetImpl" table="CM_COURSE_SET_T">
 
-		<id name="key" column="ID" type="long">
+		<id name="key" column="COURSE_SET_ID" type="long">
 			<generator class="native">
 				<param name="sequence">CM_COURSE_SET_S</param>
 			</generator>
@@ -13,7 +13,7 @@
 
 		<version name="version" type="integer" column="VERSION" />
 
-		<property name="id" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
+		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
 		<property name="title" column="TITLE" type="string" not-null="true" />
 		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
 
@@ -25,5 +25,11 @@
 		</set>
 
 	</class>
+
+    <query name="findCourseSetById">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.id=:id
+        ]]>
+    </query>
 
 </hibernate-mapping>

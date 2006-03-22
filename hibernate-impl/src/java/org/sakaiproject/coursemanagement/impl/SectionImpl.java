@@ -37,7 +37,7 @@ public class SectionImpl implements Section {
 	 */
 	private int version;
 
-	private String id;
+	private String eid;
 	private String title;
 	private String description;
 	private String category;
@@ -67,11 +67,11 @@ public class SectionImpl implements Section {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getId() {
-		return id;
+	public String getEid() {
+		return eid;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setEid(String eid) {
+		this.eid = eid;
 	}
 	public long getKey() {
 		return key;

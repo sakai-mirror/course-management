@@ -35,7 +35,7 @@ public class AcademicSessionImpl implements AcademicSession {
 	 */
 	private int version;
 	
-	private String id;
+	private String eid;
 	private String title;
 	private String description;
 	
@@ -46,11 +46,11 @@ public class AcademicSessionImpl implements AcademicSession {
 		this.key = key;
 	}
 
-	public String getId() {
-		return id;
+	public String getEid() {
+		return eid;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setEid(String id) {
+		this.eid = id;
 	}
 	
 	public String getTitle() {

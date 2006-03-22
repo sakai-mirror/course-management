@@ -25,8 +25,10 @@ import junit.framework.Assert;
 
 import net.sf.hibernate.SessionFactory;
 
+import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.impl.AcademicSessionImpl;
+import org.sakaiproject.coursemanagement.impl.CourseSetImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
@@ -40,11 +42,18 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	protected void onSetUpInTransaction() throws Exception {
 		DataLoader loader = new DataLoader(applicationContext);
 		loader.loadAcademicSessions();
+		loader.loadCourseSets();
 	}
 	
 	public void testGetAcademicSessions() throws Exception {
 		Assert.assertEquals(cm.getAcademicSessions().size(), 1);
 	}
+	
+	public void testGetAcademicSessionById() throws Exception {
+		AcademicSession term = cm.getAcademicSession("F2006");
+		Assert.assertEquals(term.getTitle(), "Fall 2006");
+	}
+	
 }
 
 class DataLoader extends HibernateDaoSupport {
@@ -54,9 +63,17 @@ class DataLoader extends HibernateDaoSupport {
 	
 	void loadAcademicSessions() {
 		AcademicSessionImpl term = new AcademicSessionImpl();
-		term.setId("F2006");
+		term.setEid("F2006");
 		term.setTitle("Fall 2006");
 		term.setDescription("Fall 2006, starts Sept 1, 2006");
 		getHibernateTemplate().save(term);
+	}
+	
+	void loadCourseSets() {
+		CourseSetImpl cSet = new CourseSetImpl();
+		cSet.setEid("BIO_DEPT");
+		cSet.setTitle("Biology Department");
+		cSet.setDescription("Department of Biology");
+		getHibernateTemplate().save(cSet);
 	}
 }

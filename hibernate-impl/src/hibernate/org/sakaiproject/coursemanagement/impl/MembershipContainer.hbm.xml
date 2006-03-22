@@ -5,7 +5,7 @@
 
 	<class name="org.sakaiproject.coursemanagement.impl.MembershipContainer" table="CM_MEMBER_CONTAINER_T" discriminator-value="0">
 
-		<id name="key" column="ID" type="long">
+		<id name="key" column="MEMBER_CONTAINER_ID" type="long">
 			<generator class="native">
 				<param name="sequence">CM_MEMBER_CONTAINER_S</param>
 			</generator>
@@ -13,7 +13,7 @@
 		<discriminator type="byte" />
 		<version name="version" type="integer" column="VERSION" />
 
-		<property name="id" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
+		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
 		<property name="title" column="TITLE" type="string" not-null="true" />
 		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
 

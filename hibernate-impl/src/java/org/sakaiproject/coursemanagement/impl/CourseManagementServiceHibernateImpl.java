@@ -28,6 +28,8 @@ import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
@@ -40,10 +42,36 @@ import org.springframework.orm.hibernate.HibernateCallback;
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport implements CourseManagementService {
+	private static final Log log = LogFactory.getLog(CourseManagementServiceHibernateImpl.class);
+	
+	/**
+	 * A generic approach to finding objects by their eid.  This is "coding by convention",
+	 * since it expects the parameterized query to use "eid" as the named parameter.
+	 * 
+	 * @param eid The eid of the object we're trying to load
+	 * @param className The name of the class / interface we're looking for
+	 * @param namedQuery The name of the query
+	 * @return The object, if found
+	 * @throws IdNotFoundException
+	 */
+	private Object getObjectById(final String eid, final String className, final String namedQuery) throws IdNotFoundException {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery(namedQuery);
+				q.setParameter("eid", eid);
+				if(log.isDebugEnabled()) log.debug("Get object by eid: " + q.getQueryString());
+				Object result = q.uniqueResult();
+				if(result == null) {
+					throw new IdNotFoundException(eid, className);
+				}
+				return result;
+			}
+		};
+		return getHibernateTemplate().execute(hc);
+	}
 
-	public CourseSet getCourseSet(String id) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public CourseSet getCourseSet(String eid) throws IdNotFoundException {
+		return (CourseSet)getObjectById(eid, CourseSet.class.getName(), "findCourseSetById");
 	}
 
 	public Set getChildCourseSets(String parentCourseSetId) {
@@ -61,7 +89,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return null;
 	}
 
-	public CanonicalCourse getCanonicalCourse(String id) throws IdNotFoundException {
+	public CanonicalCourse getCanonicalCourse(String eid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -86,22 +114,11 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public AcademicSession getAcademicSession(final String id) throws IdNotFoundException {
-		HibernateCallback hc = new HibernateCallback() {
-			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery("findAcademicSessionById");
-				q.setParameter("id", id);
-				Object result = q.uniqueResult();
-				if(result == null) {
-					throw new IdNotFoundException(id, AcademicSession.class.getName());
-				}
-				return result;
-			}
-		};
-		return (AcademicSession)getHibernateTemplate().execute(hc);
+	public AcademicSession getAcademicSession(final String eid) throws IdNotFoundException {
+		return (AcademicSession)getObjectById(eid, AcademicSession.class.getName(), "findAcademicSessionById");
 	}
-
-	public CourseOffering getCourseOffering(String id) throws IdNotFoundException {
+	
+	public CourseOffering getCourseOffering(String eid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -116,7 +133,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return null;
 	}
 
-	public Section getSection(String id) throws IdNotFoundException {
+	public Section getSection(String eid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -136,7 +153,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return null;
 	}
 
-	public EnrollmentSet getEnrollmentSet(String id) throws IdNotFoundException {
+	public EnrollmentSet getEnrollmentSet(String eid) throws IdNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}

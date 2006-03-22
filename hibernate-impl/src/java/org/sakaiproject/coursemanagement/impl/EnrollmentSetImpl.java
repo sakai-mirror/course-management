@@ -37,7 +37,7 @@ public class EnrollmentSetImpl implements EnrollmentSet {
 	 */
 	private int version;
 
-	private String id;
+	private String eid;
 	private String title;
 	private String description;
 	private String category;
@@ -57,11 +57,11 @@ public class EnrollmentSetImpl implements EnrollmentSet {
 		this.key = key;
 	}
 
-	public String getId() {
-		return id;
+	public String getEid() {
+		return eid;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setEid(String eid) {
+		this.eid = eid;
 	}
 
 	public String getTitle() {
