@@ -20,4 +20,11 @@
 
 	</class>
 	
+	<query name="findMembers">
+        <![CDATA[
+        from MembershipImpl as member where member.association.eid=:eid
+        ]]>
+    </query>
+
+	
 </hibernate-mapping>

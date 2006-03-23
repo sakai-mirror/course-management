@@ -69,9 +69,52 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		};
 		return getHibernateTemplate().execute(hc);
 	}
+	
+	/**
+	 * A generic approach to finding members in a membership container.
+	 * 
+	 * @param membershipContainerEid The membership container's eid
+	 * @return The Set of Memberships
+	 * @throws IdNotFoundException
+	 */
+	private Set getMembers(final String membershipContainerEid) throws IdNotFoundException {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				// Ensure that the container exists before looking for members
+				Query containerExists = session.getNamedQuery("memberContainerExists").setParameter("eid", membershipContainerEid);
+				if(((Integer)containerExists.iterate().next()).intValue() == 0) {
+					throw new IdNotFoundException(membershipContainerEid, MembershipContainer.class.getName());
+				}
+				// Now look for members
+				Query q = session.getNamedQuery("findMembers");
+				q.setParameter("eid", membershipContainerEid);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+	
+	/**
+	 * Gets equivalent CrossListables.
+	 * 
+	 * @param crossListable The CrossListable for which to find equivalents
+	 * @return
+	 */
+	private Set getEquivalents(final CrossListable crossListable) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findEquivalents");
+				q.setParameter("crossListing", crossListable.getCrossListing());
+				q.setParameter("crossListable", crossListable);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+
+	}
 
 	public CourseSet getCourseSet(String eid) throws IdNotFoundException {
-		return (CourseSet)getObjectByEid(eid, CourseSet.class.getName(), "findCourseSetByEid");
+		return (CourseSet)getObjectByEid(eid, CourseSetImpl.class.getName(), "findCourseSetByEid");
 	}
 
 	public Set getChildCourseSets(final String parentCourseSetEid) {
@@ -85,7 +128,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		try {
 			return new HashSet(getHibernateTemplate().executeFind(hc));
 		} catch (Exception e) {
-			throw new IdNotFoundException(parentCourseSetEid, CourseSet.class.getName());
+			throw new IdNotFoundException(parentCourseSetEid, CourseSetImpl.class.getName());
 		}
 	}
 
@@ -99,24 +142,21 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getCourseSetMembers(String courseSetEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public Set getCourseSetMembers(final String courseSetEid) throws IdNotFoundException {
+		return getMembers(courseSetEid);
 	}
 
 	public CanonicalCourse getCanonicalCourse(String eid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return (CanonicalCourse)getObjectByEid(eid, CanonicalCourseImpl.class.getName(), "findCanonicalCourseByEid");
 	}
 
 	public Set getEquivalentCanonicalCourses(String canonicalCourseEid) {
-		// TODO Auto-generated method stub
-		return null;
+		final CanonicalCourseImpl canonicalCourse = (CanonicalCourseImpl)getCanonicalCourse(canonicalCourseEid);
+		return getEquivalents(canonicalCourse);
 	}
 
-	public Set getCanonicalCourses(String courseSetEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public Set getCanonicalCourses(final String courseSetEid) throws IdNotFoundException {
+		return ((CourseSetImpl)getCourseSet(courseSetEid)).getCourseOfferings();
 	}
 
 	public Set getAcademicSessions() {
@@ -130,7 +170,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public AcademicSession getAcademicSession(final String eid) throws IdNotFoundException {
-		return (AcademicSession)getObjectByEid(eid, AcademicSession.class.getName(), "findAcademicSessionByEid");
+		return (AcademicSession)getObjectByEid(eid, AcademicSessionImpl.class.getName(), "findAcademicSessionByEid");
 	}
 	
 	public CourseOffering getCourseOffering(String eid) throws IdNotFoundException {

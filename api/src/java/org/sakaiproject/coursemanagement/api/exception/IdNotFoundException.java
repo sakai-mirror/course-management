@@ -21,6 +21,11 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api.exception;
 
+/**
+ * An exception thrown when an an object lookup fails because an object with the ID does not exist.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ */
 public class IdNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = -8588237050380289434L;

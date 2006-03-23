@@ -26,4 +26,6 @@ package org.sakaiproject.coursemanagement.impl;
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
 public interface CrossListable extends MembershipContainer {
+	public CrossListing getCrossListing();
+	public void setCrossListing(CrossListing crossListing);
 }

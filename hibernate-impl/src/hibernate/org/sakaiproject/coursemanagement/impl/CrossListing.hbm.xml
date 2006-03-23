@@ -13,11 +13,17 @@
 
 		<version name="version" type="integer" column="VERSION" />
 
-		<set name="crossListables">
+		<set name="crossListables" inverse="true">
 			<key column="ID" />
 			<one-to-many class="org.sakaiproject.coursemanagement.impl.CrossListable"/>
 		</set>
 
 	</class>
-	
+
+    <query name="findEquivalents">
+        <![CDATA[
+        from CrossListable as cl where cl.crossListing=:crossListing and cl != :crossListable
+        ]]>
+    </query>
+
 </hibernate-mapping>

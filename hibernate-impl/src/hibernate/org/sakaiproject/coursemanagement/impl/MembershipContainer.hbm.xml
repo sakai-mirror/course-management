@@ -18,20 +18,35 @@
 		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
 
 		<subclass
-			name="org.sakaiproject.coursemanagement.impl.CrossListable"
+			name="org.sakaiproject.coursemanagement.impl.CourseSetImpl"
 			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
 			discriminator-value="1">
+			
+			<many-to-one name="parent" column="PARENT_COURSE_SET" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
+	
+			<set name="courseOfferings" table="CM_COURSE_SET_OFFERING_ASSOC_T">
+				<key column="MEMBER_CONTAINER_ID" />
+				<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" column="COURSE_OFFERING" />
+			</set>
+		</subclass>
+
+		<subclass
+			name="org.sakaiproject.coursemanagement.impl.CrossListable"
+			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
+			discriminator-value="2">
+
+			<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListing" />
 			
 			<subclass
 				name="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl"
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
-				discriminator-value="2">
+				discriminator-value="3">
 			</subclass>
 	
 			<subclass
 				name="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl"
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
-				discriminator-value="3">
+				discriminator-value="4">
 					<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
 					<many-to-one name="academicSession" column="ACADEMIC_SESSION" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
 			</subclass>
@@ -40,7 +55,7 @@
 		<subclass
 			name="org.sakaiproject.coursemanagement.impl.SectionImpl"
 			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
-			discriminator-value="4">
+			discriminator-value="5">
 				<property name="category" column="CATEGORY" type="string" />
 				<many-to-one name="courseOffering" column="COURSE_OFFERING" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
 				<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
@@ -48,5 +63,35 @@
 		</subclass>
 
 	</class>
+
+    <query name="memberContainerExists">
+        <![CDATA[
+        select count(*) from MembershipContainer as container where container.eid=:eid
+        ]]>
+    </query>
+
+    <query name="findCourseSetByEid">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.eid=:eid
+        ]]>
+    </query>
+
+    <query name="findTopLevelCourseSets">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.parent is null
+        ]]>
+    </query>
+
+    <query name="findChildCourseSets">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.parent.eid=:parentEid
+        ]]>
+    </query>
 	
+    <query name="findCanonicalCourseByEid">
+        <![CDATA[
+        from CanonicalCourseImpl as cc where cc.eid=:eid
+        ]]>
+    </query>
+
 </hibernate-mapping>

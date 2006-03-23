@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 
 public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
@@ -38,6 +39,15 @@ public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
 	private String eid;
 	private String title;
 	private String description;
+	
+	private CrossListing crossListing;
+	
+	public CrossListing getCrossListing() {
+		return crossListing;
+	}
+	public void setCrossListing(CrossListing crossListing) {
+		this.crossListing = crossListing;
+	}
 
 	public String getDescription() {
 		return description;
@@ -70,5 +80,8 @@ public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
 		this.version = version;
 	}
 
-	
+	public boolean equals(Object o) {
+		CanonicalCourse other = (CanonicalCourse)o;
+		return new EqualsBuilder().append(eid, other.getEid()).isEquals();
+	}
 }

@@ -42,6 +42,16 @@ public class CourseOfferingImpl implements CourseOffering, CrossListable {
 	private CanonicalCourse canonicalCourse;
 	private AcademicSession academicSession;
 	
+	private CrossListing crossListing;
+	
+
+	public CrossListing getCrossListing() {
+		return crossListing;
+	}
+	public void setCrossListing(CrossListing crossListing) {
+		this.crossListing = crossListing;
+	}
+
 	public long getKey() {
 		return key;
 	}

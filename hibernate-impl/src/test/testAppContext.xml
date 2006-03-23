@@ -22,7 +22,6 @@
         <property name="mappingResources">
             <list>
                 <value>org/sakaiproject/coursemanagement/impl/AcademicSessionImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/CourseSetImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/CrossListing.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/EnrollmentImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/EnrollmentSetImpl.hbm.xml</value>
