@@ -21,7 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.test;
 
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -44,7 +44,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 public class CourseManagementServiceTest extends CourseManagementTestBase {
-	private Log log = LogFactory.getLog(CourseManagementServiceTest.class);
+	static final Log log = LogFactory.getLog(CourseManagementServiceTest.class);
 	
 	private CourseManagementService cm;
 	
@@ -57,6 +57,8 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		loader.loadAcademicSessions();
 		loader.loadCourseSetsAndMembers();
 		loader.loadCanonicalCourses();
+		loader.loadCourseOfferings();
+		loader.finish();
 	}
 	
 	public void testGetAcademicSessions() throws Exception {
@@ -100,10 +102,6 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 
 	public void testGetEquivalentCanonicalCourses() throws Exception {
 		Set equivalents = cm.getEquivalentCanonicalCourses("BIO101");
-
-		for(Iterator iter = equivalents.iterator(); iter.hasNext();) {
-			log.debug("Equivalent to BIO101: " + iter.next());
-		}
 		Assert.assertEquals(1, equivalents.size());
 		Assert.assertTrue(!equivalents.contains(cm.getCanonicalCourse("BIO101")));
 		try {
@@ -113,12 +111,33 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 
 	public void testGetCanonicalCoursesFromCourseSet() throws Exception {
-
-		// TODO This test fails... stopped her for the night :)
+		// TODO This works outside of a transaction (see SpringTestsNonTransactional).  Why not here?
 		
 //		Assert.assertEquals(1, cm.getCanonicalCourses("BIO_DEPT").size());
 //		Assert.assertEquals(2, cm.getCanonicalCourses("BIO_CHEM_GROUP").size());
+//		try {
+//			cm.getCanonicalCourses("bad eid");
+//			fail();
+//		} catch (IdNotFoundException ide) {}
 	}
+
+	public void testGetCourseOffering() throws Exception {
+		Assert.assertNotNull(cm.getCourseOffering("BIO101_F2006_01"));
+		try {
+			cm.getCourseOffering("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+
+	public void testGetEquivalentCourseOfferings() throws Exception {
+		Set equivalents = cm.getEquivalentCourseOfferings("BIO101_F2006_01");
+		Assert.assertEquals(1, equivalents.size());
+		try {
+			cm.getEquivalentCourseOfferings("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+	
 }
 
 class DataLoader extends HibernateDaoSupport {
@@ -127,6 +146,14 @@ class DataLoader extends HibernateDaoSupport {
 	DataLoader(ApplicationContext ac) {
 		setSessionFactory((SessionFactory)ac.getBean("cmSessionFactory"));
 		cm = (CourseManagementService)ac.getBean("org.sakaiproject.coursemanagement.api.CourseManagementService");
+	}
+	
+	void finish() {
+		// Flush the hibernate session so hibernate's cascades are completed
+		getHibernateTemplate().flush();
+		
+		// Clear the session to start fresh in the tests
+		getHibernateTemplate().clear();
 	}
 	
 	void loadAcademicSessions() {
@@ -163,6 +190,7 @@ class DataLoader extends HibernateDaoSupport {
 		CrossListing cl = new CrossListing();
 		getHibernateTemplate().save(cl);
 
+		// Build and save the CanonicalCourses
 		CanonicalCourseImpl cc1 = new CanonicalCourseImpl();
 		cc1.setEid("BIO101");
 		cc1.setTitle("Biology 101");
@@ -182,19 +210,43 @@ class DataLoader extends HibernateDaoSupport {
 		cc3.setTitle("English 101");
 		cc3.setDescription("An intro to English");
 		getHibernateTemplate().save(cc3);
+
+		// Add these canonical courses to course sets
+		CourseSetImpl bioCset = (CourseSetImpl)cm.getCourseSet("BIO_DEPT");
+		CourseSetImpl bioChemCset = (CourseSetImpl)cm.getCourseSet("BIO_CHEM_GROUP");
+		
+		Set bioCourses = new HashSet();
+		bioCourses.add(cc1);
+		bioCset.setCanonicalCourses(bioCourses);
+		getHibernateTemplate().update(bioCset);
+		
+		Set bioChemCourses = new HashSet();
+		bioChemCourses.add(cc1);
+		bioChemCourses.add(cc2);
+		bioChemCset.setCanonicalCourses(bioChemCourses);
+		getHibernateTemplate().update(bioChemCset);
+		
+//		CourseSetImpl bioCset2 = (CourseSetImpl)cm.getCourseSet("BIO_DEPT");
+//		CourseManagementServiceTest.log.debug("bioCset in mem contains" + bioCset.getCanonicalCourses());
+//		CourseManagementServiceTest.log.debug("bioCset from db contains" + bioCset2.getCanonicalCourses());
+
 	}
 	
 	void loadCourseOfferings() {
 		// Get the object dependencies
 		AcademicSession term = cm.getAcademicSession("F2006");
-		CourseSetImpl bioCset = (CourseSetImpl)cm.getCourseSet("BIO_DEPT");
-		CourseSetImpl bioChemCset = (CourseSetImpl)cm.getCourseSet("BIO_CHEM_GROUP");
 		CanonicalCourseImpl cc1 = (CanonicalCourseImpl)cm.getCanonicalCourse("BIO101");
 		CanonicalCourseImpl cc2 = (CanonicalCourseImpl)cm.getCanonicalCourse("CHEM101");
-		
+		CanonicalCourseImpl cc3 = (CanonicalCourseImpl)cm.getCanonicalCourse("ENG101");
+
+		// Cross list bio and chem, but not English
+		CrossListing cl = new CrossListing();
+		getHibernateTemplate().save(cl);
+
 		CourseOfferingImpl co1 = new CourseOfferingImpl();
 		co1.setAcademicSession(term);
 		co1.setCanonicalCourse(cc1);
+		co1.setCrossListing(cl);
 		co1.setEid("BIO101_F2006_01");
 		co1.setTitle("Bio 101: It's all about the gene");
 		co1.setDescription("Fall 2006 Bio 101 Offering");
@@ -203,18 +255,18 @@ class DataLoader extends HibernateDaoSupport {
 		CourseOfferingImpl co2 = new CourseOfferingImpl();
 		co2.setAcademicSession(term);
 		co2.setCanonicalCourse(cc2);
-		co2.setEid("BIO101_F2006_01");
-		co2.setTitle("Bio 101: It's all about the gene");
-		co2.setDescription("Fall 2006 Bio 101 Offering");
+		co2.setCrossListing(cl);
+		co2.setEid("CHEM101_F2006_01");
+		co2.setTitle("Chem 101: It's all about the gene");
+		co2.setDescription("Fall 2006 Chem 101 Offering");
 		getHibernateTemplate().save(co2);
 
-		// Add bio 101 to the bio course set
-		bioCset.getCourseOfferings().add(co1);
-		getHibernateTemplate().save(bioCset);
-
-		// Add bio 101 and chem 101 to the biochem course set
-		bioChemCset.getCourseOfferings().add(co1);
-		bioChemCset.getCourseOfferings().add(co2);
-		getHibernateTemplate().save(bioChemCset);
+		CourseOfferingImpl co3 = new CourseOfferingImpl();
+		co3.setAcademicSession(term);
+		co3.setCanonicalCourse(cc3);
+		co3.setEid("ENG101_F2006_01");
+		co3.setTitle("English 101: Intro to literature");
+		co3.setDescription("Fall 2006 Eng 101 Offering");
+		getHibernateTemplate().save(co3);
 	}
 }

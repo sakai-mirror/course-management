@@ -21,6 +21,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.Set;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 
@@ -39,8 +41,15 @@ public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
 	private String eid;
 	private String title;
 	private String description;
-	
 	private CrossListing crossListing;
+	private Set courseSets;
+
+	public Set getCourseSets() {
+		return courseSets;
+	}
+	public void setCourseSets(Set courseSets) {
+		this.courseSets = courseSets;
+	}
 	
 	public CrossListing getCrossListing() {
 		return crossListing;

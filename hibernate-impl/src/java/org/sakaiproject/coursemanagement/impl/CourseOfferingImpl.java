@@ -21,6 +21,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.Set;
+
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
@@ -41,9 +43,15 @@ public class CourseOfferingImpl implements CourseOffering, CrossListable {
 	private String description;
 	private CanonicalCourse canonicalCourse;
 	private AcademicSession academicSession;
-	
 	private CrossListing crossListing;
-	
+	private Set courseSets;
+
+	public Set getCourseSets() {
+		return courseSets;
+	}
+	public void setCourseSets(Set courseSets) {
+		this.courseSets = courseSets;
+	}
 
 	public CrossListing getCrossListing() {
 		return crossListing;

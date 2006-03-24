@@ -41,6 +41,7 @@ public class CourseSetImpl implements CourseSet, MembershipContainer {
 	private String description;
 	private CourseSet parent;
 	private Set courseOfferings;
+	private Set canonicalCourses;
 	
 	public long getKey() {
 		return key;
@@ -73,7 +74,7 @@ public class CourseSetImpl implements CourseSet, MembershipContainer {
 	public CourseSet getParent() {
 		return parent;
 	}
-	public void setParent(CourseSetImpl parent) {
+	public void setParent(CourseSet parent) {
 		this.parent = parent;
 	}
 	
@@ -83,6 +84,14 @@ public class CourseSetImpl implements CourseSet, MembershipContainer {
 	public void setCourseOfferings(Set courseOfferings) {
 		this.courseOfferings = courseOfferings;
 	}
+
+	public Set getCanonicalCourses() {
+		return canonicalCourses;
+	}
+	public void setCanonicalCourses(Set canonicalCourses) {
+		this.canonicalCourses = canonicalCourses;
+	}
+
 	public int getVersion() {
 		return version;
 	}

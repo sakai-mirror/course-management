@@ -154,7 +154,10 @@
 		<unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
 		<unitTest>
 			<includes>
-				<include>org/sakaiproject/coursemanagement/test/CourseManagementTestSuite.java</include>
+<!--
+ 				<include>org/sakaiproject/coursemanagement/test/SpringTestsNonTransactional.java</include>
+-->
+ 				<include>org/sakaiproject/coursemanagement/test/CourseManagementTestSuite.java</include>
 			</includes>
 			<resources>
 				<resource>

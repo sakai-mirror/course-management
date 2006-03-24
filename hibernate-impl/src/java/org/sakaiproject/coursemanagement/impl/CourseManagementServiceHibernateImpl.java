@@ -59,7 +59,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery(namedQuery);
 				q.setParameter("eid", eid);
-				if(log.isDebugEnabled()) log.debug("Get object by eid: " + q.getQueryString());
+//				if(log.isDebugEnabled()) log.debug("Get object by eid: " + q.getQueryString());
 				Object result = q.uniqueResult();
 				if(result == null) {
 					throw new IdNotFoundException(eid, className);
@@ -117,6 +117,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (CourseSet)getObjectByEid(eid, CourseSetImpl.class.getName(), "findCourseSetByEid");
 	}
 
+	// TODO Use getObjectByEid() instead of replicating code
 	public Set getChildCourseSets(final String parentCourseSetEid) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
@@ -174,13 +175,17 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 	
 	public CourseOffering getCourseOffering(String eid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
+		return (CourseOffering)getObjectByEid(eid, CourseOfferingImpl.class.getName(), "findCourseOfferingByEid");
+	}
+
+	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException {
+		// TODO Solve the courseSet problem for both CanonicalCourses and CourseOfferings
 		return null;
 	}
 
 	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		CourseOfferingImpl courseOffering = (CourseOfferingImpl)getCourseOffering(courseOfferingEid);
+		return getEquivalents(courseOffering);
 	}
 
 	public Set getCourseOfferingMembers(String courseOfferingEid) throws IdNotFoundException {

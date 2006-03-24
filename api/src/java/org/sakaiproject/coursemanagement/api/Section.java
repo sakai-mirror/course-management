@@ -55,14 +55,18 @@ public interface Section {
 	
 	/**
 	 * Gets the parent Section for this Section, or null if this is not a subSection.
-	 * 
 	 * @return
 	 */
 	public Section getParent();
 
 	/**
+	 * Gets the EnrollmentSet associated with this Section, if any.
+	 * @return
+	 */
+	public EnrollmentSet getEnrollmentSet();
+	
+	/**
 	 * Gets the Course Offering to which this Section belongs.
-	 * 
 	 * @return
 	 */
 	public CourseOffering getCourseOffering();

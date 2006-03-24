@@ -16,7 +16,7 @@
 		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
 		<property name="title" column="TITLE" type="string" not-null="true" />
 		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
-
+		
 		<subclass
 			name="org.sakaiproject.coursemanagement.impl.CourseSetImpl"
 			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
@@ -24,8 +24,18 @@
 			
 			<many-to-one name="parent" column="PARENT_COURSE_SET" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
 	
-			<set name="courseOfferings" table="CM_COURSE_SET_OFFERING_ASSOC_T">
-				<key column="MEMBER_CONTAINER_ID" />
+			<!-- 
+			The many-to-many relationship between CourseSets and CourseOfferings/CanonicalCourses
+			are managed on the CourseSetImpl.  If you modify the set of CourseSets on a
+			CourseOffering/CanonicalCourse, it will not be persisted.
+			-->
+			<set name="canonicalCourses" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="false">
+				<key column="COURSE_SET" />
+				<many-to-many class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" column="CANON_COURSE" />
+			</set>
+
+			<set name="courseOfferings" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="false">
+				<key column="COURSE_SET" />
 				<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" column="COURSE_OFFERING" />
 			</set>
 		</subclass>
@@ -41,6 +51,10 @@
 				name="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl"
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
 				discriminator-value="3">
+					<set name="courseSets" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="true">
+						<key column="CANON_COURSE" />
+						<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
+					</set>
 			</subclass>
 	
 			<subclass
@@ -49,6 +63,10 @@
 				discriminator-value="4">
 					<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
 					<many-to-one name="academicSession" column="ACADEMIC_SESSION" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
+					<set name="courseSets" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="true">
+						<key column="COURSE_OFFERING" />
+						<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
+					</set>
 			</subclass>
 		</subclass>
 
@@ -91,6 +109,12 @@
     <query name="findCanonicalCourseByEid">
         <![CDATA[
         from CanonicalCourseImpl as cc where cc.eid=:eid
+        ]]>
+    </query>
+
+    <query name="findCourseOfferingByEid">
+        <![CDATA[
+        from CourseOfferingImpl as co where co.eid=:eid
         ]]>
     </query>
 

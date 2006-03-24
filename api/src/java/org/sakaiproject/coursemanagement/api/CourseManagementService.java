@@ -139,6 +139,15 @@ public interface CourseManagementService {
 	public Set getCourseOfferingMembers(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
+	 * Gets the CourseOfferings in a CourseSet.
+	 * 
+	 * @param courseSetEid The eid of the CourseSet
+	 * @return The set of CourseOfferings in the CourseSet
+	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
+	 */
+	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException;
+
+	/**
 	 * Gets a Section by its eid.
 	 * 
 	 * @param eid
