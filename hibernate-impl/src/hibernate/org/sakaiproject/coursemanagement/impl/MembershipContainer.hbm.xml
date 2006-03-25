@@ -118,4 +118,22 @@
         ]]>
     </query>
 
+    <query name="findSectionByEid">
+        <![CDATA[
+        from SectionImpl as sec where sec.eid=:eid
+        ]]>
+    </query>
+
+    <query name="findTopLevelSectionsInCourseOffering">
+        <![CDATA[
+        from SectionImpl as sec where sec.courseOffering=:courseOffering and sec.parent is null
+        ]]>
+    </query>
+
+    <query name="findChildSections">
+        <![CDATA[
+        from SectionImpl as sec where sec.parent.eid=:parentEid
+        ]]>
+    </query>
+
 </hibernate-mapping>

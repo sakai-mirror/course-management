@@ -157,7 +157,7 @@ public interface CourseManagementService {
 	public Section getSection(String eid) throws IdNotFoundException;
 
 	/**
-	 * Gets the Sections associated with a CourseOffering
+	 * Gets the top-level Sections associated with a CourseOffering
 	 * 
 	 * @param courseOfferingEid
 	 * @return The Set of Sections

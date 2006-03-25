@@ -21,6 +21,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api;
 
+import java.util.Set;
+
 /**
  * Defines who is allowed to submit the final grade for this student, and what
  * is the grade for?
@@ -59,4 +61,10 @@ public interface EnrollmentSet {
 	 * @return
 	 */
 	public String getDefaultEnrollmentCredits();
+	
+	/**
+	 * The official grader(s) for this EnrollmentSet.
+	 * @return
+	 */
+	public Set getOfficialGraders();
 }

@@ -22,4 +22,10 @@
 
 	</class>
 	
+	<query name="findEnrollments">
+        <![CDATA[
+        from EnrollmentImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid
+        ]]>
+    </query>
+
 </hibernate-mapping>

@@ -21,6 +21,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.Set;
+
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
@@ -42,8 +44,8 @@ public class EnrollmentSetImpl implements EnrollmentSet {
 	private String description;
 	private String category;
 	private String defaultEnrollmentCredits;
-
 	private CourseOffering courseOffering;
+	private Set officialGraders;
 	
 	/**
 	 * The Section associated with this EnrollmentSet.  This may be null.
@@ -113,6 +115,13 @@ public class EnrollmentSetImpl implements EnrollmentSet {
 	}
 	public void setVersion(int version) {
 		this.version = version;
+	}
+	
+	public Set getOfficialGraders() {
+		return officialGraders;
+	}
+	public void setOfficialGraders(Set officialGraders) {
+		this.officialGraders = officialGraders;
 	}
 	
 }

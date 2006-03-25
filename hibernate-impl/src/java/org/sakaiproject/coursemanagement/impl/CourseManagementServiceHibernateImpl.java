@@ -189,43 +189,79 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getCourseOfferingMembers(String courseOfferingEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return getMembers(courseOfferingEid);
 	}
 
 	public Section getSection(String eid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Section)getObjectByEid(eid, SectionImpl.class.getName(), "findSectionByEid");
 	}
 
 	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		final CourseOffering courseOffering = getCourseOffering(courseOfferingEid);
+		if(courseOffering == null) {
+			throw new IdNotFoundException(courseOfferingEid, CourseOfferingImpl.class.getName());
+		}
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findTopLevelSectionsInCourseOffering");
+				q.setParameter("courseOffering", courseOffering);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getChildSections(String parentSectionEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public Set getChildSections(final String parentSectionEid) throws IdNotFoundException {
+		Section parentSection = getSection(parentSectionEid);
+		if(parentSection == null) {
+			throw new IdNotFoundException(parentSectionEid, SectionImpl.class.getName());
+		}
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findChildSections");
+				q.setParameter("parentEid", parentSectionEid);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
 	public Set getSectionMembers(String sectionEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return getMembers(sectionEid);
 	}
 
 	public EnrollmentSet getEnrollmentSet(String eid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return (EnrollmentSet)getObjectByEid(eid, EnrollmentSetImpl.class.getName(), "findEnrollmentSetByEid");
 	}
 
-	public Set getEnrollmentSets(String courseOfferingEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public Set getEnrollmentSets(final String courseOfferingEid) throws IdNotFoundException {
+		CourseOffering courseOffering = getCourseOffering(courseOfferingEid);
+		if(courseOffering == null) {
+			throw new IdNotFoundException(courseOfferingEid, CourseOfferingImpl.class.getName());
+		}
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findEnrollmentSetsByCourseOffering");
+				q.setParameter("courseOfferingEid", courseOfferingEid);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getEnrollments(String enrollmentSetEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public Set getEnrollments(final String enrollmentSetEid) throws IdNotFoundException {
+		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
+		if(es == null) {
+			throw new IdNotFoundException(enrollmentSetEid, EnrollmentSetImpl.class.getName());
+		}
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findEnrollments");
+				q.setParameter("enrollmentSetEid", enrollmentSetEid);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
 	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException {

@@ -32,14 +32,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.coursemanagement.impl.AcademicSessionImpl;
 import org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl;
 import org.sakaiproject.coursemanagement.impl.CourseOfferingImpl;
 import org.sakaiproject.coursemanagement.impl.CourseSetImpl;
 import org.sakaiproject.coursemanagement.impl.CrossListing;
+import org.sakaiproject.coursemanagement.impl.EnrollmentImpl;
+import org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl;
 import org.sakaiproject.coursemanagement.impl.MembershipImpl;
+import org.sakaiproject.coursemanagement.impl.SectionImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
@@ -54,11 +59,7 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 
 	protected void onSetUpInTransaction() throws Exception {
 		DataLoader loader = new DataLoader(applicationContext);
-		loader.loadAcademicSessions();
-		loader.loadCourseSetsAndMembers();
-		loader.loadCanonicalCourses();
-		loader.loadCourseOfferings();
-		loader.finish();
+		loader.load();
 	}
 	
 	public void testGetAcademicSessions() throws Exception {
@@ -138,8 +139,76 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		} catch(IdNotFoundException ide) {}
 	}
 	
+	public void testGetSectionByEid() throws Exception {
+		Assert.assertNotNull(cm.getSection("BIO101_F2006_01_SEC01"));
+	}
+
+	public void testGetSectionMembers() throws Exception {
+		Assert.assertEquals(1, cm.getSectionMembers("BIO101_F2006_01_SEC01").size());
+		try {
+			cm.getSectionMembers("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+	
+	public void testGetSectionsFromCourseOffering() throws Exception {
+		Assert.assertEquals(1, cm.getSections("BIO101_F2006_01").size());
+		try {
+			cm.getSections("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+	
+	public void testGetChildSections() throws Exception {
+		Assert.assertEquals(1, cm.getChildSections("BIO101_F2006_01_SEC01").size());
+		try {
+			cm.getChildSections("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+	
+	public void testGetEnrollmentSet() throws Exception {
+		Assert.assertNotNull(cm.getEnrollmentSet("BIO101_F2006_01_ES01"));
+		try {
+			cm.getEnrollmentSet("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+
+	public void testGetEnrollmentSetFromCourseOffering() throws Exception {
+		Assert.assertEquals(1, cm.getEnrollmentSets("BIO101_F2006_01").size());
+		try {
+			cm.getEnrollmentSets("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+
+	public void testGetEnrollments() throws Exception {
+		Assert.assertEquals(1, cm.getEnrollments("BIO101_F2006_01_ES01").size());
+		try {
+			cm.getEnrollmentSets("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+	
+	public void testGetOfficialGraders() throws Exception {
+		// TODO Not passing yet... stopped here for the night
+		
+//		Set graders = cm.getOfficialGraderIds("BIO101_F2006_01_ES01");
+//		Assert.assertTrue(graders.contains("grader1"));
+//		Assert.assertTrue(graders.contains("grader2"));
+//		Assert.assertTrue( ! graders.contains("josh"));
+	}
 }
 
+
+
+
+/**
+ * Loads data into the current transaction for use in a test case.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ */
 class DataLoader extends HibernateDaoSupport {
 	CourseManagementService cm;
 	
@@ -148,11 +217,15 @@ class DataLoader extends HibernateDaoSupport {
 		cm = (CourseManagementService)ac.getBean("org.sakaiproject.coursemanagement.api.CourseManagementService");
 	}
 	
-	void finish() {
-		// Flush the hibernate session so hibernate's cascades are completed
+	void load() {
+		loadAcademicSessions();
+		loadCourseSetsAndMembers();
+		loadCanonicalCourses();
+		loadCourseOfferings();
+		loadSections();
+		loadEnrollmentSets();
+		loadEnrollments();
 		getHibernateTemplate().flush();
-		
-		// Clear the session to start fresh in the tests
 		getHibernateTemplate().clear();
 	}
 	
@@ -268,5 +341,61 @@ class DataLoader extends HibernateDaoSupport {
 		co3.setTitle("English 101: Intro to literature");
 		co3.setDescription("Fall 2006 Eng 101 Offering");
 		getHibernateTemplate().save(co3);
+	}
+	
+	void loadSections() {
+		CourseOffering co = cm.getCourseOffering("BIO101_F2006_01");
+
+		SectionImpl section = new SectionImpl();
+		section.setCategory("lecture");
+		section.setCourseOffering(co);
+		section.setDescription("The lecture");
+		section.setEid("BIO101_F2006_01_SEC01");
+		section.setTitle("Main lecture");
+		getHibernateTemplate().save(section);
+		
+		SectionImpl childSection = new SectionImpl();
+		childSection.setCategory("lab");
+		childSection.setCourseOffering(co);
+		childSection.setDescription("Joe's monday morning lab");
+		childSection.setEid("BIO101_F2006_01_SEC02");
+		childSection.setTitle("Joe's Monday Morning Biology Lab");
+		childSection.setParent(section);
+		getHibernateTemplate().save(childSection);
+		
+		MembershipImpl member = new MembershipImpl();
+		member.setAssociation(section);
+		member.setRole("student");
+		member.setUserId("josh");
+		getHibernateTemplate().save(member);
+	}
+	
+	void loadEnrollmentSets() {
+		EnrollmentSetImpl enrollmentSet = new EnrollmentSetImpl();
+		enrollmentSet.setCategory("lab");
+		enrollmentSet.setCourseOffering(cm.getCourseOffering("BIO101_F2006_01"));
+		enrollmentSet.setDefaultEnrollmentCredits("3");
+		enrollmentSet.setDescription("The lecture");
+		enrollmentSet.setEid("BIO101_F2006_01_ES01");
+		enrollmentSet.setTitle("The lab");
+		enrollmentSet.setSection(cm.getSection("BIO101_F2006_01_SEC01"));
+		
+		Set graders = new HashSet();
+		graders.add("grader1");
+		graders.add("grader1");
+		enrollmentSet.setOfficialGraders(graders);
+		
+		getHibernateTemplate().save(enrollmentSet);
+	}
+	
+	void loadEnrollments() {
+		EnrollmentSet enrollmentSet = cm.getEnrollmentSet("BIO101_F2006_01_ES01");
+		EnrollmentImpl enrollment = new EnrollmentImpl();
+		enrollment.setCredits("3");
+		enrollment.setEnrollmentSet(enrollmentSet);
+		enrollment.setEnrollmentStatus("waitlisted");
+		enrollment.setGradingScheme("pass/fail");
+		enrollment.setUserId("josh");
+		getHibernateTemplate().save(enrollment);
 	}
 }

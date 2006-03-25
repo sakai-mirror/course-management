@@ -19,8 +19,27 @@
 		<property name="category" column="CATEGORY" type="string" not-null="true" />
 		<property name="defaultEnrollmentCredits" column="DEFAULT_CREDITS" type="string" not-null="true" />
 
+		<set name="officialGraders" table="CM_OFFICIAL_GRADERS_T" cascade="save-update">
+			<key column="ENROLLMENT_SET_ID" />
+			<element type="string" column="GRADER_ID" />
+		</set>
+
 		<many-to-one name="courseOffering" column="COURSE_OFFERING" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
 
 	</class>
+	
+	<query name="findEnrollmentSetByEid">
+        <![CDATA[
+        from EnrollmentSetImpl as es where es.eid=:eid
+        ]]>
+    </query>
+
+
+	<query name="findEnrollmentSetsByCourseOffering">
+        <![CDATA[
+        from EnrollmentSetImpl as es where es.courseOffering.eid=:courseOfferingEid
+        ]]>
+    </query>
+
 
 </hibernate-mapping>
