@@ -22,7 +22,7 @@
 			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
 			discriminator-value="1">
 			
-			<many-to-one name="parent" column="PARENT_COURSE_SET" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
+			<many-to-one name="parent" column="PARENT_COURSE_SET" index="CM_COURSE_SET_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
 	
 			<!-- 
 			The many-to-many relationship between CourseSets and CourseOfferings/CanonicalCourses
@@ -61,8 +61,8 @@
 				name="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl"
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
 				discriminator-value="4">
-					<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
-					<many-to-one name="academicSession" column="ACADEMIC_SESSION" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
+					<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" index="CM_CO_CANON_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
+					<many-to-one name="academicSession" column="ACADEMIC_SESSION" index="CM_CO_ACADEMIC_SESS_IDX" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
 					<set name="courseSets" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="true">
 						<key column="COURSE_OFFERING" />
 						<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
@@ -75,9 +75,9 @@
 			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
 			discriminator-value="5">
 				<property name="category" column="CATEGORY" type="string" />
-				<many-to-one name="courseOffering" column="COURSE_OFFERING" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
-				<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
-				<many-to-one name="parent" column="PARENT_SECTION" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
+				<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_SECTION_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
+				<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
+				<many-to-one name="parent" column="PARENT_SECTION" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
 		</subclass>
 
 	</class>

@@ -17,6 +17,8 @@
         <property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
         <property name="title" column="TITLE" type="string" not-null="true" />
         <property name="description" column="DESCRIPTION" type="string" not-null="true" />
+        <property name="startDate" column="START_DATE" type="timestamp" not-null="false" />
+        <property name="endDate" column="END_DATE" type="timestamp" not-null="false" />
 
     </class>
     

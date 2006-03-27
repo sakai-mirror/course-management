@@ -18,7 +18,7 @@
 		<property name="credits" column="CREDITS" type="string" not-null="true" />
 		<property name="gradingScheme" column="GRADING_SCHEME" type="string" not-null="true" />
 
-		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
+		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_ENR_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
 
 	</class>
 	

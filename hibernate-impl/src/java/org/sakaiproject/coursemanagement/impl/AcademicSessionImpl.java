@@ -21,6 +21,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.Date;
+
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 
 public class AcademicSessionImpl implements AcademicSession {
@@ -38,6 +40,8 @@ public class AcademicSessionImpl implements AcademicSession {
 	private String eid;
 	private String title;
 	private String description;
+	private Date startDate;
+	private Date endDate;
 	
 	public long getKey() {
 		return key;
@@ -71,5 +75,17 @@ public class AcademicSessionImpl implements AcademicSession {
 	}
 	public void setVersion(int version) {
 		this.version = version;
+	}
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 }

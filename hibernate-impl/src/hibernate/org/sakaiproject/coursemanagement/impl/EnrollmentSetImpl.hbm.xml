@@ -24,7 +24,7 @@
 			<element type="string" column="GRADER_ID" />
 		</set>
 
-		<many-to-one name="courseOffering" column="COURSE_OFFERING" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
+		<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_ENR_SET_CO_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
 
 	</class>
 	

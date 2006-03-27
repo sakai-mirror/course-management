@@ -21,6 +21,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api;
 
+import java.util.Date;
+
 /**
  * An institutional context for CourseOfferings, distinguishing one instance of
  * a course from another.  In higher educational institutions, it almost always
@@ -51,4 +53,16 @@ public interface AcademicSession {
 	 * @return
 	 */
 	public String getDescription();
+	
+	/**
+	 * The date this AcademicSession starts (if any).
+	 * @return
+	 */
+	public Date getStartDate();
+	
+	/**
+	 * The date this AcademicSession ends (if any).
+	 * @return
+	 */
+	public Date getEndDate();
 }
