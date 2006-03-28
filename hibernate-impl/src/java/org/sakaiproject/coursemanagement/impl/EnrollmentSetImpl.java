@@ -27,7 +27,8 @@ import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
 
-public class EnrollmentSetImpl implements EnrollmentSet {
+public class EnrollmentSetImpl extends AbstractPersistentCourseManagementObject
+	implements EnrollmentSet {
 
 	/**
 	 * The DB's primary key for this object / record.

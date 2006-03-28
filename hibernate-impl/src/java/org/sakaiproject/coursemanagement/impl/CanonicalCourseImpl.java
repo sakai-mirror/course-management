@@ -26,21 +26,9 @@ import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 
-public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
+public class CanonicalCourseImpl extends CrossListable
+	implements CanonicalCourse {
 	
-	/**
-	 * The DB's primary key for this object / record.
-	 */
-	private long key;
-
-	/**
-	 * The object instance version for optimistic locking.
-	 */
-	private int version;
-
-	private String eid;
-	private String title;
-	private String description;
 	private CrossListing crossListing;
 	private Set courseSets;
 
@@ -56,41 +44,5 @@ public class CanonicalCourseImpl implements CanonicalCourse, CrossListable {
 	}
 	public void setCrossListing(CrossListing crossListing) {
 		this.crossListing = crossListing;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public String getEid() {
-		return eid;
-	}
-	public void setEid(String eid) {
-		this.eid = eid;
-	}
-	public long getKey() {
-		return key;
-	}
-	public void setKey(long key) {
-		this.key = key;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
-	public boolean equals(Object o) {
-		CanonicalCourse other = (CanonicalCourse)o;
-		return new EqualsBuilder().append(eid, other.getEid()).isEquals();
 	}
 }

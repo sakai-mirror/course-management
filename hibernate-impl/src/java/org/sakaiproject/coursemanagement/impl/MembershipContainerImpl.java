@@ -21,50 +21,24 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import org.sakaiproject.coursemanagement.api.Enrollment;
-import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.MembershipContainer;
 
-public class EnrollmentImpl extends AbstractPersistentCourseManagementObject
-	implements Enrollment {
-
-	private String userId;
-	private EnrollmentSet enrollmentSet;
-	private String enrollmentStatus;
-	private String credits;
-	private String gradingScheme;
+public abstract class MembershipContainerImpl extends AbstractPersistentCourseManagementObject
+	implements MembershipContainer {
+	protected String title;
+	protected String description;
 	
-	public String getUserId() {
-		return userId;
+	public String getDescription() {
+		return description;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setDescription(String description) {
+		this.description = description;
 	}
-
-	public EnrollmentSet getEnrollmentSet() {
-		return enrollmentSet;
+	public String getTitle() {
+		return title;
 	}
-	public void setEnrollmentSet(EnrollmentSet enrollmentSet) {
-		this.enrollmentSet = enrollmentSet;
+	public void setTitle(String title) {
+		this.title = title;
 	}
-
-	public String getCredits() {
-		return credits;
-	}
-	public void setCredits(String credits) {
-		this.credits = credits;
-	}
-
-	public String getEnrollmentStatus() {
-		return enrollmentStatus;
-	}
-	public void setEnrollmentStatus(String enrollmentStatus) {
-		this.enrollmentStatus = enrollmentStatus;
-	}
-
-	public String getGradingScheme() {
-		return gradingScheme;
-	}
-	public void setGradingScheme(String gradingScheme) {
-		this.gradingScheme = gradingScheme;
-	}	
+	
 }

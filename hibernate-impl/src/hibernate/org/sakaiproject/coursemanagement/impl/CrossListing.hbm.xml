@@ -13,6 +13,11 @@
 
 		<version name="version" type="integer" column="VERSION" />
 
+		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
+		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
+		<property name="createdBy" column="CREATED_BY" />
+		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+
 		<set name="crossListables" inverse="true">
 			<key column="ID" />
 			<one-to-many class="org.sakaiproject.coursemanagement.impl.CrossListable"/>

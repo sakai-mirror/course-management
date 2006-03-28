@@ -3,24 +3,29 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 
-	<class name="org.sakaiproject.coursemanagement.impl.MembershipContainer" table="CM_MEMBER_CONTAINER_T" discriminator-value="0">
+	<class name="org.sakaiproject.coursemanagement.impl.MembershipContainerImpl" table="CM_MEMBER_CONTAINER_T">
 
 		<id name="key" column="MEMBER_CONTAINER_ID" type="long">
 			<generator class="native">
 				<param name="sequence">CM_MEMBER_CONTAINER_S</param>
 			</generator>
 		</id>
-		<discriminator type="byte" />
 		<version name="version" type="integer" column="VERSION" />
+
+		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
+		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
+		<property name="createdBy" column="CREATED_BY" />
+		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
 
 		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
 		<property name="title" column="TITLE" type="string" not-null="true" />
 		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
 		
-		<subclass
+		<joined-subclass
 			name="org.sakaiproject.coursemanagement.impl.CourseSetImpl"
-			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
-			discriminator-value="1">
+			extends="org.sakaiproject.coursemanagement.impl.MembershipContainerImpl"
+			>
+			<key column="MEMBER_CONTAINER_ID" />
 			
 			<many-to-one name="parent" column="PARENT_COURSE_SET" index="CM_COURSE_SET_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
 	
@@ -38,53 +43,59 @@
 				<key column="COURSE_SET" />
 				<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" column="COURSE_OFFERING" />
 			</set>
-		</subclass>
+		</joined-subclass>
 
-		<subclass
+		<joined-subclass
 			name="org.sakaiproject.coursemanagement.impl.CrossListable"
-			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
-			discriminator-value="2">
-
+			extends="org.sakaiproject.coursemanagement.impl.MembershipContainerImpl"
+			table="CM_CROSS_LISTABLE_T"
+			>
+			<key column="MEMBER_CONTAINER_ID" />
+			
 			<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListing" />
 			
-			<subclass
+			<joined-subclass
 				name="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl"
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
-				discriminator-value="3">
+				table="CM_CANON_COURSE_T"
+				>
+					<key column="MEMBER_CONTAINER_ID" />
 					<set name="courseSets" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="true">
 						<key column="CANON_COURSE" />
 						<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
 					</set>
-			</subclass>
+			</joined-subclass>
 	
-			<subclass
+			<joined-subclass
 				name="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl"
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
-				discriminator-value="4">
+				table="CM_COURSE_OFFERING_T">
+					<key column="MEMBER_CONTAINER_ID" />
 					<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" index="CM_CO_CANON_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
 					<many-to-one name="academicSession" column="ACADEMIC_SESSION" index="CM_CO_ACADEMIC_SESS_IDX" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
 					<set name="courseSets" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="true">
 						<key column="COURSE_OFFERING" />
 						<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
 					</set>
-			</subclass>
-		</subclass>
+			</joined-subclass>
+		</joined-subclass>
 
-		<subclass
+		<joined-subclass
 			name="org.sakaiproject.coursemanagement.impl.SectionImpl"
-			extends="org.sakaiproject.coursemanagement.impl.MembershipContainer"
-			discriminator-value="5">
+			extends="org.sakaiproject.coursemanagement.impl.MembershipContainerImpl"
+			table="CM_SECTION_T">
+				<key column="MEMBER_CONTAINER_ID" />
 				<property name="category" column="CATEGORY" type="string" />
 				<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_SECTION_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
 				<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
 				<many-to-one name="parent" column="PARENT_SECTION" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
-		</subclass>
+		</joined-subclass>
 
 	</class>
 
     <query name="memberContainerExists">
         <![CDATA[
-        select count(*) from MembershipContainer as container where container.eid=:eid
+        select count(*) from MembershipContainerImpl as container where container.eid=:eid
         ]]>
     </query>
 

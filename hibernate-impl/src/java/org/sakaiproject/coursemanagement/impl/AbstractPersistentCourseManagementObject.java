@@ -21,14 +21,10 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import java.util.Set;
+import java.util.Date;
 
-/**
- * Models a cross listing between two CrossListable entities.
- * 
- * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
- */
-public class CrossListing extends AbstractPersistentCourseManagementObject {
+public abstract class AbstractPersistentCourseManagementObject {
+
 	/**
 	 * The DB's primary key for this object / record.
 	 */
@@ -40,15 +36,29 @@ public class CrossListing extends AbstractPersistentCourseManagementObject {
 	private int version;
 
 	/**
-	 * The set of entities that are associated together in this CrossListing
+	 * The object's enterprise id.
 	 */
-	private Set crossListables;
+	protected String eid;
 	
 	/**
-	 * Whether this CrossListing is defined by the enterprise
+	 * The agent (either a user id or a process id) that last modified this object.  
 	 */
-	private boolean enterpriseManaged;
+	protected String lastModifiedBy;
+	
+	/**
+	 * The timestamp when this object was last modified.
+	 */
+	protected Date lastModifiedDate;
+	
+	/**
+	 * The agent (either a user id or a process id) that created this object.  
+	 */
+	protected String createdBy;
 
+	/**
+	 * The timestamp when this object was created.
+	 */
+	protected Date createdDate;
 	
 	public long getKey() {
 		return key;
@@ -56,22 +66,45 @@ public class CrossListing extends AbstractPersistentCourseManagementObject {
 	public void setKey(long key) {
 		this.key = key;
 	}
+
 	public int getVersion() {
 		return version;
 	}
 	public void setVersion(int version) {
 		this.version = version;
 	}
-	public Set getCrossListables() {
-		return crossListables;
+
+	public String getEid() {
+		return eid;
 	}
-	public void setCrossListables(Set crossListables) {
-		this.crossListables = crossListables;
+	public void setEid(String eid) {
+		this.eid = eid;
 	}
-	public boolean isEnterpriseManaged() {
-		return enterpriseManaged;
+	
+	public String getCreatedBy() {
+		return createdBy;
 	}
-	public void setEnterpriseManaged(boolean enterpriseManaged) {
-		this.enterpriseManaged = enterpriseManaged;
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+	
+	
 }

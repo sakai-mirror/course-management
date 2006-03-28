@@ -13,6 +13,11 @@
 
 		<version name="version" type="integer" column="VERSION" />
 
+		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
+		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
+		<property name="createdBy" column="CREATED_BY" />
+		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+
 		<property name="userId" column="USER_ID" type="string" not-null="true" />
 		<property name="enrollmentStatus" column="STATUS" type="string" not-null="true" />
 		<property name="credits" column="CREDITS" type="string" not-null="true" />

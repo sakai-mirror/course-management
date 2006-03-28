@@ -19,17 +19,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  **********************************************************************************/
-package org.sakaiproject.coursemanagement.impl;
+package org.sakaiproject.coursemanagement.api;
 
 public interface MembershipContainer {
-	public long getKey();
-	public void setKey(long key);
-	
-	public String getEid();
-	public void setEid(String eid);
-
-	public int getVersion();
-	public void setVersion(int version);
 
 	public String getTitle();
 	public void setTitle(String title);

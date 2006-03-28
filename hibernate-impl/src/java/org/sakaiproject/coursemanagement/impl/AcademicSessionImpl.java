@@ -25,7 +25,8 @@ import java.util.Date;
 
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 
-public class AcademicSessionImpl implements AcademicSession {
+public class AcademicSessionImpl extends AbstractPersistentCourseManagementObject
+	implements AcademicSession {
 	
 	/**
 	 * The DB's primary key for this object / record.

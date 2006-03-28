@@ -23,9 +23,11 @@ package org.sakaiproject.coursemanagement.impl;
 
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.MembershipContainer;
 import org.sakaiproject.coursemanagement.api.Section;
 
-public class SectionImpl implements Section, MembershipContainer {
+public class SectionImpl extends AbstractPersistentCourseManagementObject
+	implements Section, MembershipContainer {
 
 	/**
 	 * The DB's primary key for this object / record.

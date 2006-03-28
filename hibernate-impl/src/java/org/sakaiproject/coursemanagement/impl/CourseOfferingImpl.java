@@ -27,20 +27,8 @@ import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 
-public class CourseOfferingImpl implements CourseOffering, CrossListable {
-	/**
-	 * The DB's primary key for this object / record.
-	 */
-	private long key;
-	
-	/**
-	 * The object instance version for optimistic locking.
-	 */
-	private int version;
-
-	private String eid;
-	private String title;
-	private String description;
+public class CourseOfferingImpl extends CrossListable
+	implements CourseOffering {
 	private CanonicalCourse canonicalCourse;
 	private AcademicSession academicSession;
 	private CrossListing crossListing;
@@ -60,34 +48,6 @@ public class CourseOfferingImpl implements CourseOffering, CrossListable {
 		this.crossListing = crossListing;
 	}
 
-	public long getKey() {
-		return key;
-	}
-	public void setKey(long key) {
-		this.key = key;
-	}
-
-	public String getEid() {
-		return eid;
-	}
-	public void setEid(String eid) {
-		this.eid = eid;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public CanonicalCourse getCanonicalCourse() {
 		return canonicalCourse;
 	}
@@ -101,13 +61,4 @@ public class CourseOfferingImpl implements CourseOffering, CrossListable {
 	public void setAcademicSession(AcademicSession academicSession) {
 		this.academicSession = academicSession;
 	}
-
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-	
-
 }

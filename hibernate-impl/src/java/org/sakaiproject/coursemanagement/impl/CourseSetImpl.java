@@ -24,8 +24,10 @@ package org.sakaiproject.coursemanagement.impl;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.MembershipContainer;
 
-public class CourseSetImpl implements CourseSet, MembershipContainer {
+public class CourseSetImpl extends AbstractPersistentCourseManagementObject
+	implements CourseSet, MembershipContainer {
 	/**
 	 * The DB's primary key for this object / record.
 	 */

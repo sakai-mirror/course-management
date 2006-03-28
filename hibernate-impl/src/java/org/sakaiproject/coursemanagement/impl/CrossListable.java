@@ -21,11 +21,13 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import org.sakaiproject.coursemanagement.api.MembershipContainer;
+
 /**
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
-public interface CrossListable extends MembershipContainer {
-	public CrossListing getCrossListing();
-	public void setCrossListing(CrossListing crossListing);
+public abstract class CrossListable extends MembershipContainerImpl {
+	public abstract CrossListing getCrossListing();
+	public abstract void setCrossListing(CrossListing crossListing);
 }
