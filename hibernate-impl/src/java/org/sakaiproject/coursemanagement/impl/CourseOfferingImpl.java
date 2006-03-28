@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.AcademicSession;
@@ -29,10 +30,13 @@ import org.sakaiproject.coursemanagement.api.CourseOffering;
 
 public class CourseOfferingImpl extends CrossListable
 	implements CourseOffering {
+
 	private CanonicalCourse canonicalCourse;
 	private AcademicSession academicSession;
 	private CrossListing crossListing;
 	private Set courseSets;
+	private Date startDate;
+	private Date endDate;
 
 	public Set getCourseSets() {
 		return courseSets;
@@ -60,5 +64,18 @@ public class CourseOfferingImpl extends CrossListable
 	}
 	public void setAcademicSession(AcademicSession academicSession) {
 		this.academicSession = academicSession;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 }

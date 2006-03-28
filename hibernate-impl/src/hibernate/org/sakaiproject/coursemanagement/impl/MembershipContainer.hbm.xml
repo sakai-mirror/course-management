@@ -71,6 +71,8 @@
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
 				table="CM_COURSE_OFFERING_T">
 					<key column="MEMBER_CONTAINER_ID" />
+			        <property name="startDate" column="START_DATE" type="timestamp" not-null="false" />
+			        <property name="endDate" column="END_DATE" type="timestamp" not-null="false" />
 					<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" index="CM_CO_CANON_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
 					<many-to-one name="academicSession" column="ACADEMIC_SESSION" index="CM_CO_ACADEMIC_SESS_IDX" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
 					<set name="courseSets" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="true">

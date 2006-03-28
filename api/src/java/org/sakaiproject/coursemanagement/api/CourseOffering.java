@@ -21,6 +21,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api;
 
+import java.util.Date;
+
 /**
  * An instance of a course.
  * 
@@ -33,4 +35,22 @@ public interface CourseOffering extends MembershipContainer {
 	 * @return
 	 */
 	public AcademicSession getAcademicSession();
+
+	/**
+	 * The date this CourseOffering starts (if any).  Typically, a CourseOffering
+	 * starts when its AcademicSession starts.  Since this isn't necessarily true
+	 * for every CourseOffering, the startDate can be set explicitly here.
+	 * 
+	 * @return
+	 */
+	public Date getStartDate();
+	
+	/**
+	 * The date this CourseOffering ends (if any).  Typically, a CourseOffering
+	 * ends when its AcademicSession ends.  Since this isn't necessarily true
+	 * for every CourseOffering, the endDate can be set explicitly here.
+	 * 
+	 * @return
+	 */
+	public Date getEndDate();	
 }
