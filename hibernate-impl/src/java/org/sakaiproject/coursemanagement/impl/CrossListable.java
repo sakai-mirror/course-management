@@ -21,9 +21,9 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import org.sakaiproject.coursemanagement.api.MembershipContainer;
-
 /**
+ * A CrossListable is a CM entity that can be cross-listed.  This does not belong
+ * in the API, since the CrossListing object is specific to the hibernate implementation.
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */

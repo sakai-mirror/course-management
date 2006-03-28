@@ -21,11 +21,28 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api;
 
+/**
+ * This may or may not remain in the API, since its utility is unclear.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ */
 public interface MembershipContainer {
 
+	/**
+	 * Gets the unique enterprise id of this MembershipContainer.
+	 * @return
+	 */
+	public String getEid();
+
+	/**
+	 * Gets the title of this MembershipContainer.
+	 * @return
+	 */
 	public String getTitle();
-	public void setTitle(String title);
 	
+	/**
+	 * Gets the description of this MembershipContainer.
+	 * @return
+	 */
 	public String getDescription();
-	public void setDescription(String description);
 }
