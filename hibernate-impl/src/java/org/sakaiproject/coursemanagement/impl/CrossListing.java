@@ -29,15 +29,6 @@ import java.util.Set;
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
 public class CrossListing extends AbstractPersistentCourseManagementObject {
-	/**
-	 * The DB's primary key for this object / record.
-	 */
-	private long key;
-
-	/**
-	 * The object instance version for optimistic locking.
-	 */
-	private int version;
 
 	/**
 	 * The set of entities that are associated together in this CrossListing
@@ -50,18 +41,6 @@ public class CrossListing extends AbstractPersistentCourseManagementObject {
 	private boolean enterpriseManaged;
 
 	
-	public long getKey() {
-		return key;
-	}
-	public void setKey(long key) {
-		this.key = key;
-	}
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
 	public Set getCrossListables() {
 		return crossListables;
 	}

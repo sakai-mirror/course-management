@@ -25,26 +25,11 @@ import org.sakaiproject.coursemanagement.api.Membership;
 
 public class MembershipImpl extends AbstractPersistentCourseManagementObject
 	implements Membership {
-	/**
-	 * The DB's primary key for this object / record.
-	 */
-	private long key;
-	
-	/**
-	 * The object instance version for optimistic locking.
-	 */
-	private int version;
 
 	private String userId;
 	private String role;
-	private MembershipContainer association;
+	private AbstractNamedCourseManagementObject association;
 	
-	public long getKey() {
-		return key;
-	}
-	public void setKey(long key) {
-		this.key = key;
-	}
 	public String getRole() {
 		return role;
 	}
@@ -57,17 +42,10 @@ public class MembershipImpl extends AbstractPersistentCourseManagementObject
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public MembershipContainer getAssociation() {
+	public AbstractNamedCourseManagementObject getAssociation() {
 		return association;
 	}
-	public void setAssociation(MembershipContainer association) {
+	public void setAssociation(AbstractNamedCourseManagementObject association) {
 		this.association = association;
 	}
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
 }

@@ -28,12 +28,12 @@ public abstract class AbstractPersistentCourseManagementObject {
 	/**
 	 * The DB's primary key for this object / record.
 	 */
-	private long key;
+	protected long key;
 
 	/**
 	 * The object instance version for optimistic locking.
 	 */
-	private int version;
+	protected int version;
 
 	/**
 	 * The object's enterprise id.
@@ -105,6 +105,4 @@ public abstract class AbstractPersistentCourseManagementObject {
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
-	
-	
 }

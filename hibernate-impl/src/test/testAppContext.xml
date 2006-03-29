@@ -25,7 +25,7 @@
                 <value>org/sakaiproject/coursemanagement/impl/CrossListing.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/EnrollmentImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/EnrollmentSetImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/MembershipContainer.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/NamedCourseManagementObject.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/MembershipImpl.hbm.xml</value>
             </list>
         </property>

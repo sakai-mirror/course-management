@@ -71,23 +71,23 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 	
 	/**
-	 * A generic approach to finding members in a membership container.
+	 * A generic approach to finding members belonging to a CM object.
 	 * 
-	 * @param membershipContainerEid The membership container's eid
+	 * @param namedObjectEid The named object's eid
 	 * @return The Set of Memberships
 	 * @throws IdNotFoundException
 	 */
-	private Set getMembers(final String membershipContainerEid) throws IdNotFoundException {
+	private Set getMembers(final String namedObjectEid) throws IdNotFoundException {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				// Ensure that the container exists before looking for members
-				Query containerExists = session.getNamedQuery("memberContainerExists").setParameter("eid", membershipContainerEid);
+				Query containerExists = session.getNamedQuery("namedObjectExists").setParameter("eid", namedObjectEid);
 				if(((Integer)containerExists.iterate().next()).intValue() == 0) {
-					throw new IdNotFoundException(membershipContainerEid, MembershipContainer.class.getName());
+					throw new IdNotFoundException(namedObjectEid, AbstractNamedCourseManagementObject.class.getName());
 				}
 				// Now look for members
 				Query q = session.getNamedQuery("findMembers");
-				q.setParameter("eid", membershipContainerEid);
+				q.setParameter("eid", namedObjectEid);
 				return q.list();
 			}
 		};
@@ -265,8 +265,8 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
+		return es.getOfficialGraders();
 	}
 
 }

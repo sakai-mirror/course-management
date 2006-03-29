@@ -25,8 +25,8 @@ import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
 
-public class SectionImpl extends AbstractPersistentCourseManagementObject
-	implements Section, MembershipContainer {
+public class SectionImpl extends AbstractNamedCourseManagementObject
+	implements Section {
 
 	/**
 	 * The DB's primary key for this object / record.

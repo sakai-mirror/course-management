@@ -25,52 +25,12 @@ import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseSet;
 
-public class CourseSetImpl extends AbstractPersistentCourseManagementObject
-	implements CourseSet, MembershipContainer {
-	/**
-	 * The DB's primary key for this object / record.
-	 */
-	private long key;
-	
-	/**
-	 * The object instance version for optimistic locking.
-	 */
-	private int version;
+public class CourseSetImpl extends AbstractNamedCourseManagementObject
+	implements CourseSet {
 
-	private String eid;
-	private String title;
-	private String description;
 	private CourseSet parent;
 	private Set courseOfferings;
 	private Set canonicalCourses;
-	
-	public long getKey() {
-		return key;
-	}
-	public void setKey(long key) {
-		this.key = key;
-	}
-
-	public String getEid() {
-		return eid;
-	}
-	public void setEid(String eid) {
-		this.eid = eid;
-	}
-	
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
 	
 	public CourseSet getParent() {
 		return parent;
@@ -92,12 +52,4 @@ public class CourseSetImpl extends AbstractPersistentCourseManagementObject
 	public void setCanonicalCourses(Set canonicalCourses) {
 		this.canonicalCourses = canonicalCourses;
 	}
-
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
 }

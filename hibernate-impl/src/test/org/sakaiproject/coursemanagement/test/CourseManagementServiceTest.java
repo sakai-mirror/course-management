@@ -22,6 +22,7 @@
 package org.sakaiproject.coursemanagement.test;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -192,17 +193,12 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 	
 	public void testGetOfficialGraders() throws Exception {
-		// TODO Not passing yet... stopped here for the night
-		
-//		Set graders = cm.getOfficialGraderIds("BIO101_F2006_01_ES01");
-//		Assert.assertTrue(graders.contains("grader1"));
-//		Assert.assertTrue(graders.contains("grader2"));
-//		Assert.assertTrue( ! graders.contains("josh"));
+		Set graders = cm.getOfficialGraderIds("BIO101_F2006_01_ES01");
+		Assert.assertTrue(graders.contains("grader1"));
+		Assert.assertTrue(graders.contains("grader2"));
+		Assert.assertTrue( ! graders.contains("josh"));
 	}
 }
-
-
-
 
 /**
  * Loads data into the current transaction for use in a test case.
@@ -225,8 +221,9 @@ class DataLoader extends HibernateDaoSupport {
 		loadSections();
 		loadEnrollmentSets();
 		loadEnrollments();
+		
 		getHibernateTemplate().flush();
-		getHibernateTemplate().clear();
+//		getHibernateTemplate().clear();
 	}
 	
 	void loadAcademicSessions() {
@@ -243,6 +240,10 @@ class DataLoader extends HibernateDaoSupport {
 		cSet.setTitle("Biology Department");
 		cSet.setDescription("Department of Biology");
 		getHibernateTemplate().save(cSet);
+
+		// OK, this is odd.  If I don't select and print the CourseSet, it won't be found in the session.
+		Object obj = getHibernateTemplate().get(CourseSetImpl.class, new Long(cSet.getKey()));
+		System.out.println("++++++++++++++++++++++++++++" + obj);
 
 		MembershipImpl courseSetMember = new MembershipImpl();
 		courseSetMember.setAssociation(cSet);
@@ -299,10 +300,6 @@ class DataLoader extends HibernateDaoSupport {
 		bioChemCset.setCanonicalCourses(bioChemCourses);
 		getHibernateTemplate().update(bioChemCset);
 		
-//		CourseSetImpl bioCset2 = (CourseSetImpl)cm.getCourseSet("BIO_DEPT");
-//		CourseManagementServiceTest.log.debug("bioCset in mem contains" + bioCset.getCanonicalCourses());
-//		CourseManagementServiceTest.log.debug("bioCset from db contains" + bioCset2.getCanonicalCourses());
-
 	}
 	
 	void loadCourseOfferings() {
@@ -382,7 +379,7 @@ class DataLoader extends HibernateDaoSupport {
 		
 		Set graders = new HashSet();
 		graders.add("grader1");
-		graders.add("grader1");
+		graders.add("grader2");
 		enrollmentSet.setOfficialGraders(graders);
 		
 		getHibernateTemplate().save(enrollmentSet);

@@ -3,29 +3,32 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 
-	<class name="org.sakaiproject.coursemanagement.impl.MembershipContainerImpl" table="CM_MEMBER_CONTAINER_T">
+	<class name="org.sakaiproject.coursemanagement.impl.AbstractNamedCourseManagementObject"
+		table="CM_NAMED_OBJECT_T">
 
-		<id name="key" column="MEMBER_CONTAINER_ID" type="long">
+		<id name="key" column="NAMED_OBJECT_ID" type="long">
 			<generator class="native">
-				<param name="sequence">CM_MEMBER_CONTAINER_S</param>
+				<param name="sequence">CM_NAMED_OBJECT_S</param>
 			</generator>
 		</id>
+
 		<version name="version" type="integer" column="VERSION" />
+
+		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
+		<property name="title" column="TITLE" type="string" not-null="true" />
+		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
 
 		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
 		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
 		<property name="createdBy" column="CREATED_BY" />
 		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
-
-		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
-		<property name="title" column="TITLE" type="string" not-null="true" />
-		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
 		
 		<joined-subclass
 			name="org.sakaiproject.coursemanagement.impl.CourseSetImpl"
-			extends="org.sakaiproject.coursemanagement.impl.MembershipContainerImpl"
-			>
-			<key column="MEMBER_CONTAINER_ID" />
+			extends="org.sakaiproject.coursemanagement.impl.AbstractNamedCourseManagementObject"
+			table="CM_COURSE_SET">
+
+			<key column="NAMED_OBJECT_ID" />
 			
 			<many-to-one name="parent" column="PARENT_COURSE_SET" index="CM_COURSE_SET_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
 	
@@ -47,57 +50,65 @@
 
 		<joined-subclass
 			name="org.sakaiproject.coursemanagement.impl.CrossListable"
-			extends="org.sakaiproject.coursemanagement.impl.MembershipContainerImpl"
-			table="CM_CROSS_LISTABLE_T"
-			>
-			<key column="MEMBER_CONTAINER_ID" />
+			extends="org.sakaiproject.coursemanagement.impl.AbstractNamedCourseManagementObject"
+			table="CM_CROSS_LISTABLE_T">
+
+			<key column="NAMED_OBJECT_ID" />
 			
 			<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListing" />
 			
 			<joined-subclass
 				name="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl"
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
-				table="CM_CANON_COURSE_T"
-				>
-					<key column="MEMBER_CONTAINER_ID" />
-					<set name="courseSets" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="true">
-						<key column="CANON_COURSE" />
-						<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
-					</set>
+				table="CM_CANON_COURSE_T">
+
+				<key column="NAMED_OBJECT_ID" />
+
+				<set name="courseSets" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="true">
+					<key column="CANON_COURSE" />
+					<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
+				</set>
 			</joined-subclass>
 	
 			<joined-subclass
 				name="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl"
 				extends="org.sakaiproject.coursemanagement.impl.CrossListable"
 				table="CM_COURSE_OFFERING_T">
-					<key column="MEMBER_CONTAINER_ID" />
-			        <property name="startDate" column="START_DATE" type="timestamp" not-null="false" />
-			        <property name="endDate" column="END_DATE" type="timestamp" not-null="false" />
-					<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" index="CM_CO_CANON_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
-					<many-to-one name="academicSession" column="ACADEMIC_SESSION" index="CM_CO_ACADEMIC_SESS_IDX" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
-					<set name="courseSets" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="true">
-						<key column="COURSE_OFFERING" />
-						<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
-					</set>
+
+				<key column="NAMED_OBJECT_ID" />
+
+		        <property name="startDate" column="START_DATE" type="timestamp" not-null="false" />
+		        <property name="endDate" column="END_DATE" type="timestamp" not-null="false" />
+
+				<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" index="CM_CO_CANON_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" />
+				<many-to-one name="academicSession" column="ACADEMIC_SESSION" index="CM_CO_ACADEMIC_SESS_IDX" class="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl" />
+
+				<set name="courseSets" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="true">
+					<key column="COURSE_OFFERING" />
+					<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
+				</set>
 			</joined-subclass>
 		</joined-subclass>
 
 		<joined-subclass
 			name="org.sakaiproject.coursemanagement.impl.SectionImpl"
-			extends="org.sakaiproject.coursemanagement.impl.MembershipContainerImpl"
+			extends="org.sakaiproject.coursemanagement.impl.AbstractNamedCourseManagementObject"
 			table="CM_SECTION_T">
-				<key column="MEMBER_CONTAINER_ID" />
-				<property name="category" column="CATEGORY" type="string" />
-				<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_SECTION_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
-				<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
-				<many-to-one name="parent" column="PARENT_SECTION" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
+
+			<key column="NAMED_OBJECT_ID" />
+
+			<property name="category" column="CATEGORY" type="string" />
+
+			<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_SECTION_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
+			<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
+			<many-to-one name="parent" column="PARENT_SECTION" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
 		</joined-subclass>
 
 	</class>
 
-    <query name="memberContainerExists">
+    <query name="namedObjectExists">
         <![CDATA[
-        select count(*) from MembershipContainerImpl as container where container.eid=:eid
+        select count(*) from AbstractNamedCourseManagementObject as namedObj where namedObj.eid=:eid
         ]]>
     </query>
 

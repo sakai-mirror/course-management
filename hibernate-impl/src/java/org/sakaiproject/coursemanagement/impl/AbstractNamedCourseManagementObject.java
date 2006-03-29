@@ -21,28 +21,22 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-/**
- * This may or may not remain in the API, since its utility is unclear.
- * 
- * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
- */
-public interface MembershipContainer {
 
-	/**
-	 * Gets the unique enterprise id of this MembershipContainer.
-	 * @return
-	 */
-	public String getEid();
-
-	/**
-	 * Gets the title of this MembershipContainer.
-	 * @return
-	 */
-	public String getTitle();
+public abstract class AbstractNamedCourseManagementObject extends AbstractPersistentCourseManagementObject
+ {
+	protected String title;
+	protected String description;
 	
-	/**
-	 * Gets the description of this MembershipContainer.
-	 * @return
-	 */
-	public String getDescription();
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}	
 }
