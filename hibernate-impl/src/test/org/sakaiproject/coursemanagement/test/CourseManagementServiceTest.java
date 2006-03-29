@@ -197,6 +197,11 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Assert.assertTrue(graders.contains("grader1"));
 		Assert.assertTrue(graders.contains("grader2"));
 		Assert.assertTrue( ! graders.contains("josh"));
+		
+		try {
+			cm.getOfficialGraderIds("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
 	}
 }
 
@@ -223,7 +228,7 @@ class DataLoader extends HibernateDaoSupport {
 		loadEnrollments();
 		
 		getHibernateTemplate().flush();
-//		getHibernateTemplate().clear();
+		getHibernateTemplate().clear();
 	}
 	
 	void loadAcademicSessions() {
