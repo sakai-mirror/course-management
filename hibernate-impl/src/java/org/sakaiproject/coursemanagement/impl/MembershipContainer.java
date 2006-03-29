@@ -19,7 +19,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  **********************************************************************************/
-package org.sakaiproject.coursemanagement.api;
+package org.sakaiproject.coursemanagement.impl;
 
 /**
  * This may or may not remain in the API, since its utility is unclear.

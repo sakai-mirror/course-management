@@ -26,7 +26,25 @@ package org.sakaiproject.coursemanagement.api;
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
-public interface CourseSet extends MembershipContainer {
+public interface CourseSet {
+
+	/**
+	 * Gets the unique enterprise id of this MembershipContainer.
+	 * @return
+	 */
+	public String getEid();
+
+	/**
+	 * Gets the title of this MembershipContainer.
+	 * @return
+	 */
+	public String getTitle();
+	
+	/**
+	 * Gets the description of this MembershipContainer.
+	 * @return
+	 */
+	public String getDescription();
 
 	/**
 	 * Gets the parent CourseSet for this CourseSet, or null if this is a top-level CourseSet.

@@ -28,7 +28,25 @@ import java.util.Date;
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
-public interface CourseOffering extends MembershipContainer {
+public interface CourseOffering {
+
+	/**
+	 * Gets the unique enterprise id of this MembershipContainer.
+	 * @return
+	 */
+	public String getEid();
+
+	/**
+	 * Gets the title of this MembershipContainer.
+	 * @return
+	 */
+	public String getTitle();
+	
+	/**
+	 * Gets the description of this MembershipContainer.
+	 * @return
+	 */
+	public String getDescription();
 
 	/**
 	 * The AcademicSession for this course

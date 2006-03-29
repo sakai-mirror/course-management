@@ -21,7 +21,6 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import org.sakaiproject.coursemanagement.api.MembershipContainer;
 
 public abstract class MembershipContainerImpl extends AbstractPersistentCourseManagementObject
 	implements MembershipContainer {
@@ -39,6 +38,5 @@ public abstract class MembershipContainerImpl extends AbstractPersistentCourseMa
 	}
 	public void setTitle(String title) {
 		this.title = title;
-	}
-	
+	}	
 }

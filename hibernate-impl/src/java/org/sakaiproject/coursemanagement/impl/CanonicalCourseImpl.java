@@ -23,7 +23,6 @@ package org.sakaiproject.coursemanagement.impl;
 
 import java.util.Set;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 
 public class CanonicalCourseImpl extends CrossListable

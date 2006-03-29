@@ -24,7 +24,6 @@ package org.sakaiproject.coursemanagement.impl;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseSet;
-import org.sakaiproject.coursemanagement.api.MembershipContainer;
 
 public class CourseSetImpl extends AbstractPersistentCourseManagementObject
 	implements CourseSet, MembershipContainer {

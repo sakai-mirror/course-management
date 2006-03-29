@@ -22,7 +22,6 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import org.sakaiproject.coursemanagement.api.Membership;
-import org.sakaiproject.coursemanagement.api.MembershipContainer;
 
 public class MembershipImpl extends AbstractPersistentCourseManagementObject
 	implements Membership {
