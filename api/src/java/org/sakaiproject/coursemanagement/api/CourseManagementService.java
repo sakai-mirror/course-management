@@ -58,14 +58,14 @@ public interface CourseManagementService {
 	public Set getCourseSets();
 		
 	/**
-	 * Gets the members directly contained by this CourseSet.
+	 * Gets the memberships directly contained by this CourseSet.
 	 * 
 	 * @param courseSetEid
-	 * @return The set of members in this CourseSet.  This is not a transitive
+	 * @return The set of memberships in this CourseSet.  This is not a transitive
 	 * set.
 	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
 	 */
-	public Set getCourseSetMembers(String courseSetEid) throws IdNotFoundException;
+	public Set getCourseSetMemberships(String courseSetEid) throws IdNotFoundException;
 
 	/**
 	 * Gets a CanonicalCourse by its eid.
@@ -129,14 +129,14 @@ public interface CourseManagementService {
 	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
-	 * Gets the members directly contained by this CourseOffering.
+	 * Gets the memberships directly contained by this CourseOffering.
 	 * 
 	 * @param courseOfferingEid
-	 * @return The set of members in this CourseOffering.  This is not a transitive
+	 * @return The set of memberships in this CourseOffering.  This is not a transitive
 	 * set.
 	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
-	public Set getCourseOfferingMembers(String courseOfferingEid) throws IdNotFoundException;
+	public Set getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the CourseOfferings in a CourseSet.

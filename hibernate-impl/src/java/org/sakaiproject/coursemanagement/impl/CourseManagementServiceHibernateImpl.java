@@ -102,7 +102,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getCourseSetMembers(final String courseSetEid) throws IdNotFoundException {
+	public Set getCourseSetMemberships(final String courseSetEid) throws IdNotFoundException {
 		CourseSetImpl courseSet = (CourseSetImpl)getCourseSet(courseSetEid);
 		return courseSet.getMembers();
 	}
@@ -164,7 +164,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getCourseOfferingMembers(String courseOfferingEid) throws IdNotFoundException {
+	public Set getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException {
 		CourseOfferingImpl co = (CourseOfferingImpl)getCourseOffering(courseOfferingEid);
 		return co.getMembers();
 	}

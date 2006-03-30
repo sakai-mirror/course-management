@@ -85,10 +85,10 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 	
 	public void testGetCourseSetMembers() throws Exception {
-		Set members = cm.getCourseSetMembers("BIO_DEPT");
+		Set members = cm.getCourseSetMemberships("BIO_DEPT");
 		Assert.assertEquals(1, members.size());
 		try {
-			cm.getCourseSetMembers("bad eid");
+			cm.getCourseSetMemberships("bad eid");
 			fail();
 		} catch(IdNotFoundException ide) {}
 	}
