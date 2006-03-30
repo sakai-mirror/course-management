@@ -22,7 +22,6 @@
 package org.sakaiproject.coursemanagement.test;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -50,7 +49,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 public class CourseManagementServiceTest extends CourseManagementTestBase {
-	static final Log log = LogFactory.getLog(CourseManagementServiceTest.class);
+	private static final Log log = LogFactory.getLog(CourseManagementServiceTest.class);
 	
 	private CourseManagementService cm;
 	
@@ -244,17 +243,16 @@ class DataLoader extends HibernateDaoSupport {
 		cSet.setEid("BIO_DEPT");
 		cSet.setTitle("Biology Department");
 		cSet.setDescription("Department of Biology");
-		getHibernateTemplate().save(cSet);
-
-		// OK, this is odd.  If I don't select and print the CourseSet, it won't be found in the session.
-		Object obj = getHibernateTemplate().get(CourseSetImpl.class, new Long(cSet.getKey()));
-		System.out.println("++++++++++++++++++++++++++++" + obj);
 
 		MembershipImpl courseSetMember = new MembershipImpl();
-		courseSetMember.setAssociation(cSet);
 		courseSetMember.setRole("departmentAdmin");
 		courseSetMember.setUserId("user1");
-		getHibernateTemplate().save(courseSetMember);
+		
+		Set members = new HashSet();
+		members.add(courseSetMember);
+		cSet.setMembers(members);
+
+		getHibernateTemplate().save(cSet);
 
 		CourseSetImpl cSetChild = new CourseSetImpl();
 		cSetChild.setEid("BIO_CHEM_GROUP");
@@ -354,6 +352,15 @@ class DataLoader extends HibernateDaoSupport {
 		section.setDescription("The lecture");
 		section.setEid("BIO101_F2006_01_SEC01");
 		section.setTitle("Main lecture");
+
+		MembershipImpl member = new MembershipImpl();
+		member.setRole("student");
+		member.setUserId("josh");
+		
+		Set members = new HashSet();
+		members.add(member);
+		section.setMembers(members);
+
 		getHibernateTemplate().save(section);
 		
 		SectionImpl childSection = new SectionImpl();
@@ -365,11 +372,6 @@ class DataLoader extends HibernateDaoSupport {
 		childSection.setParent(section);
 		getHibernateTemplate().save(childSection);
 		
-		MembershipImpl member = new MembershipImpl();
-		member.setAssociation(section);
-		member.setRole("student");
-		member.setUserId("josh");
-		getHibernateTemplate().save(member);
 	}
 	
 	void loadEnrollmentSets() {

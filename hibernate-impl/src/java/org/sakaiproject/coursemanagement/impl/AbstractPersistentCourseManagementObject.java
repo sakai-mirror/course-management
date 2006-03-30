@@ -28,7 +28,7 @@ public abstract class AbstractPersistentCourseManagementObject {
 	/**
 	 * The DB's primary key for this object / record.
 	 */
-	protected long key;
+	protected Long key;
 
 	/**
 	 * The object instance version for optimistic locking.
@@ -60,10 +60,10 @@ public abstract class AbstractPersistentCourseManagementObject {
 	 */
 	protected Date createdDate;
 	
-	public long getKey() {
+	public Long getKey() {
 		return key;
 	}
-	public void setKey(long key) {
+	public void setKey(Long key) {
 		this.key = key;
 	}
 

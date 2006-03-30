@@ -28,6 +28,8 @@ import junit.framework.TestCase;
 
 import net.sf.hibernate.SessionFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl;
 import org.sakaiproject.coursemanagement.impl.CourseSetImpl;
@@ -46,7 +48,7 @@ import org.springframework.orm.hibernate.support.HibernateDaoSupport;
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
 public class SpringTestsNonTransactional extends TestCase {
-
+	
 	public void testInSpring() throws Exception {
 		ApplicationContext ac = new ClassPathXmlApplicationContext("/testAppContext.xml");
 		CourseManagementService cm = (CourseManagementService)ac.getBean("org.sakaiproject.coursemanagement.api.CourseManagementService");
@@ -57,6 +59,8 @@ public class SpringTestsNonTransactional extends TestCase {
 }
 
 class Loader extends HibernateDaoSupport {
+	private static final Log log = LogFactory.getLog(Loader.class);
+
 	CourseManagementService cm;
 	
 	Loader(ApplicationContext ac) {
@@ -71,13 +75,16 @@ class Loader extends HibernateDaoSupport {
 		cSet.setEid("BIO_DEPT");
 		cSet.setTitle("Biology Department");
 		cSet.setDescription("Department of Biology");
-		getHibernateTemplate().save(cSet);
 
 		MembershipImpl courseSetMember = new MembershipImpl();
-		courseSetMember.setAssociation(cSet);
 		courseSetMember.setRole("departmentAdmin");
 		courseSetMember.setUserId("user1");
-		getHibernateTemplate().save(courseSetMember);
+		
+		Set members = new HashSet();
+		members.add(courseSetMember);
+		cSet.setMembers(members);
+
+		getHibernateTemplate().save(cSet);
 
 		CourseSetImpl cSetChild = new CourseSetImpl();
 		cSetChild.setEid("BIO_CHEM_GROUP");
@@ -133,11 +140,11 @@ class Loader extends HibernateDaoSupport {
 		getHibernateTemplate().clear();
 		
 		CourseSetImpl bioCsetTest1 = (CourseSetImpl)cm.getCourseSet("BIO_DEPT");
-		CourseManagementServiceTest.log.debug("bioCset in mem contains" + bioCset.getCanonicalCourses());
-		CourseManagementServiceTest.log.debug("bioCset from db contains" + bioCsetTest1.getCanonicalCourses());
+		log.debug("bioCset in mem contains" + bioCset.getCanonicalCourses());
+		log.debug("bioCset from db contains" + bioCsetTest1.getCanonicalCourses());
 
 		CourseSetImpl bioCsetTest2 = (CourseSetImpl)cm.getCourseSet("BIO_CHEM_GROUP");
-		CourseManagementServiceTest.log.debug("bioCset in mem contains" + bioChemCset.getCanonicalCourses());
-		CourseManagementServiceTest.log.debug("bioCset from db contains" + bioCsetTest2.getCanonicalCourses());
+		log.debug("bioCset in mem contains" + bioChemCset.getCanonicalCourses());
+		log.debug("bioCset from db contains" + bioCsetTest2.getCanonicalCourses());
 	}
 }

@@ -22,11 +22,14 @@
         <property name="mappingResources">
             <list>
                 <value>org/sakaiproject/coursemanagement/impl/AcademicSessionImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/CanonicalCourseImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/CourseOfferingImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/CourseSetImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/CrossListing.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/EnrollmentImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/EnrollmentSetImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/NamedCourseManagementObject.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/MembershipImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/SectionImpl.hbm.xml</value>
             </list>
         </property>
         

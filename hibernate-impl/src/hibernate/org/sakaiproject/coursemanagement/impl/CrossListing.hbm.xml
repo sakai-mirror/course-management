@@ -18,16 +18,27 @@
 		<property name="createdBy" column="CREATED_BY" />
 		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
 
-		<set name="crossListables" inverse="true">
+		<set name="canonicalCourses" inverse="true">
 			<key column="ID" />
-			<one-to-many class="org.sakaiproject.coursemanagement.impl.CrossListable"/>
+			<one-to-many class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl"/>
+		</set>
+
+		<set name="courseOfferings" inverse="true">
+			<key column="ID" />
+			<one-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl"/>
 		</set>
 
 	</class>
 
-    <query name="findEquivalents">
+    <query name="findEquivalentCanonicalCourses">
         <![CDATA[
-        from CrossListable as cl where cl.crossListing=:crossListing and cl != :crossListable
+        from CanonicalCourseImpl as cc where cc.crossListing=:crossListing and cc != :canonicalCourse
+        ]]>
+    </query>
+
+    <query name="findEquivalentCourseOfferings">
+        <![CDATA[
+        from CourseOfferingImpl as co where co.crossListing=:crossListing and co != :courseOffering
         ]]>
     </query>
 

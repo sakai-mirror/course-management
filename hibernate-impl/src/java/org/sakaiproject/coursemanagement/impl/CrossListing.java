@@ -31,21 +31,31 @@ import java.util.Set;
 public class CrossListing extends AbstractPersistentCourseManagementObject {
 
 	/**
-	 * The set of entities that are associated together in this CrossListing
+	 * The set of canonicalCourses that are associated together in this CrossListing
 	 */
-	private Set crossListables;
-	
+	private Set canonicalCourses;
+
+	/**
+	 * The set of courseOfferings that are associated together in this CrossListing
+	 */
+	private Set courseOfferings;
+
 	/**
 	 * Whether this CrossListing is defined by the enterprise
 	 */
 	private boolean enterpriseManaged;
 
-	
-	public Set getCrossListables() {
-		return crossListables;
+	public Set getCanonicalCourses() {
+		return canonicalCourses;
 	}
-	public void setCrossListables(Set crossListables) {
-		this.crossListables = crossListables;
+	public void setCanonicalCourses(Set canonicalCourses) {
+		this.canonicalCourses = canonicalCourses;
+	}
+	public Set getCourseOfferings() {
+		return courseOfferings;
+	}
+	public void setCourseOfferings(Set courseOfferings) {
+		this.courseOfferings = courseOfferings;
 	}
 	public boolean isEnterpriseManaged() {
 		return enterpriseManaged;

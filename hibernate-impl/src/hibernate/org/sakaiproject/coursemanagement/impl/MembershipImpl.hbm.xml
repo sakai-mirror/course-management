@@ -16,15 +16,6 @@
 		<property name="userId" column="USER_ID" type="string" not-null="true" />
 		<property name="role" column="ROLE" type="string" not-null="true" />
 
-		<many-to-one name="association" column="MEMBERSHIP_ASSOC" index="CM_MEMBER_ASSOC_IDX" class="org.sakaiproject.coursemanagement.impl.AbstractNamedCourseManagementObject" />
-
 	</class>
-	
-	<query name="findMembers">
-        <![CDATA[
-        from MembershipImpl as member where member.association.eid=:eid
-        ]]>
-    </query>
 
-	
 </hibernate-mapping>

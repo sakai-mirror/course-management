@@ -28,7 +28,6 @@ public class MembershipImpl extends AbstractPersistentCourseManagementObject
 
 	private String userId;
 	private String role;
-	private AbstractNamedCourseManagementObject association;
 	
 	public String getRole() {
 		return role;
@@ -41,11 +40,5 @@ public class MembershipImpl extends AbstractPersistentCourseManagementObject
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
-	}
-	public AbstractNamedCourseManagementObject getAssociation() {
-		return association;
-	}
-	public void setAssociation(AbstractNamedCourseManagementObject association) {
-		this.association = association;
 	}
 }

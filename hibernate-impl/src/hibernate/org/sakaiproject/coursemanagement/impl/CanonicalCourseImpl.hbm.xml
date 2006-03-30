@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
+	<class name="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" table="CM_CANON_COURSE_T">
+
+		<id name="key" column="CANON_COURSE_ID" type="long">
+			<generator class="native">
+				<param name="sequence">CM_CANON_COURSE_S</param>
+			</generator>
+		</id>
+
+		<version name="version" type="integer" column="VERSION" />
+
+		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
+		<property name="title" column="TITLE" type="string" not-null="true" />
+		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
+
+		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
+		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
+		<property name="createdBy" column="CREATED_BY" />
+		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+
+		<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListing" />
+			
+		<set name="courseSets" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="true">
+			<key column="CANON_COURSE" />
+			<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
+		</set>
+	</class>
+
+    <query name="findCanonicalCourseByEid">
+        <![CDATA[
+        from CanonicalCourseImpl as cc where cc.eid=:eid
+        ]]>
+    </query>
+
+</hibernate-mapping>

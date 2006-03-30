@@ -21,6 +21,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.Set;
+
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
@@ -28,28 +30,19 @@ import org.sakaiproject.coursemanagement.api.Section;
 public class SectionImpl extends AbstractNamedCourseManagementObject
 	implements Section {
 
-	/**
-	 * The DB's primary key for this object / record.
-	 */
-	private long key;
-	
-	/**
-	 * The object instance version for optimistic locking.
-	 */
-	private int version;
-
-	private String eid;
-	private String title;
-	private String description;
 	private String category;
 	private CourseOffering courseOffering;
 	private Section parent;
-	
-	/**
-	 * The EnrollmentSet associated with this Section.  This may be null.
-	 */
+	private Set members;
 	private EnrollmentSet enrollmentSet;
 	
+	public Set getMembers() {
+		return members;
+	}
+	public void setMembers(Set members) {
+		this.members = members;
+	}
+
 	public String getCategory() {
 		return category;
 	}
@@ -61,30 +54,6 @@ public class SectionImpl extends AbstractNamedCourseManagementObject
 	}
 	public void setCourseOffering(CourseOffering courseOffering) {
 		this.courseOffering = courseOffering;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public String getEid() {
-		return eid;
-	}
-	public void setEid(String eid) {
-		this.eid = eid;
-	}
-	public long getKey() {
-		return key;
-	}
-	public void setKey(long key) {
-		this.key = key;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
 	}
 	public Section getParent() {
 		return parent;
@@ -98,12 +67,4 @@ public class SectionImpl extends AbstractNamedCourseManagementObject
 	public void setEnrollmentSet(EnrollmentSet enrollmentSet) {
 		this.enrollmentSet = enrollmentSet;
 	}
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
-	
 }

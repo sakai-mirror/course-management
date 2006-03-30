@@ -31,7 +31,15 @@ public class CourseSetImpl extends AbstractNamedCourseManagementObject
 	private CourseSet parent;
 	private Set courseOfferings;
 	private Set canonicalCourses;
-	
+	private Set members;
+
+	public Set getMembers() {
+		return members;
+	}
+	public void setMembers(Set members) {
+		this.members = members;
+	}
+
 	public CourseSet getParent() {
 		return parent;
 	}

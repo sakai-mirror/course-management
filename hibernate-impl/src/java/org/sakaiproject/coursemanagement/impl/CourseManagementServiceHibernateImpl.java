@@ -57,7 +57,9 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	private Object getObjectByEid(final String eid, final String className, final String namedQuery) throws IdNotFoundException {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery(namedQuery);
+				StringBuffer hql = new StringBuffer();
+				hql.append("from ").append(className).append(" as obj where obj.eid=:eid");
+				Query q = session.createQuery(hql.toString());
 				q.setParameter("eid", eid);
 //				if(log.isDebugEnabled()) log.debug("Get object by eid: " + q.getQueryString());
 				Object result = q.uniqueResult();
@@ -70,54 +72,11 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return getHibernateTemplate().execute(hc);
 	}
 	
-	/**
-	 * A generic approach to finding members belonging to a CM object.
-	 * 
-	 * @param namedObjectEid The named object's eid
-	 * @return The Set of Memberships
-	 * @throws IdNotFoundException
-	 */
-	private Set getMembers(final String namedObjectEid) throws IdNotFoundException {
-		HibernateCallback hc = new HibernateCallback() {
-			public Object doInHibernate(Session session) throws HibernateException {
-				// Ensure that the container exists before looking for members
-				Query containerExists = session.getNamedQuery("namedObjectExists").setParameter("eid", namedObjectEid);
-				if(((Integer)containerExists.iterate().next()).intValue() == 0) {
-					throw new IdNotFoundException(namedObjectEid, AbstractNamedCourseManagementObject.class.getName());
-				}
-				// Now look for members
-				Query q = session.getNamedQuery("findMembers");
-				q.setParameter("eid", namedObjectEid);
-				return q.list();
-			}
-		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
-	}
 	
-	/**
-	 * Gets equivalent CrossListables.
-	 * 
-	 * @param crossListable The CrossListable for which to find equivalents
-	 * @return
-	 */
-	private Set getEquivalents(final CrossListable crossListable) {
-		HibernateCallback hc = new HibernateCallback() {
-			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery("findEquivalents");
-				q.setParameter("crossListing", crossListable.getCrossListing());
-				q.setParameter("crossListable", crossListable);
-				return q.list();
-			}
-		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
-
-	}
-
 	public CourseSet getCourseSet(String eid) throws IdNotFoundException {
 		return (CourseSet)getObjectByEid(eid, CourseSetImpl.class.getName(), "findCourseSetByEid");
 	}
 
-	// TODO Use getObjectByEid() instead of replicating code
 	public Set getChildCourseSets(final String parentCourseSetEid) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
@@ -144,7 +103,8 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getCourseSetMembers(final String courseSetEid) throws IdNotFoundException {
-		return getMembers(courseSetEid);
+		CourseSetImpl courseSet = (CourseSetImpl)getCourseSet(courseSetEid);
+		return courseSet.getMembers();
 	}
 
 	public CanonicalCourse getCanonicalCourse(String eid) throws IdNotFoundException {
@@ -153,7 +113,15 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 
 	public Set getEquivalentCanonicalCourses(String canonicalCourseEid) {
 		final CanonicalCourseImpl canonicalCourse = (CanonicalCourseImpl)getCanonicalCourse(canonicalCourseEid);
-		return getEquivalents(canonicalCourse);
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findEquivalentCanonicalCourses");
+				q.setParameter("crossListing", canonicalCourse.getCrossListing());
+				q.setParameter("canonicalCourse", canonicalCourse);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
 	public Set getCanonicalCourses(final String courseSetEid) throws IdNotFoundException {
@@ -184,12 +152,21 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {
-		CourseOfferingImpl courseOffering = (CourseOfferingImpl)getCourseOffering(courseOfferingEid);
-		return getEquivalents(courseOffering);
+		final CourseOfferingImpl courseOffering = (CourseOfferingImpl)getCourseOffering(courseOfferingEid);
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findEquivalentCourseOfferings");
+				q.setParameter("crossListing", courseOffering.getCrossListing());
+				q.setParameter("courseOffering", courseOffering);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
 	public Set getCourseOfferingMembers(String courseOfferingEid) throws IdNotFoundException {
-		return getMembers(courseOfferingEid);
+		CourseOfferingImpl co = (CourseOfferingImpl)getCourseOffering(courseOfferingEid);
+		return co.getMembers();
 	}
 
 	public Section getSection(String eid) throws IdNotFoundException {
@@ -227,7 +204,8 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getSectionMembers(String sectionEid) throws IdNotFoundException {
-		return getMembers(sectionEid);
+		SectionImpl section = (SectionImpl)getSection(sectionEid);
+		return section.getMembers();
 	}
 
 	public EnrollmentSet getEnrollmentSet(String eid) throws IdNotFoundException {

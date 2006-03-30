@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
+	<class name="org.sakaiproject.coursemanagement.impl.CourseSetImpl" table="CM_COURSE_SET_T">
+
+		<id name="key" column="COURSE_SET_ID" type="long">
+			<generator class="native">
+				<param name="sequence">CM_COURSE_SET_S</param>
+			</generator>
+		</id>
+
+		<version name="version" type="integer" column="VERSION" />
+
+		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
+		<property name="title" column="TITLE" type="string" not-null="true" />
+		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
+
+		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
+		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
+		<property name="createdBy" column="CREATED_BY" />
+		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+
+			
+		<many-to-one name="parent" column="PARENT_COURSE_SET" index="CM_COURSE_SET_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
+	
+		<!-- 
+		The many-to-many relationship between CourseSets and CourseOfferings/CanonicalCourses
+		are managed on the CourseSetImpl.  If you modify the set of CourseSets on a
+		CourseOffering/CanonicalCourse, it will not be persisted.
+		-->
+		<set name="canonicalCourses" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="false">
+			<key column="COURSE_SET" />
+			<many-to-many class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl" column="CANON_COURSE" />
+		</set>
+
+		<set name="courseOfferings" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="false">
+			<key column="COURSE_SET" />
+			<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" column="COURSE_OFFERING" />
+		</set>
+		
+		<set name="members" inverse="false" cascade="save-update">
+			<key column="COURSE_SET" />
+			<one-to-many class="org.sakaiproject.coursemanagement.impl.MembershipImpl" />
+		</set>
+		
+	</class>
+
+    <query name="findCourseSetByEid">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.eid=:eid
+        ]]>
+    </query>
+
+    <query name="findTopLevelCourseSets">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.parent is null
+        ]]>
+    </query>
+
+    <query name="findChildCourseSets">
+        <![CDATA[
+        from CourseSetImpl as courseSet where courseSet.parent.eid=:parentEid
+        ]]>
+    </query>
+
+</hibernate-mapping>
