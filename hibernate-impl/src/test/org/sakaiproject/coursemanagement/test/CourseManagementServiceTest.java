@@ -21,44 +21,29 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.test;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Assert;
-
-import net.sf.hibernate.SessionFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
-import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
-import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
-import org.sakaiproject.coursemanagement.impl.AcademicSessionImpl;
-import org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl;
-import org.sakaiproject.coursemanagement.impl.CourseOfferingImpl;
-import org.sakaiproject.coursemanagement.impl.CourseSetImpl;
-import org.sakaiproject.coursemanagement.impl.CrossListing;
-import org.sakaiproject.coursemanagement.impl.EnrollmentImpl;
-import org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl;
-import org.sakaiproject.coursemanagement.impl.MembershipImpl;
-import org.sakaiproject.coursemanagement.impl.SectionImpl;
-import org.springframework.context.ApplicationContext;
-import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 public class CourseManagementServiceTest extends CourseManagementTestBase {
 	private static final Log log = LogFactory.getLog(CourseManagementServiceTest.class);
 	
 	private CourseManagementService cm;
+	private DataLoader loader;
 	
 	protected void onSetUpBeforeTransaction() throws Exception {
-    	cm = (CourseManagementService)applicationContext.getBean("org.sakaiproject.coursemanagement.api.CourseManagementService");
     }
 
 	protected void onSetUpInTransaction() throws Exception {
-		DataLoader loader = new DataLoader(applicationContext);
+    	cm = (CourseManagementService)applicationContext.getBean("org.sakaiproject.coursemanagement.api.CourseManagementService");
+		loader = (DataLoader)applicationContext.getBean("hibernateTestDataLoader");
 		loader.load();
 	}
 	
@@ -112,14 +97,21 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 
 	public void testGetCanonicalCoursesFromCourseSet() throws Exception {
-		// TODO This works outside of a transaction (see SpringTestsNonTransactional).  Why not here?
-		
-//		Assert.assertEquals(1, cm.getCanonicalCourses("BIO_DEPT").size());
-//		Assert.assertEquals(2, cm.getCanonicalCourses("BIO_CHEM_GROUP").size());
-//		try {
-//			cm.getCanonicalCourses("bad eid");
-//			fail();
-//		} catch (IdNotFoundException ide) {}
+		Assert.assertEquals(1, cm.getCanonicalCourses("BIO_DEPT").size());
+		Assert.assertEquals(2, cm.getCanonicalCourses("BIO_CHEM_GROUP").size());
+		try {
+			cm.getCanonicalCourses("bad eid");
+			fail();
+		} catch (IdNotFoundException ide) {}
+	}
+
+	public void testGetCourseOfferingsFromCourseSet() throws Exception {
+		Assert.assertEquals(1, cm.getCourseOfferings("BIO_DEPT").size());
+		Assert.assertEquals(2, cm.getCourseOfferings("BIO_CHEM_GROUP").size());
+		try {
+			cm.getCanonicalCourses("bad eid");
+			fail();
+		} catch (IdNotFoundException ide) {}
 	}
 
 	public void testGetCourseOffering() throws Exception {
@@ -201,205 +193,5 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 			cm.getOfficialGraderIds("bad eid");
 			fail();
 		} catch(IdNotFoundException ide) {}
-	}
-}
-
-/**
- * Loads data into the current transaction for use in a test case.
- * 
- * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
- */
-class DataLoader extends HibernateDaoSupport {
-	CourseManagementService cm;
-	
-	DataLoader(ApplicationContext ac) {
-		setSessionFactory((SessionFactory)ac.getBean("cmSessionFactory"));
-		cm = (CourseManagementService)ac.getBean("org.sakaiproject.coursemanagement.api.CourseManagementService");
-	}
-	
-	void load() {
-		loadAcademicSessions();
-		loadCourseSetsAndMembers();
-		loadCanonicalCourses();
-		loadCourseOfferings();
-		loadSections();
-		loadEnrollmentSets();
-		loadEnrollments();
-		
-		getHibernateTemplate().flush();
-		getHibernateTemplate().clear();
-	}
-	
-	void loadAcademicSessions() {
-		AcademicSessionImpl term = new AcademicSessionImpl();
-		term.setEid("F2006");
-		term.setTitle("Fall 2006");
-		term.setDescription("Fall 2006, starts Sept 1, 2006");
-		getHibernateTemplate().save(term);
-	}
-	
-	void loadCourseSetsAndMembers() {
-		CourseSetImpl cSet = new CourseSetImpl();
-		cSet.setEid("BIO_DEPT");
-		cSet.setTitle("Biology Department");
-		cSet.setDescription("Department of Biology");
-
-		MembershipImpl courseSetMember = new MembershipImpl();
-		courseSetMember.setRole("departmentAdmin");
-		courseSetMember.setUserId("user1");
-		
-		Set members = new HashSet();
-		members.add(courseSetMember);
-		cSet.setMembers(members);
-
-		getHibernateTemplate().save(cSet);
-
-		CourseSetImpl cSetChild = new CourseSetImpl();
-		cSetChild.setEid("BIO_CHEM_GROUP");
-		cSetChild.setTitle("Biochem Group");
-		cSetChild.setDescription("Biochemistry group, Department of Biology");
-		cSetChild.setParent(cSet);
-		getHibernateTemplate().save(cSetChild);
-	}
-
-	void loadCanonicalCourses() {
-		// Cross-list bio and chem (but not English)
-		CrossListing cl = new CrossListing();
-		getHibernateTemplate().save(cl);
-
-		// Build and save the CanonicalCourses
-		CanonicalCourseImpl cc1 = new CanonicalCourseImpl();
-		cc1.setEid("BIO101");
-		cc1.setTitle("Biology 101");
-		cc1.setDescription("An intro to biology");
-		cc1.setCrossListing(cl);
-		getHibernateTemplate().save(cc1);
-		
-		CanonicalCourseImpl cc2 = new CanonicalCourseImpl();
-		cc2.setEid("CHEM101");
-		cc2.setTitle("Chem 101");
-		cc2.setDescription("An intro to chemistry");
-		cc2.setCrossListing(cl);
-		getHibernateTemplate().save(cc2);
-		
-		CanonicalCourseImpl cc3 = new CanonicalCourseImpl();
-		cc3.setEid("ENG101");
-		cc3.setTitle("English 101");
-		cc3.setDescription("An intro to English");
-		getHibernateTemplate().save(cc3);
-
-		// Add these canonical courses to course sets
-		CourseSetImpl bioCset = (CourseSetImpl)cm.getCourseSet("BIO_DEPT");
-		CourseSetImpl bioChemCset = (CourseSetImpl)cm.getCourseSet("BIO_CHEM_GROUP");
-		
-		Set bioCourses = new HashSet();
-		bioCourses.add(cc1);
-		bioCset.setCanonicalCourses(bioCourses);
-		getHibernateTemplate().update(bioCset);
-		
-		Set bioChemCourses = new HashSet();
-		bioChemCourses.add(cc1);
-		bioChemCourses.add(cc2);
-		bioChemCset.setCanonicalCourses(bioChemCourses);
-		getHibernateTemplate().update(bioChemCset);
-		
-	}
-	
-	void loadCourseOfferings() {
-		// Get the object dependencies
-		AcademicSession term = cm.getAcademicSession("F2006");
-		CanonicalCourseImpl cc1 = (CanonicalCourseImpl)cm.getCanonicalCourse("BIO101");
-		CanonicalCourseImpl cc2 = (CanonicalCourseImpl)cm.getCanonicalCourse("CHEM101");
-		CanonicalCourseImpl cc3 = (CanonicalCourseImpl)cm.getCanonicalCourse("ENG101");
-
-		// Cross list bio and chem, but not English
-		CrossListing cl = new CrossListing();
-		getHibernateTemplate().save(cl);
-
-		CourseOfferingImpl co1 = new CourseOfferingImpl();
-		co1.setAcademicSession(term);
-		co1.setCanonicalCourse(cc1);
-		co1.setCrossListing(cl);
-		co1.setEid("BIO101_F2006_01");
-		co1.setTitle("Bio 101: It's all about the gene");
-		co1.setDescription("Fall 2006 Bio 101 Offering");
-		getHibernateTemplate().save(co1);
-
-		CourseOfferingImpl co2 = new CourseOfferingImpl();
-		co2.setAcademicSession(term);
-		co2.setCanonicalCourse(cc2);
-		co2.setCrossListing(cl);
-		co2.setEid("CHEM101_F2006_01");
-		co2.setTitle("Chem 101: It's all about the gene");
-		co2.setDescription("Fall 2006 Chem 101 Offering");
-		getHibernateTemplate().save(co2);
-
-		CourseOfferingImpl co3 = new CourseOfferingImpl();
-		co3.setAcademicSession(term);
-		co3.setCanonicalCourse(cc3);
-		co3.setEid("ENG101_F2006_01");
-		co3.setTitle("English 101: Intro to literature");
-		co3.setDescription("Fall 2006 Eng 101 Offering");
-		getHibernateTemplate().save(co3);
-	}
-	
-	void loadSections() {
-		CourseOffering co = cm.getCourseOffering("BIO101_F2006_01");
-
-		SectionImpl section = new SectionImpl();
-		section.setCategory("lecture");
-		section.setCourseOffering(co);
-		section.setDescription("The lecture");
-		section.setEid("BIO101_F2006_01_SEC01");
-		section.setTitle("Main lecture");
-
-		MembershipImpl member = new MembershipImpl();
-		member.setRole("student");
-		member.setUserId("josh");
-		
-		Set members = new HashSet();
-		members.add(member);
-		section.setMembers(members);
-
-		getHibernateTemplate().save(section);
-		
-		SectionImpl childSection = new SectionImpl();
-		childSection.setCategory("lab");
-		childSection.setCourseOffering(co);
-		childSection.setDescription("Joe's monday morning lab");
-		childSection.setEid("BIO101_F2006_01_SEC02");
-		childSection.setTitle("Joe's Monday Morning Biology Lab");
-		childSection.setParent(section);
-		getHibernateTemplate().save(childSection);
-		
-	}
-	
-	void loadEnrollmentSets() {
-		EnrollmentSetImpl enrollmentSet = new EnrollmentSetImpl();
-		enrollmentSet.setCategory("lab");
-		enrollmentSet.setCourseOffering(cm.getCourseOffering("BIO101_F2006_01"));
-		enrollmentSet.setDefaultEnrollmentCredits("3");
-		enrollmentSet.setDescription("The lecture");
-		enrollmentSet.setEid("BIO101_F2006_01_ES01");
-		enrollmentSet.setTitle("The lab");
-		enrollmentSet.setSection(cm.getSection("BIO101_F2006_01_SEC01"));
-		
-		Set graders = new HashSet();
-		graders.add("grader1");
-		graders.add("grader2");
-		enrollmentSet.setOfficialGraders(graders);
-		
-		getHibernateTemplate().save(enrollmentSet);
-	}
-	
-	void loadEnrollments() {
-		EnrollmentSet enrollmentSet = cm.getEnrollmentSet("BIO101_F2006_01_ES01");
-		EnrollmentImpl enrollment = new EnrollmentImpl();
-		enrollment.setCredits("3");
-		enrollment.setEnrollmentSet(enrollmentSet);
-		enrollment.setEnrollmentStatus("waitlisted");
-		enrollment.setGradingScheme("pass/fail");
-		enrollment.setUserId("josh");
-		getHibernateTemplate().save(enrollment);
 	}
 }

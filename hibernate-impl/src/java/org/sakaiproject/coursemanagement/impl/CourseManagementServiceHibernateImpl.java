@@ -125,7 +125,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getCanonicalCourses(final String courseSetEid) throws IdNotFoundException {
-		return ((CourseSetImpl)getCourseSet(courseSetEid)).getCourseOfferings();
+		return ((CourseSetImpl)getCourseSet(courseSetEid)).getCanonicalCourses();
 	}
 
 	public Set getAcademicSessions() {
@@ -147,8 +147,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException {
-		// TODO Solve the courseSet problem for both CanonicalCourses and CourseOfferings
-		return null;
+		return ((CourseSetImpl)getCourseSet(courseSetEid)).getCourseOfferings();
 	}
 
 	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {

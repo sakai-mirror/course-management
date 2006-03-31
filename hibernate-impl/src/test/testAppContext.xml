@@ -52,7 +52,7 @@
         <property name="transactionManager"><ref bean="cmTransactionManager"/></property>
         <property name="transactionAttributes">
             <props>
-                <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="*">PROPAGATION_REQUIRED</prop>
             </props>
         </property>
     </bean>
@@ -64,5 +64,15 @@
             </bean>
         </property>
 	</bean>
+	
+	<bean id="hibernateTestDataLoader" parent="cmTxTemplate">
+        <property name="target">
+            <bean class="org.sakaiproject.coursemanagement.test.HibernateTestDataLoader">
+        		<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>
+        		<property name="courseManagementService"><ref local="org.sakaiproject.coursemanagement.api.CourseManagementService"/></property>
+            </bean>
+        </property>
+	</bean>
+	
 
 </beans>
