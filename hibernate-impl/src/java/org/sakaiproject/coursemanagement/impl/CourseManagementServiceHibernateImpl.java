@@ -241,6 +241,20 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
+	public boolean isEnrolled(final String userId, final Set enrollmentSetEids) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("countEnrollments");
+				q.setParameter("userId", userId);
+				q.setParameterList("enrollmentSetEids", enrollmentSetEids);
+				return (Integer)q.iterate().next();
+			}
+		};
+		Integer i = (Integer)getHibernateTemplate().execute(hc);
+		if(log.isDebugEnabled()) log.debug(userId + " is enrolled in " + i + " of these " + enrollmentSetEids.size() + " EnrollmentSets" );
+		return i.intValue() > 0;
+	}
+
 	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException {
 		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
 		return es.getOfficialGraders();

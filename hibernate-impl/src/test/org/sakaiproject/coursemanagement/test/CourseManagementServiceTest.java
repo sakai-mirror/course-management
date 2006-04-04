@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.test;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -181,6 +182,20 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 			cm.getEnrollmentSets("bad eid");
 			fail();
 		} catch(IdNotFoundException ide) {}
+	}
+	
+	public void testIsEnrolled() throws Exception {
+		Set enrollmentSetEids = new HashSet();
+		enrollmentSetEids.add("BIO101_F2006_01_ES01");
+		
+		// We don't care about bad EnrollmentSet eids here... we're just interested in Enrollments
+		enrollmentSetEids.add("bad eid");
+
+		Assert.assertTrue(cm.isEnrolled("josh", enrollmentSetEids));
+		
+		// Graders are not enrolled
+		Assert.assertTrue( ! cm.isEnrolled("grader1", enrollmentSetEids));
+		Assert.assertTrue( ! cm.isEnrolled("grader2", enrollmentSetEids));
 	}
 	
 	public void testGetOfficialGraders() throws Exception {

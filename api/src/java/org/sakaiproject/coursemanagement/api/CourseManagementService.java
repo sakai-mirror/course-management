@@ -220,4 +220,14 @@ public interface CourseManagementService {
 	 * @throws IdNotFoundException If the eid is not associated with any EnrollmentSet
 	 */
 	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException;
+	
+	/**
+	 * Determines whether a user is enrolled in one of the EnrollmentSets.  This
+	 * method is needed to implement Sakai's GroupProvider.
+	 * 
+	 * @param userId The student's userId
+	 * @param enrollmentSetEids The set of EnrollmentSetEids
+	 * @return
+	 */
+	public boolean isEnrolled(String userId, Set enrollmentSetEids);
 }

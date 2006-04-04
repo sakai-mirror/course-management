@@ -32,5 +32,11 @@
         from EnrollmentImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid
         ]]>
     </query>
+    
+	<query name="countEnrollments">
+        <![CDATA[
+        select count(enr) from EnrollmentImpl as enr where enr.userId=:userId and enr.enrollmentSet.eid in (:enrollmentSetEids)
+        ]]>
+    </query>
 
 </hibernate-mapping>
