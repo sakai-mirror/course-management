@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.test;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -162,6 +163,11 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		co1.setEid("BIO101_F2006_01");
 		co1.setTitle("Bio 101: It's all about the gene");
 		co1.setDescription("Fall 2006 Bio 101 Offering");
+		
+		// Make this always a "current" course offering
+		co1.setStartDate(new Date(0));
+		co1.setEndDate(new Date(Long.MAX_VALUE));
+
 		getHibernateTemplate().save(co1);
 
 		CourseOfferingImpl co2 = new CourseOfferingImpl();
@@ -171,6 +177,11 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		co2.setEid("CHEM101_F2006_01");
 		co2.setTitle("Chem 101: It's all about the gene");
 		co2.setDescription("Fall 2006 Chem 101 Offering");
+		
+		// Make this almost never a "current" course offering (until 2036, that is)
+		co2.setStartDate(new Date(Long.MAX_VALUE));
+		co2.setEndDate(new Date(Long.MAX_VALUE));
+
 		getHibernateTemplate().save(co2);
 
 		CourseOfferingImpl co3 = new CourseOfferingImpl();
@@ -233,9 +244,9 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		enrollmentSet.setCategory("lab");
 		enrollmentSet.setCourseOffering(cm.getCourseOffering("BIO101_F2006_01"));
 		enrollmentSet.setDefaultEnrollmentCredits("3");
-		enrollmentSet.setDescription("The lecture");
+		enrollmentSet.setDescription("An enrollment set description");
 		enrollmentSet.setEid("BIO101_F2006_01_ES01");
-		enrollmentSet.setTitle("The lab");
+		enrollmentSet.setTitle("The lab enrollment set");
 		enrollmentSet.setSection(cm.getSection("BIO101_F2006_01_SEC01"));
 		
 		Set graders = new HashSet();
@@ -244,6 +255,16 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		enrollmentSet.setOfficialGraders(graders);
 		
 		getHibernateTemplate().save(enrollmentSet);
+		
+		EnrollmentSetImpl enrollmentSet2 = new EnrollmentSetImpl();
+		enrollmentSet2.setCategory("lab");
+		enrollmentSet2.setCourseOffering(cm.getCourseOffering("CHEM101_F2006_01"));
+		enrollmentSet2.setDefaultEnrollmentCredits("3");
+		enrollmentSet2.setDescription("Another enrollment set description");
+		enrollmentSet2.setEid("CHEM101_F2006_01_ES01");
+		enrollmentSet2.setTitle("The lab enrollment set");
+
+		getHibernateTemplate().save(enrollmentSet2);
 	}
 	
 	void loadEnrollments() {
@@ -255,5 +276,15 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		enrollment.setGradingScheme("pass/fail");
 		enrollment.setUserId("josh");
 		getHibernateTemplate().save(enrollment);
+		
+		EnrollmentSet enrollmentSet2 = cm.getEnrollmentSet("CHEM101_F2006_01_ES01");
+		EnrollmentImpl enrollment2 = new EnrollmentImpl();
+		enrollment2.setCredits("3");
+		enrollment2.setEnrollmentSet(enrollmentSet2);
+		enrollment2.setEnrollmentStatus("officially enrolled");
+		enrollment2.setGradingScheme("letter grade");
+		enrollment2.setUserId("josh");
+		getHibernateTemplate().save(enrollment2);
+		
 	}
 }

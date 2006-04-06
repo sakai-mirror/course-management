@@ -230,4 +230,15 @@ public interface CourseManagementService {
 	 * @return
 	 */
 	public boolean isEnrolled(String userId, Set enrollmentSetEids);
+
+	/**
+	 * Gets the set of current EnrollmentSets for which a user is enrolled.
+	 * An EnrollmentSet is considered current if its CourseOffering's start date
+	 * (is null or prior to the current date/time) and its end date (is null or
+	 * after the current date/time).
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public Set getCurrentlyEnrolledEnrollmentSets(String userId);
 }

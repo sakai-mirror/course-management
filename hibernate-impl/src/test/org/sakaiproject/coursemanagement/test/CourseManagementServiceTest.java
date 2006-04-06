@@ -184,6 +184,18 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		} catch(IdNotFoundException ide) {}
 	}
 	
+	public void testGetOfficialGraders() throws Exception {
+		Set graders = cm.getOfficialGraderIds("BIO101_F2006_01_ES01");
+		Assert.assertTrue(graders.contains("grader1"));
+		Assert.assertTrue(graders.contains("grader2"));
+		Assert.assertTrue( ! graders.contains("josh"));
+		
+		try {
+			cm.getOfficialGraderIds("bad eid");
+			fail();
+		} catch(IdNotFoundException ide) {}
+	}
+	
 	public void testIsEnrolled() throws Exception {
 		Set enrollmentSetEids = new HashSet();
 		enrollmentSetEids.add("BIO101_F2006_01_ES01");
@@ -198,15 +210,12 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Assert.assertTrue( ! cm.isEnrolled("grader2", enrollmentSetEids));
 	}
 	
-	public void testGetOfficialGraders() throws Exception {
-		Set graders = cm.getOfficialGraderIds("BIO101_F2006_01_ES01");
-		Assert.assertTrue(graders.contains("grader1"));
-		Assert.assertTrue(graders.contains("grader2"));
-		Assert.assertTrue( ! graders.contains("josh"));
-		
-		try {
-			cm.getOfficialGraderIds("bad eid");
-			fail();
-		} catch(IdNotFoundException ide) {}
+	public void testGetEnrolledEnrollmentSets() throws Exception {
+		// User "josh" is enrolled in two EnrollmentSets.  One is only current in 2036.
+		// The other is always current.
+		Set enrSets = cm.getCurrentlyEnrolledEnrollmentSets("josh");
+		Assert.assertEquals(1, enrSets.size());
 	}
+	
+
 }

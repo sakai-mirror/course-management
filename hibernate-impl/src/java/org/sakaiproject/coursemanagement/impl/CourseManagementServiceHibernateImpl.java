@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,7 +62,6 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				hql.append("from ").append(className).append(" as obj where obj.eid=:eid");
 				Query q = session.createQuery(hql.toString());
 				q.setParameter("eid", eid);
-//				if(log.isDebugEnabled()) log.debug("Get object by eid: " + q.getQueryString());
 				Object result = q.uniqueResult();
 				if(result == null) {
 					throw new IdNotFoundException(eid, className);
@@ -260,4 +260,16 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return es.getOfficialGraders();
 	}
 
+
+	public Set getCurrentlyEnrolledEnrollmentSets(final String userId) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findCurrentlyEnrolledEnrollmentSets");
+				q.setParameter("userId", userId);
+//				q.setParameter("now", new Date());
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
 }
