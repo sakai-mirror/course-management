@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="api/src/java"/>
-	<classpathentry kind="src" path="hibernate-impl/src/java"/>
-	<classpathentry kind="src" path="hibernate-impl/src/hibernate"/>
-	<classpathentry kind="src" path="hibernate-impl/src/test"/>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cm-api"/>
+	<classpathentry kind="var" path="MAVEN_REPO/hibernate/jars/hibernate-2.1.8.jar"/>
 	<classpathentry sourcepath="/JAVA_DIR/spring-framework-1.2.7" kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2.6.jar"/>
 	<classpathentry sourcepath="/JAVA_DIR/spring-framework-1.2.7" kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2.6.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/hibernate/jars/hibernate-2.1.8.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.7.3.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
