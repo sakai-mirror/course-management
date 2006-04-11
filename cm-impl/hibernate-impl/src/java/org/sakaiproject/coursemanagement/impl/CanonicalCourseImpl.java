@@ -31,6 +31,13 @@ public class CanonicalCourseImpl extends CrossListable
 	private CrossListing crossListing;
 	private Set courseSets;
 
+	public CanonicalCourseImpl() {}
+	public CanonicalCourseImpl(String eid, String title, String description) {
+		this.eid = eid;
+		this.title = title;
+		this.description = description;
+	}
+	
 	public Set getCourseSets() {
 		return courseSets;
 	}

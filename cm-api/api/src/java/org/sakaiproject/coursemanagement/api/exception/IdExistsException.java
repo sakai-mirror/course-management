@@ -19,54 +19,19 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  **********************************************************************************/
-package org.sakaiproject.coursemanagement.impl;
+package org.sakaiproject.coursemanagement.api.exception;
 
-import java.util.Set;
+/**
+ * An exception thrown when an an object can not be created because the same
+ * type of object with the same ID already exist.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ */
+public class IdExistsException extends RuntimeException {
 
-import org.sakaiproject.coursemanagement.api.CourseSet;
+	private static final long serialVersionUID = -8588237050380289434L;
 
-public class CourseSetImpl extends AbstractNamedCourseManagementObject
-	implements CourseSet {
-
-	private CourseSet parent;
-	private Set courseOfferings;
-	private Set canonicalCourses;
-	private Set members;
-
-	public CourseSetImpl() {}
-	
-	public CourseSetImpl(String eid, String title, String description, CourseSet parent) {
-		this.eid = eid;
-		this.title = title;
-		this.description = description;
-		this.parent = parent;
-	}
-	
-	public Set getMembers() {
-		return members;
-	}
-	public void setMembers(Set members) {
-		this.members = members;
-	}
-
-	public CourseSet getParent() {
-		return parent;
-	}
-	public void setParent(CourseSet parent) {
-		this.parent = parent;
-	}
-	
-	public Set getCourseOfferings() {
-		return courseOfferings;
-	}
-	public void setCourseOfferings(Set courseOfferings) {
-		this.courseOfferings = courseOfferings;
-	}
-
-	public Set getCanonicalCourses() {
-		return canonicalCourses;
-	}
-	public void setCanonicalCourses(Set canonicalCourses) {
-		this.canonicalCourses = canonicalCourses;
+	public IdExistsException(String id, String className) {
+		super("An object of type " + className + " with id " + id + " already exists");
 	}
 }

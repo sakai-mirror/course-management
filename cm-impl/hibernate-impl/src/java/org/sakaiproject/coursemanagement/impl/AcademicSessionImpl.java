@@ -31,6 +31,16 @@ public class AcademicSessionImpl extends AbstractNamedCourseManagementObject
 	private Date startDate;
 	private Date endDate;
 	
+	public AcademicSessionImpl() {}
+	
+	public AcademicSessionImpl(String eid, String title, String description, Date startDate, Date endDate) {
+		this.eid = eid;
+		this.title = title;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+	
 	public Date getEndDate() {
 		return endDate;
 	}

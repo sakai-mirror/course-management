@@ -132,8 +132,8 @@ public interface CourseManagementService {
 	 * Gets the memberships directly contained by this CourseOffering.
 	 * 
 	 * @param courseOfferingEid
-	 * @return The set of memberships in this CourseOffering.  This is not a transitive
-	 * set.
+	 * @return The set of memberships in this CourseOffering.  This is not a recursive
+	 * set of Memberships.
 	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
 	public Set getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException;
