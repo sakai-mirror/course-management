@@ -74,5 +74,13 @@
         </property>
 	</bean>
 	
+	<bean id="org.sakaiproject.coursemanagement.api.CourseManagementAdministration" parent="cmTxTemplate">
+        <property name="target">
+            <bean class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl">
+        		<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>
+	        	<property name="cmService"><ref bean="org.sakaiproject.coursemanagement.api.CourseManagementService"/></property>
+            </bean>
+        </property>
+	</bean>
 
 </beans>

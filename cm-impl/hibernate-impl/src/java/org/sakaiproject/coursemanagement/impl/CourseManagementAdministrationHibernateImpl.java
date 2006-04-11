@@ -22,8 +22,12 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
@@ -35,11 +39,18 @@ import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 public class CourseManagementAdministrationHibernateImpl extends
-		CourseManagementServiceHibernateImpl implements CourseManagementAdministration {
+		HibernateDaoSupport implements CourseManagementAdministration {
 
+	private static final Log log = LogFactory.getLog(CourseManagementAdministrationHibernateImpl.class);
+	
 	CourseManagementService cmService;
+	
+	public void setCmService(CourseManagementService cmService) {
+		this.cmService = cmService;
+	}
 	
 	public void createAcademicSession(String eid, String title,
 			String description, Date startDate, Date endDate) throws IdExistsException {
@@ -82,26 +93,37 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void addCanonicalCourseToCourseSet(String courseSetEid, String canonicalCourseEid) throws IdNotFoundException {
-		CourseSetImpl cSet = (CourseSetImpl)getCourseSet(courseSetEid);
-		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)getCanonicalCourse(canonicalCourseEid);
+		CourseSetImpl cSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)cmService.getCanonicalCourse(canonicalCourseEid);
 		cSet.getCanonicalCourses().add(canonCourse);
 		getHibernateTemplate().update(cSet);
 	}
 
 	public boolean removeCanonicalCourseFromCourseSet(String courseSetEid, String canonicalCourseEid) {
-		CourseSetImpl cSet = (CourseSetImpl)getCourseSet(courseSetEid);
-		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)getCanonicalCourse(canonicalCourseEid);
+		CourseSetImpl cSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)cmService.getCanonicalCourse(canonicalCourseEid);
 		boolean wasMember = cSet.getCanonicalCourses().remove(canonCourse);
 		getHibernateTemplate().update(cSet);
 		return wasMember;
 	}
 
 	public void setEquivalentCanonicalCourses(Set canonicalCourses) {
-		// Do any of these belong to a cross listing yet?
+		CrossListing newCrossListing = new CrossListing();
+		getHibernateTemplate().save(newCrossListing);
+		Set oldCrossListings = new HashSet();
+
+		for(Iterator iter = canonicalCourses.iterator(); iter.hasNext();) {
+			CanonicalCourseImpl cc = (CanonicalCourseImpl)iter.next();
+			CrossListing oldCrossListing = cc.getCrossListing();
+			if(oldCrossListing != null) {
+				oldCrossListings.add(oldCrossListing);
+			}
+			if(log.isDebugEnabled()) log.debug("Setting crosslisting for CanonicalCourse " + cc.getEid() + " to " + newCrossListing.getKey());
+			cc.setCrossListing(newCrossListing);
+			getHibernateTemplate().update(cc);
+		}
 		
-		// Do they belong to multiple cross listings?  If so, remove them and reset to this list.
-		
-		// Create or update the cross listing
+		// TODO Clean up orphaned cross listings
 	}
 
 	public boolean removeEquivalency(CanonicalCourse canonicalCourse) {

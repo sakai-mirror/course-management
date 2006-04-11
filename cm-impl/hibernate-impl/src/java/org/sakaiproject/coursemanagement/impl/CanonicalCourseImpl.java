@@ -23,6 +23,7 @@ package org.sakaiproject.coursemanagement.impl;
 
 import java.util.Set;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 
 public class CanonicalCourseImpl extends CrossListable
@@ -50,5 +51,10 @@ public class CanonicalCourseImpl extends CrossListable
 	}
 	public void setCrossListing(CrossListing crossListing) {
 		this.crossListing = crossListing;
+	}
+	
+	public boolean equals(Object o) {
+		CanonicalCourse other = (CanonicalCourse)o;
+		return new EqualsBuilder().append(this.eid, other.getEid()).isEquals();
 	}
 }

@@ -29,6 +29,7 @@ public class CourseManagementTestSuite extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite(CourseManagementServiceTest.class);
+		suite.addTestSuite(CourseManagementAdministrationTest.class);
 		return suite;
 	}
 }
