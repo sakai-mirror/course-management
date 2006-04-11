@@ -46,5 +46,12 @@
         ]]>
     </query>
 
+	<query name="findCurrentlyGradableEnrollmentSets">
+        <![CDATA[
+        from EnrollmentSetImpl as enrollmentSet where :userId in elements(enrollmentSet.officialGraders) and
+        	(enrollmentSet.courseOffering.startDate is null or enrollmentSet.courseOffering.startDate <= sysdate) and
+        	(enrollmentSet.courseOffering.endDate is null or enrollmentSet.courseOffering.endDate >= sysdate)
+        ]]>
+    </query>
 
 </hibernate-mapping>

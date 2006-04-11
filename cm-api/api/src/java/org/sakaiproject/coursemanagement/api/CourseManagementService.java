@@ -241,4 +241,15 @@ public interface CourseManagementService {
 	 * @return
 	 */
 	public Set getCurrentlyEnrolledEnrollmentSets(String userId);
+
+	/**
+	 * Gets the set of current EnrollmentSets for which a user is an official grader.
+	 * An EnrollmentSet is considered current if its CourseOffering's start date
+	 * (is null or prior to the current date/time) and its end date (is null or
+	 * after the current date/time).
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public Set getCurrentlyGradableEnrollmentSets(String userId);
 }

@@ -217,5 +217,9 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Assert.assertEquals(1, enrSets.size());
 	}
 	
+	public void testGetGradableEnrollmentSets() throws Exception {
+		Set gradableEnrollmentSets = cm.getCurrentlyGradableEnrollmentSets("grader1");
+		Assert.assertEquals(1, gradableEnrollmentSets.size());
+	}
 
 }

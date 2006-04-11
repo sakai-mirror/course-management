@@ -265,7 +265,18 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findCurrentlyEnrolledEnrollmentSets");
 				q.setParameter("userId", userId);
-//				q.setParameter("now", new Date());
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+
+
+	public Set getCurrentlyGradableEnrollmentSets(final String userId) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findCurrentlyGradableEnrollmentSets");
+				q.setParameter("userId", userId);
 				return q.list();
 			}
 		};
