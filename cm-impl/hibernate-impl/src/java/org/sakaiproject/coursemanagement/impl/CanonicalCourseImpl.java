@@ -24,6 +24,7 @@ package org.sakaiproject.coursemanagement.impl;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 
 public class CanonicalCourseImpl extends CrossListable
@@ -56,5 +57,9 @@ public class CanonicalCourseImpl extends CrossListable
 	public boolean equals(Object o) {
 		CanonicalCourse other = (CanonicalCourse)o;
 		return new EqualsBuilder().append(this.eid, other.getEid()).isEquals();
+	}
+	
+	public int hashCode() {
+		return new HashCodeBuilder().append(eid).toHashCode();
 	}
 }
