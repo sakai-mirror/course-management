@@ -107,23 +107,28 @@ public class CourseManagementAdministrationHibernateImpl extends
 		return wasMember;
 	}
 
-	public void setEquivalentCanonicalCourses(Set canonicalCourses) {
+	private void setEquivalents(Set crossListables) {
 		CrossListing newCrossListing = new CrossListing();
 		getHibernateTemplate().save(newCrossListing);
 		Set oldCrossListings = new HashSet();
 
-		for(Iterator iter = canonicalCourses.iterator(); iter.hasNext();) {
-			CanonicalCourseImpl cc = (CanonicalCourseImpl)iter.next();
-			CrossListing oldCrossListing = cc.getCrossListing();
+		for(Iterator iter = crossListables.iterator(); iter.hasNext();) {
+			CrossListable clable = (CrossListable)iter.next();
+			CrossListing oldCrossListing = clable.getCrossListing();
 			if(oldCrossListing != null) {
 				oldCrossListings.add(oldCrossListing);
 			}
-			if(log.isDebugEnabled()) log.debug("Setting crosslisting for CanonicalCourse " + cc.getEid() + " to " + newCrossListing.getKey());
-			cc.setCrossListing(newCrossListing);
-			getHibernateTemplate().update(cc);
+			if(log.isDebugEnabled()) log.debug("Setting crosslisting for crosslistable " +
+					clable.getEid() + " to " + newCrossListing.getKey());
+			clable.setCrossListing(newCrossListing);
+			getHibernateTemplate().update(clable);
 		}
 		
 		// TODO Clean up orphaned cross listings
+	}
+	
+	public void setEquivalentCanonicalCourses(Set canonicalCourses) {
+		setEquivalents(canonicalCourses);
 	}
 
 	public boolean removeEquivalency(CanonicalCourse canonicalCourse) {
@@ -137,13 +142,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void updateCourseOffering(CourseOffering courseOffering) {
-		// TODO Auto-generated method stub
-		
+		getHibernateTemplate().update(courseOffering);
 	}
 
 	public void setEquivalentCourseOfferings(Set courseOfferings) {
-		// TODO Auto-generated method stub
-		
+		setEquivalents(courseOfferings);
 	}
 
 	public boolean removeEquivalency(CourseOffering courseOffering) {
