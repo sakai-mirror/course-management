@@ -29,6 +29,13 @@ public class MembershipImpl extends AbstractPersistentCourseManagementObject
 	private String userId;
 	private String role;
 	
+	public MembershipImpl() {}
+	
+	public MembershipImpl(String userId, String role) {
+		this.userId = userId;
+		this.role = role;
+	}
+	
 	public String getRole() {
 		return role;
 	}

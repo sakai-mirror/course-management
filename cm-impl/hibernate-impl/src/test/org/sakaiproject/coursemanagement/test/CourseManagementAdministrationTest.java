@@ -82,7 +82,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.setEquivalentCanonicalCourses(courses);
 		equivalents = cm.getEquivalentCanonicalCourses("cc1");
 		Assert.assertTrue(equivalents.contains(cm.getCanonicalCourse("cc2")));
-		Assert.assertTrue( ! equivalents.contains(cm.getCanonicalCourse("cc3")));
+		Assert.assertFalse(equivalents.contains(cm.getCanonicalCourse("cc3")));
 	}
 	
 	public void testRemoveEquivalencyCanonCourse() throws Exception {
@@ -103,7 +103,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		Assert.assertTrue(cmAdmin.removeEquivalency(cm.getCanonicalCourse("cc1")));
 		
 		// Remove one that wasn't crosslisted
-		Assert.assertTrue( ! cmAdmin.removeEquivalency(cm.getCanonicalCourse("cc3")));
+		Assert.assertFalse(cmAdmin.removeEquivalency(cm.getCanonicalCourse("cc3")));
 	}
 	
 	public void testAddCourseOfferingToCourseSet() throws Exception {
@@ -118,6 +118,49 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		
 		// Ensure that the course is in the set
 		Assert.assertTrue(cm.getCourseOfferings("cs1").contains(cm.getCourseOffering("co1")));
+	}
+
+	public void testAddEnrollment() throws Exception {
+		// Create the EnrollmentSet
+		cmAdmin.createEnrollmentSet("es1", "es1", "es1", "es1", "es1", null);
+		
+		// Add an enrollment
+		cmAdmin.addOrUpdateEnrollment("josh", cm.getEnrollmentSet("es1"), "enrolled", "4", "pass/fail");
+		
+		// Ensure that the enrollment exists
+		Assert.assertNotNull(cm.getEnrollment("josh", "es1"));
+	}
+
+	public void testUpdateEnrollment() throws Exception {
+		// Create the EnrollmentSet
+		cmAdmin.createEnrollmentSet("es1", "es1", "es1", "es1", "es1", null);
+		
+		// Add an enrollment
+		cmAdmin.addOrUpdateEnrollment("josh", cm.getEnrollmentSet("es1"), "enrolled", "4", "pass/fail");
+		
+		// Update the enrollment
+		cmAdmin.addOrUpdateEnrollment("josh", cm.getEnrollmentSet("es1"), "waitlisted", "3", "lettter gradel");
+		
+		// Ensure that the enrollment has been updated
+		Assert.assertEquals("waitlisted", cm.getEnrollment("josh", "es1").getEnrollmentStatus());
+	}
+
+	public void testDropEnrollment() throws Exception {
+		// Create the EnrollmentSet
+		cmAdmin.createEnrollmentSet("es1", "es1", "es1", "es1", "es1", null);
+		
+		// Add an enrollment
+		cmAdmin.addOrUpdateEnrollment("josh", cm.getEnrollmentSet("es1"), "enrolled", "4", "pass/fail");
+		
+		// Drop the enrollment
+		cmAdmin.removeEnrollment("josh", "es1");
+		
+		// Ensure that the enrollment has been dropped
+		Assert.assertEquals(0, cm.getEnrollments("es1").size());
+	}
+	
+	public void testAddCourseSetMembership() throws Exception {
+		// TODO Write this test!
 	}
 
 }

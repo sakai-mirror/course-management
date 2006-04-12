@@ -256,8 +256,9 @@ public interface CourseManagementAdministration {
 	 * @param userId
 	 * @param role
 	 * @param courseSetEid
+	 * @throws IdNotFoundException If the CourseSet can not be found
 	 */
-	public void addCourseSetMembership(String userId, String role, String courseSetEid);
+	public void addCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException;
 	
 	/**
 	 * Removes a user from a CourseSet.

@@ -36,6 +36,18 @@ public class SectionImpl extends AbstractNamedCourseManagementObject
 	private Set members;
 	private EnrollmentSet enrollmentSet;
 	
+	public SectionImpl() {}
+	
+	public SectionImpl(String eid, String title, String description, String category, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet) {
+		this.eid = eid;
+		this.title = title;
+		this.description = description;
+		this.category = category;
+		this.parent = parent;
+		this.courseOffering = courseOffering;
+		this.enrollmentSet = enrollmentSet;
+	}
+
 	public Set getMembers() {
 		return members;
 	}

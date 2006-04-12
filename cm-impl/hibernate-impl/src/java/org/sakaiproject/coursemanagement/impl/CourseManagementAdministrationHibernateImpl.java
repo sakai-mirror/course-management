@@ -36,6 +36,7 @@ import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
@@ -231,18 +232,39 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void createSection(String eid, String title, String description, String category, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet) throws IdExistsException {
-		// TODO Auto-generated method stub
-		
+		SectionImpl section = new SectionImpl(eid, title, description, category, parent, courseOffering, enrollmentSet);
+		try {
+			getHibernateTemplate().save(section);
+		} catch (DataIntegrityViolationException dive) {
+			throw new IdExistsException(eid, Section.class.getName());
+		}
 	}
 
 	public void updateSection(Section section) {
-		// TODO Auto-generated method stub
-		
+		getHibernateTemplate().update(section);
 	}
 
-	public void addCourseSetMembership(String userId, String role, String courseSetEid) {
-		// TODO Auto-generated method stub
-		
+	public void addCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException {
+		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		Set memberships = courseSet.getMembers();
+		if(memberships == null) {
+			memberships = new HashSet();
+			courseSet.setMembers(memberships);
+		}
+		// Check to see if this user is already a member
+		boolean alreadyMember = false;
+		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
+			MembershipImpl member = (MembershipImpl)iter.next();
+			if(member.getUserId().equals(userId)) {
+				alreadyMember = true;
+				member.setRole(role);
+				break;
+			}
+		}
+		if(!alreadyMember) {
+			memberships.add(new MembershipImpl(userId, role));
+		}
+		getHibernateTemplate().update(courseSet);
 	}
 
 	public boolean removeCourseSetMembership(String userId, String courseSetEid) {
