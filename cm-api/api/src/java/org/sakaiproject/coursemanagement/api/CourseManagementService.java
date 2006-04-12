@@ -232,6 +232,28 @@ public interface CourseManagementService {
 	public boolean isEnrolled(String userId, Set enrollmentSetEids);
 
 	/**
+	 * Convenience method for checking whether a user is enrolled in an EnrollmentSet.
+	 * 
+	 * @param userId
+	 * @param eid
+	 * @return
+	 */
+	public boolean isEnrolled(String userId, String eid);
+
+
+	/**
+	 * Returns the Enrollment for a user in an EnrollmentSet.  If the user isn't in the
+	 * EnrollmentSet, or the EnrollmentSet doesn't exist, this returns null.
+	 * 
+	 * TODO Should this throw more descriptive exceptions e.g. when the EnrollmentSet doesn't exist?
+	 * 
+	 * @param userId
+	 * @param eid
+	 * @return
+	 */
+	public Enrollment getEnrollment(String userId, String eid);
+
+	/**
 	 * Gets the set of current EnrollmentSets for which a user is enrolled.
 	 * An EnrollmentSet is considered current if its CourseOffering's start date
 	 * (is null or prior to the current date/time) and its end date (is null or

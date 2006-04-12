@@ -39,6 +39,17 @@ public class CourseOfferingImpl extends CrossListable
 	private Date endDate;
 	private Set members;
 
+	public CourseOfferingImpl() {}
+	
+	public CourseOfferingImpl(String eid, String title, String description, AcademicSession academicSession, Date startDate, Date endDate) {
+		this.eid = eid;
+		this.title = title;
+		this.description = description;
+		this.academicSession = academicSession;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+	
 	public Set getMembers() {
 		return members;
 	}

@@ -32,6 +32,17 @@ public class EnrollmentImpl extends AbstractPersistentCourseManagementObject
 	private String enrollmentStatus;
 	private String credits;
 	private String gradingScheme;
+	private boolean dropped;
+	
+	public EnrollmentImpl() {}
+	
+	public EnrollmentImpl(String userId, EnrollmentSet enrollmentSet, String enrollmentStatus, String credits, String gradingScheme) {
+		this.userId = userId;
+		this.enrollmentSet = enrollmentSet;
+		this.enrollmentStatus = enrollmentStatus;
+		this.credits = credits;
+		this.gradingScheme = gradingScheme;
+	}
 	
 	public String getUserId() {
 		return userId;
@@ -66,5 +77,12 @@ public class EnrollmentImpl extends AbstractPersistentCourseManagementObject
 	}
 	public void setGradingScheme(String gradingScheme) {
 		this.gradingScheme = gradingScheme;
+	}
+
+	public boolean isDropped() {
+		return dropped;
+	}
+	public void setDropped(boolean dropped) {
+		this.dropped = dropped;
 	}	
 }

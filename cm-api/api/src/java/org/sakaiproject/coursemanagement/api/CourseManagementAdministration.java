@@ -214,7 +214,7 @@ public interface CourseManagementAdministration {
 	 * @param credits
 	 * @param gradingScheme
 	 */
-	public void addEnrollment(String userId, EnrollmentSet enrollmentSet,
+	public void addOrUpdateEnrollment(String userId, EnrollmentSet enrollmentSet,
 			String enrollmentStatus, String credits, String gradingScheme);
 
 	/**

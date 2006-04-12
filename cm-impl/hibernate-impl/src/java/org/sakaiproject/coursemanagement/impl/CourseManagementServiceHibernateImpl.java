@@ -35,6 +35,7 @@ import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
@@ -254,6 +255,24 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return i.intValue() > 0;
 	}
 
+	public boolean isEnrolled(String userId, String enrollmentSetEid) {
+		HashSet enrollmentSetEids = new HashSet();
+		enrollmentSetEids.add(enrollmentSetEid);
+		return isEnrolled(userId, enrollmentSetEids);
+	}
+	
+	public Enrollment getEnrollment(final String userId, final String enrollmentSetEid) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findEnrollment");
+				q.setParameter("userId", userId);
+				q.setParameter("enrollmentSetEid", enrollmentSetEid);
+				return q.uniqueResult();
+			}
+		};
+		return (Enrollment)getHibernateTemplate().execute(hc);
+	}
+	
 	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException {
 		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
 		return es.getOfficialGraders();

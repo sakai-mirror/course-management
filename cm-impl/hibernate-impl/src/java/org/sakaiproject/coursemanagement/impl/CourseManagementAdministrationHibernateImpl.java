@@ -34,6 +34,7 @@ import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
@@ -93,18 +94,22 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void addCanonicalCourseToCourseSet(String courseSetEid, String canonicalCourseEid) throws IdNotFoundException {
-		CourseSetImpl cSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
 		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)cmService.getCanonicalCourse(canonicalCourseEid);
-		cSet.getCanonicalCourses().add(canonCourse);
-		getHibernateTemplate().update(cSet);
+		courseSet.getCanonicalCourses().add(canonCourse);
+		getHibernateTemplate().update(courseSet);
 	}
 
 	public boolean removeCanonicalCourseFromCourseSet(String courseSetEid, String canonicalCourseEid) {
-		CourseSetImpl cSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
 		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)cmService.getCanonicalCourse(canonicalCourseEid);
-		boolean wasMember = cSet.getCanonicalCourses().remove(canonCourse);
-		getHibernateTemplate().update(cSet);
-		return wasMember;
+		Set courses = courseSet.getCanonicalCourses();
+		if(courses == null || ! courses.contains(canonCourse)) {
+			return false;
+		}
+		courses.remove(canonCourse);
+		getHibernateTemplate().update(courseSet);
+		return true;
 	}
 
 	private void setEquivalents(Set crossListables) {
@@ -131,14 +136,24 @@ public class CourseManagementAdministrationHibernateImpl extends
 		setEquivalents(canonicalCourses);
 	}
 
+	private boolean removeEquiv(CrossListable impl) {
+		boolean hadCrossListing = impl.getCrossListing() != null;
+		impl.setCrossListing(null);
+		getHibernateTemplate().update(impl);
+		return hadCrossListing;
+	}
+	
 	public boolean removeEquivalency(CanonicalCourse canonicalCourse) {
-		// TODO Auto-generated method stub
-		return false;
+		return removeEquiv((CanonicalCourseImpl)canonicalCourse);
 	}
 
 	public void createCourseOffering(String eid, String title, String description, AcademicSession academicSession, Date startDate, Date endDate) throws IdExistsException {
-		// TODO Auto-generated method stub
-		
+		CourseOfferingImpl co = new CourseOfferingImpl(eid, title, description, academicSession, startDate, endDate);
+		try {
+			getHibernateTemplate().save(co);
+		} catch (DataIntegrityViolationException dive) {
+			throw new IdExistsException(eid, CourseOffering.class.getName());
+		}
 	}
 
 	public void updateCourseOffering(CourseOffering courseOffering) {
@@ -150,38 +165,69 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeEquivalency(CourseOffering courseOffering) {
-		// TODO Auto-generated method stub
-		return false;
+		return removeEquiv((CrossListable)courseOffering);
 	}
 
 	public void addCourseOfferingToCourseSet(String courseSetEid, String courseOfferingEid) {
-		// TODO Auto-generated method stub
-		
+		// CourseSet's set of courses are controlled on the CourseSet side of the bi-directional relationship
+		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		CourseOffering courseOffering = cmService.getCourseOffering(courseOfferingEid);
+		Set offerings = courseSet.getCourseOfferings();
+		if(offerings == null) {
+			offerings = new HashSet();
+			courseSet.setCourseOfferings(offerings);
+		}
+		offerings.add(courseOffering);
+		getHibernateTemplate().update(courseSet);
 	}
 
 	public boolean removeCourseOfferingFromCourseSet(String courseSetEid, String courseOfferingEid) {
-		// TODO Auto-generated method stub
-		return false;
+		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		CourseOffering courseOffering = cmService.getCourseOffering(courseOfferingEid);
+		Set offerings = courseSet.getCourseOfferings();
+		if(offerings == null || ! offerings.contains(courseOffering)) {
+			return false;
+		}
+		offerings.remove(courseOffering);
+		getHibernateTemplate().update(courseSet);
+		return true;
 	}
 
 	public void createEnrollmentSet(String eid, String title, String description, String category, String defaultEnrollmentCredits, Set officialGraders) throws IdExistsException {
-		// TODO Auto-generated method stub
-		
+		EnrollmentSetImpl enrollmentSet = new EnrollmentSetImpl(eid, title, description, category, defaultEnrollmentCredits, officialGraders);
+		try {
+			getHibernateTemplate().save(enrollmentSet);
+		} catch (DataIntegrityViolationException dive) {
+			throw new IdExistsException(eid, EnrollmentSet.class.getName());
+		}
 	}
 
 	public void updateEnrollmentSet(EnrollmentSet enrollmentSet) {
-		// TODO Auto-generated method stub
-		
+		getHibernateTemplate().update(enrollmentSet);
 	}
 
-	public void addEnrollment(String userId, EnrollmentSet enrollmentSet, String enrollmentStatus, String credits, String gradingScheme) {
-		// TODO Auto-generated method stub
-		
+	public void addOrUpdateEnrollment(String userId, EnrollmentSet enrollmentSet, String enrollmentStatus, String credits, String gradingScheme) {
+		if(cmService.isEnrolled(userId,enrollmentSet.getEid())) {
+			EnrollmentImpl enrollment = (EnrollmentImpl)cmService.getEnrollment(userId, enrollmentSet.getEid());
+			enrollment.setEnrollmentStatus(enrollmentStatus);
+			enrollment.setCredits(credits);
+			enrollment.setGradingScheme(gradingScheme);
+			getHibernateTemplate().update(enrollment);
+		} else {
+			EnrollmentImpl enrollment = new EnrollmentImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
+			getHibernateTemplate().save(enrollment);
+		}
 	}
 
 	public boolean removeEnrollment(String userId, String enrollmentSetEid) {
-		// TODO Auto-generated method stub
-		return false;
+		EnrollmentImpl enr = (EnrollmentImpl)cmService.getEnrollment(userId, enrollmentSetEid);
+		if(enr == null) {
+			return false;
+		} else {
+			enr.setDropped(true);
+			getHibernateTemplate().update(enr);
+			return true;
+		}
 	}
 
 	public void createSection(String eid, String title, String description, String category, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet) throws IdExistsException {

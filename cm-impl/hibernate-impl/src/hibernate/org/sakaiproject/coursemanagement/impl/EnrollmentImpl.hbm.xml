@@ -22,6 +22,7 @@
 		<property name="enrollmentStatus" column="STATUS" type="string" not-null="true" />
 		<property name="credits" column="CREDITS" type="string" not-null="true" />
 		<property name="gradingScheme" column="GRADING_SCHEME" type="string" not-null="true" />
+		<property name="dropped" column="DROPPED" type="boolean" />
 
 		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_ENR_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
 
@@ -29,19 +30,25 @@
 	
 	<query name="findEnrollments">
         <![CDATA[
-        from EnrollmentImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid
+        from EnrollmentImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid and enr.dropped=false
         ]]>
     </query>
-    
+
+	<query name="findEnrollment">
+        <![CDATA[
+        from EnrollmentImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid and enr.userId=:userId and enr.dropped=false
+        ]]>
+    </query>
+
 	<query name="countEnrollments">
         <![CDATA[
-        select count(enr) from EnrollmentImpl as enr where enr.userId=:userId and enr.enrollmentSet.eid in (:enrollmentSetEids)
+        select count(enr) from EnrollmentImpl as enr where enr.userId=:userId and enr.enrollmentSet.eid in (:enrollmentSetEids) and enr.dropped=false
         ]]>
     </query>
 
 	<query name="findCurrentlyEnrolledEnrollmentSets">
         <![CDATA[
-        select enr.enrollmentSet from EnrollmentImpl as enr where enr.userId=:userId and
+        select enr.enrollmentSet from EnrollmentImpl as enr where enr.userId=:userId and enr.dropped=false and
         	(enr.enrollmentSet.courseOffering.startDate is null or enr.enrollmentSet.courseOffering.startDate <= sysdate) and
         	(enr.enrollmentSet.courseOffering.endDate is null or enr.enrollmentSet.courseOffering.endDate >= sysdate)
         ]]>

@@ -84,4 +84,40 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		Assert.assertTrue(equivalents.contains(cm.getCanonicalCourse("cc2")));
 		Assert.assertTrue( ! equivalents.contains(cm.getCanonicalCourse("cc3")));
 	}
+	
+	public void testRemoveEquivalencyCanonCourse() throws Exception {
+		// Create some courses
+		cmAdmin.createCanonicalCourse("cc1", "cc1", "cc1");
+		cmAdmin.createCanonicalCourse("cc2", "cc2", "cc2");
+		cmAdmin.createCanonicalCourse("cc3", "cc3", "cc3");
+		
+		// Add them to a set
+		Set courses = new HashSet();
+		courses.add(cm.getCanonicalCourse("cc1"));
+		courses.add(cm.getCanonicalCourse("cc2"));
+
+		// Crosslist them
+		cmAdmin.setEquivalentCanonicalCourses(courses);
+		
+		// Remove a course that was crosslisted
+		Assert.assertTrue(cmAdmin.removeEquivalency(cm.getCanonicalCourse("cc1")));
+		
+		// Remove one that wasn't crosslisted
+		Assert.assertTrue( ! cmAdmin.removeEquivalency(cm.getCanonicalCourse("cc3")));
+	}
+	
+	public void testAddCourseOfferingToCourseSet() throws Exception {
+		// Create a course offering
+		cmAdmin.createCourseOffering("co1", "co1", "co1", null, null, null);
+		
+		// Create a course set
+		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null);
+		
+		// Add the course to the set
+		cmAdmin.addCourseOfferingToCourseSet("cs1", "co1");
+		
+		// Ensure that the course is in the set
+		Assert.assertTrue(cm.getCourseOfferings("cs1").contains(cm.getCourseOffering("co1")));
+	}
+
 }
