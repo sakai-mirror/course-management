@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 
 public class CourseManagementAdministrationTest extends CourseManagementTestBase {
@@ -160,7 +161,34 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 	}
 	
 	public void testAddCourseSetMembership() throws Exception {
-		// TODO Write this test!
+		// Create a course set
+		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null);
+		
+		// Create a membership in the courseSet
+		cmAdmin.addOrUpdateCourseSetMembership("josh", "student", "cs1");
+		
+		// Ensure that the membership was added
+		Assert.assertEquals(1, cm.getCourseSetMemberships("cs1").size());
+
+		// Add the same username, this time with a different role
+		cmAdmin.addOrUpdateCourseSetMembership("josh", "ta", "cs1");
+		
+		// Ensure that the membership was updated, not added
+		Assert.assertEquals(1, cm.getCourseSetMemberships("cs1").size());
+		Assert.assertEquals("ta", ((Membership)cm.getCourseSetMemberships("cs1").iterator().next()).getRole());
 	}
 
+	public void testRemoveCourseSetMembers() throws Exception {
+		// Create a course set
+		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null);
+		
+		// Create a membership in the courseSet
+		cmAdmin.addOrUpdateCourseSetMembership("josh", "student", "cs1");
+
+		// Remove the membership (should return true)
+		Assert.assertTrue(cmAdmin.removeCourseSetMembership("josh", "cs1"));
+		
+		// Try to remove it again (should return false)
+		Assert.assertFalse(cmAdmin.removeCourseSetMembership("josh", "cs1"));
+	}
 }

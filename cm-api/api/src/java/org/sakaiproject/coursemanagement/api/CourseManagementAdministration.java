@@ -258,7 +258,7 @@ public interface CourseManagementAdministration {
 	 * @param courseSetEid
 	 * @throws IdNotFoundException If the CourseSet can not be found
 	 */
-	public void addCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException;
+	public void addOrUpdateCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException;
 	
 	/**
 	 * Removes a user from a CourseSet.
@@ -277,7 +277,7 @@ public interface CourseManagementAdministration {
 	 * @param role
 	 * @param courseOfferingEid
 	 */
-	public void addCourseOfferingMembership(String userId, String role, String courseOfferingEid);
+	public void addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid);
 	
 	/**
 	 * Removes a user from a CourseOffering.
@@ -297,7 +297,7 @@ public interface CourseManagementAdministration {
 	 * @param role
 	 * @param SectionEid
 	 */
-	public void addSectionMembership(String userId, String role, String sectionEid);
+	public void addOrUpdateSectionMembership(String userId, String role, String sectionEid);
 	
 	/**
 	 * Removes a user from a Section.

@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -244,13 +245,9 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(section);
 	}
 
-	public void addCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException {
-		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
-		Set memberships = courseSet.getMembers();
-		if(memberships == null) {
-			memberships = new HashSet();
-			courseSet.setMembers(memberships);
-		}
+	private void addOrUpdateMembership(String userId, String role, Collection memberships) {
+		// FIXME This is another case where the membership hibernate mapping is causing problems.
+
 		// Check to see if this user is already a member
 		boolean alreadyMember = false;
 		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
@@ -258,37 +255,89 @@ public class CourseManagementAdministrationHibernateImpl extends
 			if(member.getUserId().equals(userId)) {
 				alreadyMember = true;
 				member.setRole(role);
-				break;
+				return;
 			}
 		}
 		if(!alreadyMember) {
 			memberships.add(new MembershipImpl(userId, role));
 		}
+	}
+	
+	public void addOrUpdateCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException {
+		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		Set memberships = courseSet.getMembers();
+		if(memberships == null) {
+			memberships = new HashSet();
+			courseSet.setMembers(memberships);
+		}
+		addOrUpdateMembership(userId, role, memberships);
 		getHibernateTemplate().update(courseSet);
 	}
 
+	private boolean removeMembership(String userId, Collection members) {
+		// FIXME This is the first case where the membership hibernate mapping is causing problems.  There will be others...
+		if(members == null) {
+			return false;
+		}
+
+		// Iterate over a copy of the set of memberships so we can modify the persistent original
+		Set memberCopy = new HashSet(members);
+		for(Iterator iter = memberCopy.iterator(); iter.hasNext();) {
+			Membership member = (Membership)iter.next();
+			if(member.getUserId().equals(userId)) {
+				members.remove(member);
+				return true;
+			}
+		}
+		return false;
+		
+	}
 	public boolean removeCourseSetMembership(String userId, String courseSetEid) {
-		// TODO Auto-generated method stub
+		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		if(removeMembership(userId, courseSet.getMembers())) {
+			getHibernateTemplate().update(courseSet);
+			return true;
+		}
 		return false;
 	}
 
-	public void addCourseOfferingMembership(String userId, String role, String courseOfferingEid) {
-		// TODO Auto-generated method stub
-		
+	public void addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid) {
+		CourseOfferingImpl co = (CourseOfferingImpl)cmService.getCourseOffering(courseOfferingEid);
+		Set memberships = co.getMembers();
+		if(memberships == null) {
+			memberships = new HashSet();
+			co.setMembers(memberships);
+		}
+		addOrUpdateMembership(userId, role, memberships);
+		getHibernateTemplate().update(co);
 	}
 
 	public boolean removeCourseOfferingMembership(String userId, String courseOfferingEid) {
-		// TODO Auto-generated method stub
+		CourseOfferingImpl co = (CourseOfferingImpl)cmService.getCourseOffering(courseOfferingEid);
+		if(removeMembership(userId, co.getMembers())) {
+			getHibernateTemplate().update(co);
+			return true;
+		}
 		return false;
 	}
 
-	public void addSectionMembership(String userId, String role, String sectionEid) {
-		// TODO Auto-generated method stub
-		
+	public void addOrUpdateSectionMembership(String userId, String role, String sectionEid) {
+		SectionImpl sec = (SectionImpl)cmService.getSection(sectionEid);
+		Set memberships = sec.getMembers();
+		if(memberships == null) {
+			memberships = new HashSet();
+			sec.setMembers(memberships);
+		}
+		addOrUpdateMembership(userId, role, memberships);
+		getHibernateTemplate().update(sec);
 	}
 
 	public boolean removeSectionMembership(String userId, String sectionEid) {
-		// TODO Auto-generated method stub
+		SectionImpl sec = (SectionImpl)cmService.getSection(sectionEid);
+		if(removeMembership(userId, sec.getMembers())) {
+			getHibernateTemplate().update(sec);
+			return true;
+		}
 		return false;
 	}
 
