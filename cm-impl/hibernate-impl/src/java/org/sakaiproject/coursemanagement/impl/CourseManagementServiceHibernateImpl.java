@@ -22,6 +22,7 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import net.sf.hibernate.HibernateException;
@@ -37,6 +38,7 @@ import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.springframework.orm.hibernate.HibernateCallback;
@@ -300,5 +302,24 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 			}
 		};
 		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+
+
+	public String getSectionRole(final String sectionEid, final String userId) {
+		// TODO Write a query to do this search efficiently
+
+		SectionImpl section = (SectionImpl)getSection(sectionEid);
+		Set members = section.getMembers();
+		if(members == null) {
+			if(log.isDebugEnabled()) log.debug("User " + userId + " is not a member of section " + sectionEid);
+			return null;
+		}
+		for(Iterator iter = members.iterator(); iter.hasNext();) {
+			Membership member = (Membership)iter.next();
+			if(member.getUserId().equals(userId)) {
+				return member.getRole();
+			}
+		}
+		return null;
 	}
 }

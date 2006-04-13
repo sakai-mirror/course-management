@@ -41,6 +41,7 @@ import org.sakaiproject.coursemanagement.impl.EnrollmentImpl;
 import org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl;
 import org.sakaiproject.coursemanagement.impl.MembershipImpl;
 import org.sakaiproject.coursemanagement.impl.SectionImpl;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 /**
@@ -55,6 +56,16 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 
 	public void setCourseManagementService(CourseManagementService cm) {
 		this.cm = cm;
+	}
+
+	public static void main(String[] args) {
+		ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext("testAppContext.xml");
+		DataLoader loader = (DataLoader)ac.getBean(DataLoader.class.getName());
+		try {
+			loader.load();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void load() {

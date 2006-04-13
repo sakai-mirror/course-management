@@ -43,8 +43,8 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
     }
 
 	protected void onSetUpInTransaction() throws Exception {
-    	cm = (CourseManagementService)applicationContext.getBean("org.sakaiproject.coursemanagement.api.CourseManagementService");
-		loader = (DataLoader)applicationContext.getBean("hibernateTestDataLoader");
+    	cm = (CourseManagementService)applicationContext.getBean(CourseManagementService.class.getName());
+		loader = (DataLoader)applicationContext.getBean(DataLoader.class.getName());
 		loader.load();
 	}
 	
@@ -142,6 +142,10 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 			cm.getSectionMembers("bad eid");
 			fail();
 		} catch(IdNotFoundException ide) {}
+	}
+
+	public void testGetSectionRole() throws Exception {
+		Assert.assertNotNull(cm.getSectionRole("BIO101_F2006_01_SEC01", "josh"));
 	}
 	
 	public void testGetSectionsFromCourseOffering() throws Exception {

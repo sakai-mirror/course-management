@@ -65,7 +65,7 @@
         </property>
 	</bean>
 	
-	<bean id="hibernateTestDataLoader" parent="cmTxTemplate">
+	<bean id="org.sakaiproject.coursemanagement.test.DataLoader" parent="cmTxTemplate">
         <property name="target">
             <bean class="org.sakaiproject.coursemanagement.test.HibernateTestDataLoader">
         		<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>

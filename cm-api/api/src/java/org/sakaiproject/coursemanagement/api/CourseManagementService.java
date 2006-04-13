@@ -185,6 +185,16 @@ public interface CourseManagementService {
 	public Set getSectionMembers(String sectionEid) throws IdNotFoundException;
 	
 	/**
+	 * Gets the role for a user's Membership in a Section, or null if the user is not a
+	 * member of the Section.
+	 * 
+	 * @param sectionEid The Section's eid
+	 * @param userId The user's id
+	 * @return The enterprise-defined role string
+	 */
+	public String getSectionRole(String sectionEid, String userId);
+	
+	/**
 	 * Gets an EnrollmentSet by its eid.
 	 * 
 	 * @param eid
@@ -222,7 +232,7 @@ public interface CourseManagementService {
 	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException;
 	
 	/**
-	 * Determines whether a user is enrolled in one of the EnrollmentSets.  This
+	 * Determines whether a user is enrolled in an EnrollmentSet.  This
 	 * method is needed to implement Sakai's GroupProvider.
 	 * 
 	 * @param userId The student's userId

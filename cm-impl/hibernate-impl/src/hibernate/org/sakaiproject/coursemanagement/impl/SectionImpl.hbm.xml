@@ -4,7 +4,7 @@
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 	<class name="org.sakaiproject.coursemanagement.impl.SectionImpl" table="CM_SECTION_T">
 
-		<id name="key" column="NAMED_OBJECT_ID" type="long">
+		<id name="key" column="SECTION_ID" type="long">
 			<generator class="native">
 				<param name="sequence">CM_SECTION_S</param>
 			</generator>
@@ -28,7 +28,7 @@
 		<many-to-one name="parent" column="PARENT_SECTION" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
 
 		<set name="members" inverse="false" cascade="save-update">
-			<key column="SECTION" />
+			<key column="SECTION_ID" />
 			<one-to-many class="org.sakaiproject.coursemanagement.impl.MembershipImpl" />
 		</set>
 
@@ -51,5 +51,15 @@
         from SectionImpl as sec where sec.parent.eid=:parentEid
         ]]>
     </query>
+
+<!-- 
+    <query name="findSectionRole">
+        <![CDATA[
+        select member.role from MembershipImpl as member, SectionImpl as section
+        	where member in elements(section.members) and
+        	section.eid=:sectionEid and member.userId=:userId
+        ]]>
+    </query>
+-->
 
 </hibernate-mapping>
