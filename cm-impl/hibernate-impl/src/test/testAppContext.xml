@@ -22,6 +22,7 @@
         <property name="mappingResources">
             <list>
                 <value>org/sakaiproject/coursemanagement/impl/AcademicSessionImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/MembershipContainer.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/CanonicalCourseImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/CourseOfferingImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/CourseSetImpl.hbm.xml</value>

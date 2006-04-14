@@ -182,7 +182,7 @@ public interface CourseManagementService {
 	 * set.
 	 * @throws IdNotFoundException If the eid is not associated with any Section
 	 */
-	public Set getSectionMembers(String sectionEid) throws IdNotFoundException;
+	public Set getSectionMemberships(String sectionEid) throws IdNotFoundException;
 	
 	/**
 	 * Gets the role for a user's Membership in a Section, or null if the user is not a
@@ -284,4 +284,15 @@ public interface CourseManagementService {
 	 * @return
 	 */
 	public Set getCurrentlyGradableEnrollmentSets(String userId);
+
+	/**
+	 * Gets the set of Memberships for all Sections belonging to a current CourseOffering.
+	 * A CourseOffering is considered current if its start date
+	 * (is null or prior to the current date/time) and its end date (is null or
+	 * after the current date/time).
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public Set getCurrentSectionMemberships(String userId);
 }

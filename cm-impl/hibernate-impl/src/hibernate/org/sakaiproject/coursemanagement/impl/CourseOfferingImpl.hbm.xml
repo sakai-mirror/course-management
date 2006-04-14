@@ -2,24 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
-	<class name="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" table="CM_COURSE_OFFERING_T">
-
-		<id name="key" column="COURSE_OFFERING_ID" type="long">
-			<generator class="native">
-				<param name="sequence">CM_COURSE_OFFERING_S</param>
-			</generator>
-		</id>
-
-		<version name="version" type="integer" column="VERSION" />
-
-		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
-		<property name="title" column="TITLE" type="string" not-null="true" />
-		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
-
-		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
-		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
-		<property name="createdBy" column="CREATED_BY" />
-		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+	<subclass name="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl"
+			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainer">
 
 		<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListing" />
         <property name="startDate" column="START_DATE" type="timestamp" not-null="false" />
@@ -33,12 +17,7 @@
 			<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" column="COURSE_SET" />
 		</set>
 
-		<set name="members" inverse="false" cascade="save-update">
-			<key column="COURSE_OFFERING" />
-			<one-to-many class="org.sakaiproject.coursemanagement.impl.MembershipImpl" />
-		</set>
-
-	</class>
+	</subclass>
 
     <query name="findCourseOfferingByEid">
         <![CDATA[

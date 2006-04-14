@@ -21,41 +21,17 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import org.sakaiproject.coursemanagement.api.Membership;
+import java.util.Set;
 
-public class MembershipImpl extends AbstractPersistentCourseManagementObject
-	implements Membership {
+public class AbstractMembershipContainer extends
+		AbstractNamedCourseManagementObject {
 
-	private String userId;
-	private String role;
-	private AbstractMembershipContainer memberContainer;
-	
-	public MembershipImpl() {}
-	
-	public MembershipImpl(String userId, String role, AbstractMembershipContainer memberContainer) {
-		this.userId = userId;
-		this.role = role;
-		this.memberContainer = memberContainer;
-	}
-	
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+	private Set members;
 
-	public AbstractMembershipContainer getMemberContainer() {
-		return memberContainer;
+	public Set getMembers() {
+		return members;
 	}
-
-	public void setMemberContainer(AbstractMembershipContainer memberContainer) {
-		this.memberContainer = memberContainer;
+	public void setMembers(Set members) {
+		this.members = members;
 	}
 }

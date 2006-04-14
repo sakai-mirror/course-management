@@ -22,7 +22,6 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import net.sf.hibernate.HibernateException;
@@ -104,9 +103,8 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getCourseSetMemberships(final String courseSetEid) throws IdNotFoundException {
-		CourseSetImpl courseSet = (CourseSetImpl)getCourseSet(courseSetEid);
-		return courseSet.getMembers();
+	public Set getCourseSetMemberships(String courseSetEid) throws IdNotFoundException {
+		return getMemberships((CourseSetImpl)getCourseSet(courseSetEid));
 	}
 
 	public CanonicalCourse getCanonicalCourse(String eid) throws IdNotFoundException {
@@ -166,9 +164,32 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException {
-		CourseOfferingImpl co = (CourseOfferingImpl)getCourseOffering(courseOfferingEid);
-		return co.getMembers();
+		return getMemberships((CourseOfferingImpl)getCourseOffering(courseOfferingEid));
 	}
+
+	/**
+	 * Gets the memberships for a membership container.  This query can not be
+	 * performed using just the container's eid, since it may conflict with other kinds
+	 * of objects with the same eid.
+	 * 
+	 * @param container
+	 * @return
+	 */
+	private Set getMemberships(final AbstractMembershipContainer container) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				StringBuffer sb = new StringBuffer("select member from MembershipImpl as member, ");
+					sb.append(container.getClass().getName());
+					sb.append(" as container where member.memberContainer=container ");
+					sb.append("and container.eid=:eid");
+				Query q = session.createQuery(sb.toString());
+				q.setParameter("eid", container.getEid());
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+
 
 	public Section getSection(String eid) throws IdNotFoundException {
 		return (Section)getObjectByEid(eid, SectionImpl.class.getName(), "findSectionByEid");
@@ -204,9 +225,8 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getSectionMembers(String sectionEid) throws IdNotFoundException {
-		SectionImpl section = (SectionImpl)getSection(sectionEid);
-		return section.getMembers();
+	public Set getSectionMemberships(String sectionEid) throws IdNotFoundException {
+		return getMemberships((SectionImpl)getSection(sectionEid));
 	}
 
 	public EnrollmentSet getEnrollmentSet(String eid) throws IdNotFoundException {
@@ -304,22 +324,42 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
+	public Set getCurrentSectionMemberships(final String userId) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findMembersInCurrentSections");
+				q.setParameter("userId", userId);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+
+	private MembershipImpl getMembership(final String userId, final AbstractMembershipContainer container) {
+        final StringBuffer sb = new StringBuffer("select member from MembershipImpl as member, ");
+		sb.append(container.getClass().getName());
+        sb.append(" as container where member.memberContainer=container ");
+        sb.append("and container.eid=:eid ");
+    	sb.append("and member.userId=:userId");
+    	
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.createQuery(sb.toString());
+				q.setParameter("eid", container.getEid());
+				q.setParameter("userId", userId);
+				return q.uniqueResult();
+			}
+		};
+		return (MembershipImpl)getHibernateTemplate().execute(hc);
+	}
 
 	public String getSectionRole(final String sectionEid, final String userId) {
-		// TODO Write a query to do this search efficiently
-
 		SectionImpl section = (SectionImpl)getSection(sectionEid);
-		Set members = section.getMembers();
-		if(members == null) {
-			if(log.isDebugEnabled()) log.debug("User " + userId + " is not a member of section " + sectionEid);
+		Membership member = getMembership(userId, section);
+		if(member == null) {
 			return null;
+		} else {
+			return member.getRole();
 		}
-		for(Iterator iter = members.iterator(); iter.hasNext();) {
-			Membership member = (Membership)iter.next();
-			if(member.getUserId().equals(userId)) {
-				return member.getRole();
-			}
-		}
-		return null;
 	}
 }

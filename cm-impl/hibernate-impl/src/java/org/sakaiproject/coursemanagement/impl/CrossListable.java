@@ -27,7 +27,7 @@ package org.sakaiproject.coursemanagement.impl;
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
-public abstract class CrossListable extends AbstractNamedCourseManagementObject {
+public abstract class CrossListable extends AbstractMembershipContainer {
 	public abstract CrossListing getCrossListing();
 	public abstract void setCrossListing(CrossListing crossListing);
 }

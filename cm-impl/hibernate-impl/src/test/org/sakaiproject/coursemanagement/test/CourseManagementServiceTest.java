@@ -137,16 +137,16 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 
 	public void testGetSectionMembers() throws Exception {
-		Assert.assertEquals(1, cm.getSectionMembers("BIO101_F2006_01_SEC01").size());
+		Assert.assertEquals(1, cm.getSectionMemberships("BIO101_F2006_01_SEC01").size());
 		try {
-			cm.getSectionMembers("bad eid");
+			cm.getSectionMemberships("bad eid");
 			fail();
 		} catch(IdNotFoundException ide) {}
 	}
 
-	public void testGetSectionRole() throws Exception {
-		Assert.assertNotNull(cm.getSectionRole("BIO101_F2006_01_SEC01", "josh"));
-	}
+//	public void testGetSectionRole() throws Exception {
+//		Assert.assertNotNull(cm.getSectionRole("BIO101_F2006_01_SEC01", "josh"));
+//	}
 	
 	public void testGetSectionsFromCourseOffering() throws Exception {
 		Assert.assertEquals(1, cm.getSections("BIO101_F2006_01").size());
@@ -231,4 +231,8 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Assert.assertEquals(1, gradableEnrollmentSets.size());
 	}
 
+	public void testGetCurrentSectionMemberships() throws Exception {
+		// Even though this user is a member of two sections, one is in the future
+		Assert.assertEquals(1, cm.getCurrentSectionMemberships("josh").size());
+	}
 }

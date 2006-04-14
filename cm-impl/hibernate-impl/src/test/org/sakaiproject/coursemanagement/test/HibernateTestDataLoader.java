@@ -94,17 +94,14 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		cSet.setEid("BIO_DEPT");
 		cSet.setTitle("Biology Department");
 		cSet.setDescription("Department of Biology");
+		getHibernateTemplate().save(cSet);
 
 		MembershipImpl courseSetMember = new MembershipImpl();
 		courseSetMember.setRole("departmentAdmin");
 		courseSetMember.setUserId("user1");
+		courseSetMember.setMemberContainer(cSet);
+		getHibernateTemplate().save(courseSetMember);
 		
-		Set members = new HashSet();
-		members.add(courseSetMember);
-		cSet.setMembers(members);
-
-		getHibernateTemplate().save(cSet);
-
 		CourseSetImpl cSetChild = new CourseSetImpl();
 		cSetChild.setEid("BIO_CHEM_GROUP");
 		cSetChild.setTitle("Biochem Group");
@@ -223,23 +220,23 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	void loadSections() {
 		CourseOffering co = cm.getCourseOffering("BIO101_F2006_01");
 
+		// Add a section
 		SectionImpl section = new SectionImpl();
 		section.setCategory("lecture");
 		section.setCourseOffering(co);
 		section.setDescription("The lecture");
 		section.setEid("BIO101_F2006_01_SEC01");
 		section.setTitle("Main lecture");
+		getHibernateTemplate().save(section);
 
+		// Add a membership to this section
 		MembershipImpl member = new MembershipImpl();
 		member.setRole("student");
 		member.setUserId("josh");
-		
-		Set members = new HashSet();
-		members.add(member);
-		section.setMembers(members);
+		member.setMemberContainer(section);
+		getHibernateTemplate().save(member);
 
-		getHibernateTemplate().save(section);
-		
+		// Add a child section
 		SectionImpl childSection = new SectionImpl();
 		childSection.setCategory("lab");
 		childSection.setCourseOffering(co);
@@ -248,6 +245,24 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		childSection.setTitle("Joe's Monday Morning Biology Lab");
 		childSection.setParent(section);
 		getHibernateTemplate().save(childSection);
+
+		// Add a section for the future course offering
+		CourseOffering futureCo = cm.getCourseOffering("CHEM101_F2006_01");
+		
+		SectionImpl futureSection = new SectionImpl();
+		futureSection.setCategory("lab");
+		futureSection.setCourseOffering(futureCo);
+		futureSection.setDescription("Future lab");
+		futureSection.setEid("CHEM101_F2006_01_SEC01");
+		futureSection.setTitle("Future Lab");
+		getHibernateTemplate().save(futureSection);
+
+		// Add a member to this future section
+		MembershipImpl member2 = new MembershipImpl();
+		member2.setRole("student");
+		member2.setUserId("josh");
+		member2.setMemberContainer(futureSection);
+		getHibernateTemplate().save(member2);
 	}
 	
 	void loadEnrollmentSets() {

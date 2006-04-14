@@ -21,11 +21,14 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.Query;
+import net.sf.hibernate.Session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,13 +38,12 @@ import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
-import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
-import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.hibernate.HibernateCallback;
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 public class CourseManagementAdministrationHibernateImpl extends
@@ -244,101 +246,97 @@ public class CourseManagementAdministrationHibernateImpl extends
 	public void updateSection(Section section) {
 		getHibernateTemplate().update(section);
 	}
-
-	private void addOrUpdateMembership(String userId, String role, Collection memberships) {
-		// FIXME This is another case where the membership hibernate mapping is causing problems.
-
-		// Check to see if this user is already a member
-		boolean alreadyMember = false;
-		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
-			MembershipImpl member = (MembershipImpl)iter.next();
-			if(member.getUserId().equals(userId)) {
-				alreadyMember = true;
-				member.setRole(role);
-				return;
-			}
-		}
-		if(!alreadyMember) {
-			memberships.add(new MembershipImpl(userId, role));
-		}
-	}
 	
-	public void addOrUpdateCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException {
-		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
-		Set memberships = courseSet.getMembers();
-		if(memberships == null) {
-			memberships = new HashSet();
-			courseSet.setMembers(memberships);
+	public void addOrUpdateCourseSetMembership(final String userId, String role, final String courseSetEid) throws IdNotFoundException {
+		CourseSetImpl cs = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		MembershipImpl member =getMembership(userId, cs);
+		if(member == null) {
+			// Add the new member
+			member = new MembershipImpl(userId, role, cs);
+			getHibernateTemplate().save(member);
+		} else {
+			// Update the existing member
+			member.setRole(role);
+			getHibernateTemplate().update(member);
 		}
-		addOrUpdateMembership(userId, role, memberships);
-		getHibernateTemplate().update(courseSet);
 	}
 
-	private boolean removeMembership(String userId, Collection members) {
-		// FIXME This is the first case where the membership hibernate mapping is causing problems.  There will be others...
-		if(members == null) {
-			return false;
-		}
-
-		// Iterate over a copy of the set of memberships so we can modify the persistent original
-		Set memberCopy = new HashSet(members);
-		for(Iterator iter = memberCopy.iterator(); iter.hasNext();) {
-			Membership member = (Membership)iter.next();
-			if(member.getUserId().equals(userId)) {
-				members.remove(member);
-				return true;
-			}
-		}
-		return false;
-		
-	}
 	public boolean removeCourseSetMembership(String userId, String courseSetEid) {
-		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
-		if(removeMembership(userId, courseSet.getMembers())) {
-			getHibernateTemplate().update(courseSet);
+		MembershipImpl member = getMembership(userId, (CourseSetImpl)cmService.getCourseSet(courseSetEid));
+		if(member == null) {
+			return false;
+		} else {
+			getHibernateTemplate().delete(member);
 			return true;
 		}
-		return false;
 	}
 
 	public void addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid) {
 		CourseOfferingImpl co = (CourseOfferingImpl)cmService.getCourseOffering(courseOfferingEid);
-		Set memberships = co.getMembers();
-		if(memberships == null) {
-			memberships = new HashSet();
-			co.setMembers(memberships);
+		MembershipImpl member =getMembership(userId, co);
+		if(member == null) {
+			// Add the new member
+			member = new MembershipImpl(userId, role, co);
+			getHibernateTemplate().save(member);
+		} else {
+			// Update the existing member
+			member.setRole(role);
+			getHibernateTemplate().update(member);
 		}
-		addOrUpdateMembership(userId, role, memberships);
-		getHibernateTemplate().update(co);
 	}
 
 	public boolean removeCourseOfferingMembership(String userId, String courseOfferingEid) {
-		CourseOfferingImpl co = (CourseOfferingImpl)cmService.getCourseOffering(courseOfferingEid);
-		if(removeMembership(userId, co.getMembers())) {
-			getHibernateTemplate().update(co);
+		CourseOfferingImpl courseOffering = (CourseOfferingImpl)cmService.getCourseOffering(courseOfferingEid);
+		MembershipImpl member = getMembership(userId, courseOffering);
+		if(member == null) {
+			return false;
+		} else {
+			getHibernateTemplate().delete(member);
 			return true;
 		}
-		return false;
 	}
-
+	
 	public void addOrUpdateSectionMembership(String userId, String role, String sectionEid) {
 		SectionImpl sec = (SectionImpl)cmService.getSection(sectionEid);
-		Set memberships = sec.getMembers();
-		if(memberships == null) {
-			memberships = new HashSet();
-			sec.setMembers(memberships);
+		MembershipImpl member =getMembership(userId, sec);
+		if(member == null) {
+			// Add the new member
+			member = new MembershipImpl(userId, role, sec);
+			getHibernateTemplate().save(member);
+		} else {
+			// Update the existing member
+			member.setRole(role);
+			getHibernateTemplate().update(member);
 		}
-		addOrUpdateMembership(userId, role, memberships);
-		getHibernateTemplate().update(sec);
 	}
 
 	public boolean removeSectionMembership(String userId, String sectionEid) {
 		SectionImpl sec = (SectionImpl)cmService.getSection(sectionEid);
-		if(removeMembership(userId, sec.getMembers())) {
-			getHibernateTemplate().update(sec);
+		MembershipImpl member = getMembership(userId, sec);
+		if(member == null) {
+			return false;
+		} else {
+			getHibernateTemplate().delete(member);
 			return true;
 		}
-		return false;
+	}
+	
+	private MembershipImpl getMembership(final String userId, final AbstractMembershipContainer container) {
+        final StringBuffer sb = new StringBuffer("select member from MembershipImpl as member, ");
+		sb.append(container.getClass().getName());
+        sb.append(" as container where member.memberContainer=container ");
+        sb.append("and container.eid=:eid ");
+    	sb.append("and member.userId=:userId");
+    	
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.createQuery(sb.toString());
+				q.setParameter("eid", container.getEid());
+				q.setParameter("userId", userId);
+				return q.uniqueResult();
+			}
+		};
+		return (MembershipImpl)getHibernateTemplate().execute(hc);
 	}
 
 }

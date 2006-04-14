@@ -21,19 +21,16 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import java.util.Set;
-
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
 
-public class SectionImpl extends AbstractNamedCourseManagementObject
+public class SectionImpl extends AbstractMembershipContainer
 	implements Section {
 
 	private String category;
 	private CourseOffering courseOffering;
 	private Section parent;
-	private Set members;
 	private EnrollmentSet enrollmentSet;
 	
 	public SectionImpl() {}
@@ -46,13 +43,6 @@ public class SectionImpl extends AbstractNamedCourseManagementObject
 		this.parent = parent;
 		this.courseOffering = courseOffering;
 		this.enrollmentSet = enrollmentSet;
-	}
-
-	public Set getMembers() {
-		return members;
-	}
-	public void setMembers(Set members) {
-		this.members = members;
 	}
 
 	public String getCategory() {

@@ -191,4 +191,75 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Try to remove it again (should return false)
 		Assert.assertFalse(cmAdmin.removeCourseSetMembership("josh", "cs1"));
 	}
+	
+	public void testAddCourseOfferingMembership() throws Exception {
+		// Create a course offering
+		cmAdmin.createCourseOffering("co1", "co1", "co1", null, null, null);
+		
+		// Create a membership in the courseOffering
+		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "student", "co1");
+		
+		// Ensure that the membership was added
+		Assert.assertEquals(1, cm.getCourseOfferingMemberships("co1").size());
+
+		// Add the same username, this time with a different role
+		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "ta", "co1");
+		
+		// Ensure that the membership was updated, not added
+		Assert.assertEquals(1, cm.getCourseOfferingMemberships("co1").size());
+		Assert.assertEquals("ta", ((Membership)cm.getCourseOfferingMemberships("co1").iterator().next()).getRole());
+	}
+
+	public void testRemoveCourseOfferingMembers() throws Exception {
+		// Create a course offering
+		cmAdmin.createCourseOffering("co1", "co1", "co1", null, null, null);
+		
+		// Create a membership in the courseOffering
+		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "student", "co1");
+
+		// Remove the membership (should return true)
+		Assert.assertTrue(cmAdmin.removeCourseOfferingMembership("josh", "co1"));
+		
+		// Try to remove it again (should return false)
+		Assert.assertFalse(cmAdmin.removeCourseOfferingMembership("josh", "co1"));
+	}
+
+	public void testAddSectionMembership() throws Exception {
+		// Create a course offering
+		cmAdmin.createCourseOffering("co1", "co1", "co1", null, null, null);
+		
+		// Add a section
+		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, cm.getCourseOffering("co1"), null);
+		
+		// Create a membership in the section
+		cmAdmin.addOrUpdateSectionMembership("josh", "student", "sec1");
+		
+		// Ensure that the membership was added
+		Assert.assertEquals(1, cm.getSectionMemberships("sec1").size());
+
+		// Add the same username, this time with a different role
+		cmAdmin.addOrUpdateSectionMembership("josh", "ta", "sec1");
+		
+		// Ensure that the membership was updated, not added
+		Assert.assertEquals(1, cm.getSectionMemberships("sec1").size());
+		Assert.assertEquals("ta", ((Membership)cm.getSectionMemberships("sec1").iterator().next()).getRole());
+	}
+
+	public void testRemoveSectionMembers() throws Exception {
+		// Create a course offering
+		cmAdmin.createCourseOffering("co1", "co1", "co1", null, null, null);
+		
+		// Add a section
+		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, cm.getCourseOffering("co1"), null);
+		
+		// Create a membership in the section
+		cmAdmin.addOrUpdateSectionMembership("josh", "student", "sec1");
+
+		// Remove the membership (should return true)
+		Assert.assertTrue(cmAdmin.removeSectionMembership("josh", "sec1"));
+		
+		// Try to remove it again (should return false)
+		Assert.assertFalse(cmAdmin.removeSectionMembership("josh", "sec1"));
+	}
+
 }

@@ -37,7 +37,6 @@ public class CourseOfferingImpl extends CrossListable
 	private Set courseSets;
 	private Date startDate;
 	private Date endDate;
-	private Set members;
 
 	public CourseOfferingImpl() {}
 	
@@ -50,13 +49,6 @@ public class CourseOfferingImpl extends CrossListable
 		this.endDate = endDate;
 	}
 	
-	public Set getMembers() {
-		return members;
-	}
-	public void setMembers(Set members) {
-		this.members = members;
-	}
-
 	public Set getCourseSets() {
 		return courseSets;
 	}

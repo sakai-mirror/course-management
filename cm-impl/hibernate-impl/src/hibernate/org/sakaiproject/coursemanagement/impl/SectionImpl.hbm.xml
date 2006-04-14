@@ -2,24 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
-	<class name="org.sakaiproject.coursemanagement.impl.SectionImpl" table="CM_SECTION_T">
-
-		<id name="key" column="SECTION_ID" type="long">
-			<generator class="native">
-				<param name="sequence">CM_SECTION_S</param>
-			</generator>
-		</id>
-
-		<version name="version" type="integer" column="VERSION" />
-
-		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
-		<property name="title" column="TITLE" type="string" not-null="true" />
-		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
-
-		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
-		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
-		<property name="createdBy" column="CREATED_BY" />
-		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+	<subclass name="org.sakaiproject.coursemanagement.impl.SectionImpl"
+			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainer">
 
 		<property name="category" column="CATEGORY" type="string" />
 
@@ -27,12 +11,7 @@
 		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
 		<many-to-one name="parent" column="PARENT_SECTION" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
 
-		<set name="members" inverse="false" cascade="save-update">
-			<key column="SECTION_ID" />
-			<one-to-many class="org.sakaiproject.coursemanagement.impl.MembershipImpl" />
-		</set>
-
-	</class>
+	</subclass>
 
     <query name="findSectionByEid">
         <![CDATA[
@@ -52,12 +31,23 @@
         ]]>
     </query>
 
-<!-- 
-    <query name="findSectionRole">
+	<query name="findMembersInCurrentSections">
         <![CDATA[
-        select member.role from MembershipImpl as member, SectionImpl as section
-        	where member in elements(section.members) and
-        	section.eid=:sectionEid and member.userId=:userId
+        select member from MembershipImpl as member, SectionImpl as section
+        	where member.userId=:userId and
+        	member.memberContainer=section and
+        	(section.courseOffering.startDate is null or section.courseOffering.startDate <= sysdate) and
+        	(section.courseOffering.endDate is null or section.courseOffering.endDate >= sysdate)
+        ]]>
+    </query>
+
+<!-- 
+    <query name="findSectionMembership">
+        <![CDATA[
+        select member from MembershipImpl as member, SectionImpl as section
+        	where member.memberContainer=section
+        	and section.eid=:sectionEid
+        	and member.userId=:userId
         ]]>
     </query>
 -->

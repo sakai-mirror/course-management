@@ -25,13 +25,12 @@ import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseSet;
 
-public class CourseSetImpl extends AbstractNamedCourseManagementObject
+public class CourseSetImpl extends AbstractMembershipContainer
 	implements CourseSet {
 
 	private CourseSet parent;
 	private Set courseOfferings;
 	private Set canonicalCourses;
-	private Set members;
 
 	public CourseSetImpl() {}
 	
@@ -42,13 +41,6 @@ public class CourseSetImpl extends AbstractNamedCourseManagementObject
 		this.parent = parent;
 	}
 	
-	public Set getMembers() {
-		return members;
-	}
-	public void setMembers(Set members) {
-		this.members = members;
-	}
-
 	public CourseSet getParent() {
 		return parent;
 	}

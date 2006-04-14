@@ -26,6 +26,7 @@ public abstract class AbstractNamedCourseManagementObject extends AbstractPersis
  {
 	protected String title;
 	protected String description;
+	protected String eid;
 	
 	public String getDescription() {
 		return description;
@@ -38,5 +39,11 @@ public abstract class AbstractNamedCourseManagementObject extends AbstractPersis
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public String getEid() {
+		return eid;
+	}
+	public void setEid(String eid) {
+		this.eid = eid;
 	}	
 }

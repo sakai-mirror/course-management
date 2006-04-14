@@ -36,11 +36,6 @@ public abstract class AbstractPersistentCourseManagementObject {
 	protected int version;
 
 	/**
-	 * The object's enterprise id.
-	 */
-	protected String eid;
-	
-	/**
 	 * The agent (either a user id or a process id) that last modified this object.  
 	 */
 	protected String lastModifiedBy;
@@ -72,13 +67,6 @@ public abstract class AbstractPersistentCourseManagementObject {
 	}
 	public void setVersion(int version) {
 		this.version = version;
-	}
-
-	public String getEid() {
-		return eid;
-	}
-	public void setEid(String eid) {
-		this.eid = eid;
 	}
 	
 	public String getCreatedBy() {

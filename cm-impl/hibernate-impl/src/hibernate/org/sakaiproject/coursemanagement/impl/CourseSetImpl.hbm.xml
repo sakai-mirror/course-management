@@ -2,25 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
-	<class name="org.sakaiproject.coursemanagement.impl.CourseSetImpl" table="CM_COURSE_SET_T">
-
-		<id name="key" column="COURSE_SET_ID" type="long">
-			<generator class="native">
-				<param name="sequence">CM_COURSE_SET_S</param>
-			</generator>
-		</id>
-
-		<version name="version" type="integer" column="VERSION" />
-
-		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
-		<property name="title" column="TITLE" type="string" not-null="true" />
-		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
-
-		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
-		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
-		<property name="createdBy" column="CREATED_BY" />
-		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
-
+	<subclass name="org.sakaiproject.coursemanagement.impl.CourseSetImpl"
+			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainer">
 			
 		<many-to-one name="parent" column="PARENT_COURSE_SET" index="CM_COURSE_SET_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
 	
@@ -39,12 +22,7 @@
 			<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" column="COURSE_OFFERING" />
 		</set>
 		
-		<set name="members" inverse="false" cascade="save-update">
-			<key column="COURSE_SET" />
-			<one-to-many class="org.sakaiproject.coursemanagement.impl.MembershipImpl" />
-		</set>
-		
-	</class>
+	</subclass>
 
     <query name="findCourseSetByEid">
         <![CDATA[
@@ -63,5 +41,12 @@
         from CourseSetImpl as courseSet where courseSet.parent.eid=:parentEid
         ]]>
     </query>
-
+    
+    <!-- 
+    <query name="findCourseSetMembers">
+        <![CDATA[
+        from MembershipImpl as member where member.memberContainer=:courseSet
+        ]]>
+    </query>    
+	-->
 </hibernate-mapping>
