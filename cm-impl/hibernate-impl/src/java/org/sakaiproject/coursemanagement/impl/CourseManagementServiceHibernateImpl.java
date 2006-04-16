@@ -79,6 +79,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getChildCourseSets(final String parentCourseSetEid) {
+		CourseSet courseSet = getCourseSet(parentCourseSetEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findChildCourseSets");
@@ -86,11 +87,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				return q.list();
 			}
 		};
-		try {
-			return new HashSet(getHibernateTemplate().executeFind(hc));
-		} catch (Exception e) {
-			throw new IdNotFoundException(parentCourseSetEid, CourseSetImpl.class.getName());
-		}
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
 	public Set getCourseSets() {
@@ -197,9 +194,6 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 
 	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
 		final CourseOffering courseOffering = getCourseOffering(courseOfferingEid);
-		if(courseOffering == null) {
-			throw new IdNotFoundException(courseOfferingEid, CourseOfferingImpl.class.getName());
-		}
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findTopLevelSectionsInCourseOffering");
@@ -212,9 +206,6 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 
 	public Set getChildSections(final String parentSectionEid) throws IdNotFoundException {
 		Section parentSection = getSection(parentSectionEid);
-		if(parentSection == null) {
-			throw new IdNotFoundException(parentSectionEid, SectionImpl.class.getName());
-		}
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findChildSections");
@@ -235,9 +226,6 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 
 	public Set getEnrollmentSets(final String courseOfferingEid) throws IdNotFoundException {
 		CourseOffering courseOffering = getCourseOffering(courseOfferingEid);
-		if(courseOffering == null) {
-			throw new IdNotFoundException(courseOfferingEid, CourseOfferingImpl.class.getName());
-		}
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findEnrollmentSetsByCourseOffering");
@@ -250,9 +238,6 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 
 	public Set getEnrollments(final String enrollmentSetEid) throws IdNotFoundException {
 		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
-		if(es == null) {
-			throw new IdNotFoundException(enrollmentSetEid, EnrollmentSetImpl.class.getName());
-		}
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findEnrollments");

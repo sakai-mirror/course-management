@@ -100,7 +100,12 @@ public class CourseManagementAdministrationHibernateImpl extends
 	public void addCanonicalCourseToCourseSet(String courseSetEid, String canonicalCourseEid) throws IdNotFoundException {
 		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
 		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)cmService.getCanonicalCourse(canonicalCourseEid);
-		courseSet.getCanonicalCourses().add(canonCourse);
+		Set canonCourses = courseSet.getCanonicalCourses();
+		if(canonCourses == null) {
+			canonCourses = new HashSet();
+			courseSet.setCanonicalCourses(canonCourses);
+		}
+		canonCourses.add(canonCourse);
 		getHibernateTemplate().update(courseSet);
 	}
 

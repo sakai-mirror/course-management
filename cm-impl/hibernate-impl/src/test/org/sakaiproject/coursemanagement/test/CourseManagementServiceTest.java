@@ -68,6 +68,11 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	public void testGetChildCourseSets() throws Exception {
 		CourseSet parent = (CourseSet)cm.getCourseSets().iterator().next();
 		Assert.assertEquals(1, cm.getChildCourseSets(parent.getEid()).size());		
+		
+		try {
+			cm.getChildCourseSets("bad eid");
+			fail();
+		} catch (IdNotFoundException ide) {}
 	}
 	
 	public void testGetCourseSetMembers() throws Exception {
@@ -235,4 +240,14 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		// Even though this user is a member of two sections, one is in the future
 		Assert.assertEquals(1, cm.getCurrentSectionMemberships("josh").size());
 	}
+	
+	public void testGetSectionRole() throws Exception {
+		Assert.assertEquals("student", cm.getSectionRole("BIO101_F2006_01_SEC01", "josh"));
+		Assert.assertNull(cm.getSectionRole("BIO101_F2006_01_SEC01", "somebody not in the section"));
+		try {
+			cm.getSectionRole("bad eid", "any userId");
+			fail();
+		} catch (IdNotFoundException ide) {}
+	}
+	
 }
