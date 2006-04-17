@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="src" path="src/hibernate"/>
-	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="hibernate-impl/src/hibernate"/>
+	<classpathentry kind="src" path="hibernate-impl/src/java"/>
+	<classpathentry kind="src" path="hibernate-impl/src/test"/>
+	<classpathentry kind="src" path="hibernate-pack/src/webapp/WEB-INF"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/cm-api"/>
 	<classpathentry kind="var" path="MAVEN_REPO/hibernate/jars/hibernate-2.1.8.jar"/>
