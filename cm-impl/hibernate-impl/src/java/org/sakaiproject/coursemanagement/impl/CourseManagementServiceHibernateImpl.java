@@ -309,10 +309,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getCurrentSectionMemberships(final String userId) {
+	public Set getCurrentSectionsWithMember(final String userId) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery("findMembersInCurrentSections");
+				Query q = session.getNamedQuery("findCurrentSectionsWithMember");
 				q.setParameter("userId", userId);
 				return q.list();
 			}

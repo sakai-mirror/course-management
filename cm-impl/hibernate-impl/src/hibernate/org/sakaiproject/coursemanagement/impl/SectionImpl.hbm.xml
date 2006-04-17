@@ -31,6 +31,17 @@
         ]]>
     </query>
 
+	<query name="findCurrentSectionsWithMember">
+        <![CDATA[
+        select section from SectionImpl as section, MembershipImpl as member
+        	where member.userId=:userId and
+        	member.memberContainer=section and
+        	(section.courseOffering.startDate is null or section.courseOffering.startDate <= sysdate) and
+        	(section.courseOffering.endDate is null or section.courseOffering.endDate >= sysdate)
+        ]]>
+    </query>
+
+<!-- 
 	<query name="findMembersInCurrentSections">
         <![CDATA[
         select member from MembershipImpl as member, SectionImpl as section
@@ -40,6 +51,7 @@
         	(section.courseOffering.endDate is null or section.courseOffering.endDate >= sysdate)
         ]]>
     </query>
+-->
 
 <!-- 
     <query name="findSectionMembership">

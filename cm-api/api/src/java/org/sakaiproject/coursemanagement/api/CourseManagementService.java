@@ -294,5 +294,5 @@ public interface CourseManagementService {
 	 * @param userId
 	 * @return
 	 */
-	public Set getCurrentSectionMemberships(String userId);
+	public Set getCurrentSectionsWithMember(String userId);
 }

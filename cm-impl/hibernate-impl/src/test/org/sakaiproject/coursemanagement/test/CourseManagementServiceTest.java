@@ -238,7 +238,7 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 
 	public void testGetCurrentSectionMemberships() throws Exception {
 		// Even though this user is a member of two sections, one is in the future
-		Assert.assertEquals(1, cm.getCurrentSectionMemberships("josh").size());
+		Assert.assertEquals(1, cm.getCurrentSectionsWithMember("josh").size());
 	}
 	
 	public void testGetSectionRole() throws Exception {
