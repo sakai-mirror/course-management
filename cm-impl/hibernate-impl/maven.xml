@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="sakai:build"
+	xmlns:j="jelly:core"
+	xmlns:ant="jelly:ant"
+	xmlns:maven="jelly:maven"
+	xmlns:u="jelly:util">
+
+	<goal name="load-data">
+		<!-- Skip the tests -->
+		<j:set var="maven.test.skip" value="true" />
+		<j:set var="testcase" value="org.sakaiproject.coursemanagement.test.CourseManagementAdministrationDataLoader" />
+		<attainGoal name="test:single" />
+	</goal>
+
+</project>

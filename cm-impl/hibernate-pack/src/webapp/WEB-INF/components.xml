@@ -40,5 +40,27 @@
         </property>
 	</bean>
 
+	<bean id="org.sakaiproject.coursemanagement.api.CourseManagementAdministration"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+		</property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+        <property name="target">
+            <bean class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl">
+        		<property name="sessionFactory">
+	        		<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+				</property>
+	        	<property name="cmService">
+	        		<ref bean="org.sakaiproject.coursemanagement.api.CourseManagementService"/>
+	        	</property>
+            </bean>
+        </property>
+	</bean>
+
 </beans>
 
