@@ -26,7 +26,7 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
 public abstract class CourseManagementTestBase extends AbstractTransactionalSpringContextTests {
 
 	protected String[] getConfigLocations() {
-		return new String[] {"/testAppContext.xml"};
+		return new String[] {"/spring-test.xml", "spring-config-test.xml"};
 	}
 
 }

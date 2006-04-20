@@ -59,7 +59,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	}
 
 	public static void main(String[] args) {
-		ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext("testAppContext.xml");
+		ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext(new String[] {"spring-test.xml", "spring-config-test.xml"});
 		DataLoader loader = (DataLoader)ac.getBean(DataLoader.class.getName());
 		try {
 			loader.load();

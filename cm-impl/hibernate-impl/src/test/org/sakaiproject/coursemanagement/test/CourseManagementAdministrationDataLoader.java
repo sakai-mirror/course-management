@@ -23,6 +23,7 @@ package org.sakaiproject.coursemanagement.test;
 
 import java.util.Date;
 
+import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -42,7 +43,7 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 	private CourseManagementAdministration cmAdmin;
 	private CourseManagementService cmService;
 	public void testLoadData() throws Exception {
-		ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext("testAppContext.xml");
+		ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext(new String[] {"spring-test.xml", "spring-config-dataload.xml"});
 		cmAdmin = (CourseManagementAdministration)ac.getBean(CourseManagementAdministration.class.getName());
 		cmService = (CourseManagementService)ac.getBean(CourseManagementService.class.getName());
 		load();
@@ -50,8 +51,9 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 
 	public void load() throws Exception {
 		// Load your data here
-		cmAdmin.createAcademicSession("fall 2006", "Fall 2006", "The fall term, 2006", new Date(), new Date());
-		
+		cmAdmin.createAcademicSession("f2006", "Fall 2006", "The fall term, 2006", new Date(), new Date());
+		AcademicSession academicSession = cmService.getAcademicSession("f2006");
+		// etc
 	}
 
 }

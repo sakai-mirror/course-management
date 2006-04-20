@@ -177,8 +177,11 @@
 					<directory>${basedir}/src/test</directory>
 					<includes>
 						<include>log4j.properties</include>
-						<include>hibernate.properties</include>
-						<include>testAppContext.xml</include>
+						<include>hibernate.test.properties</include>
+						<include>hibernate.dataload.properties</include>
+						<include>spring-test.xml</include>
+						<include>spring-config-test.xml</include>
+						<include>spring-config-dataload.xml</include>
 					</includes>
 				</resource>
 			</resources>
