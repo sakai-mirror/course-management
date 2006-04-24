@@ -79,7 +79,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getChildCourseSets(final String parentCourseSetEid) {
-		CourseSet courseSet = getCourseSet(parentCourseSetEid);
+		// Ensure that the parent exists
+		// TODO Add exists() methods rather than loading the entire object
+		getCourseSet(parentCourseSetEid);
+
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findChildCourseSets");
@@ -205,7 +208,9 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getChildSections(final String parentSectionEid) throws IdNotFoundException {
-		Section parentSection = getSection(parentSectionEid);
+		// Ensure that the parent exists
+		// TODO Add exists() methods rather than loading the entire object
+		getSection(parentSectionEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findChildSections");
@@ -225,7 +230,9 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getEnrollmentSets(final String courseOfferingEid) throws IdNotFoundException {
-		CourseOffering courseOffering = getCourseOffering(courseOfferingEid);
+		// Ensure that the parent exists
+		// TODO Add exists() methods rather than loading the entire object
+		getCourseOffering(courseOfferingEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findEnrollmentSetsByCourseOffering");
@@ -237,7 +244,9 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getEnrollments(final String enrollmentSetEid) throws IdNotFoundException {
-		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
+		// Ensure that the parent exists
+		// TODO Add exists() methods rather than loading the entire object
+		getEnrollmentSet(enrollmentSetEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findEnrollments");

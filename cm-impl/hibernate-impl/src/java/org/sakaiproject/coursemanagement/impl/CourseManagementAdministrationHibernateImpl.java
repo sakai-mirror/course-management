@@ -71,7 +71,12 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(academicSession);
 	}
 
-	public void createCourseSet(String eid, String title, String description, CourseSet parent) throws IdExistsException {
+	public void createCourseSet(String eid, String title, String description,
+			String parentCourseSetEid) throws IdExistsException {
+		CourseSet parent = null;
+		if(parentCourseSetEid != null) {
+			parent = cmService.getCourseSet(parentCourseSetEid);
+		}
 		CourseSetImpl courseSet = new CourseSetImpl(eid, title, description, parent);
 		try {
 			getHibernateTemplate().save(courseSet);
@@ -156,8 +161,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 		return removeEquiv((CanonicalCourseImpl)canonicalCourse);
 	}
 
-	public void createCourseOffering(String eid, String title, String description, AcademicSession academicSession, Date startDate, Date endDate) throws IdExistsException {
-		CourseOfferingImpl co = new CourseOfferingImpl(eid, title, description, academicSession, startDate, endDate);
+	public void createCourseOffering(String eid, String title, String description,
+			String academicSessionEid, String canonicalCourseEid, Date startDate, Date endDate) throws IdExistsException {
+		AcademicSession as = cmService.getAcademicSession(academicSessionEid);
+		CanonicalCourse cc = cmService.getCanonicalCourse(canonicalCourseEid);
+		CourseOfferingImpl co = new CourseOfferingImpl(eid, title, description, as, cc, startDate, endDate);
 		try {
 			getHibernateTemplate().save(co);
 		} catch (DataIntegrityViolationException dive) {
@@ -202,8 +210,14 @@ public class CourseManagementAdministrationHibernateImpl extends
 		return true;
 	}
 
-	public void createEnrollmentSet(String eid, String title, String description, String category, String defaultEnrollmentCredits, Set officialGraders) throws IdExistsException {
-		EnrollmentSetImpl enrollmentSet = new EnrollmentSetImpl(eid, title, description, category, defaultEnrollmentCredits, officialGraders);
+	public void createEnrollmentSet(String eid, String title, String description, String category,
+			String defaultEnrollmentCredits, String courseOfferingEid, Set officialGraders)
+			throws IdExistsException {
+		if(courseOfferingEid == null) {
+			throw new IllegalArgumentException("You can not create an EnrollmentSet without specifying a courseOffering");
+		}
+		CourseOffering co = cmService.getCourseOffering(courseOfferingEid);
+		EnrollmentSetImpl enrollmentSet = new EnrollmentSetImpl(eid, title, description, category, defaultEnrollmentCredits, co, officialGraders);
 		try {
 			getHibernateTemplate().save(enrollmentSet);
 		} catch (DataIntegrityViolationException dive) {
@@ -215,14 +229,15 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(enrollmentSet);
 	}
 
-	public void addOrUpdateEnrollment(String userId, EnrollmentSet enrollmentSet, String enrollmentStatus, String credits, String gradingScheme) {
-		if(cmService.isEnrolled(userId,enrollmentSet.getEid())) {
-			EnrollmentImpl enrollment = (EnrollmentImpl)cmService.getEnrollment(userId, enrollmentSet.getEid());
+	public void addOrUpdateEnrollment(String userId, String enrollmentSetEid, String enrollmentStatus, String credits, String gradingScheme) {
+		if(cmService.isEnrolled(userId,enrollmentSetEid)) {
+			EnrollmentImpl enrollment = (EnrollmentImpl)cmService.getEnrollment(userId, enrollmentSetEid);
 			enrollment.setEnrollmentStatus(enrollmentStatus);
 			enrollment.setCredits(credits);
 			enrollment.setGradingScheme(gradingScheme);
 			getHibernateTemplate().update(enrollment);
 		} else {
+			EnrollmentSet enrollmentSet = cmService.getEnrollmentSet(enrollmentSetEid);
 			EnrollmentImpl enrollment = new EnrollmentImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
 			getHibernateTemplate().save(enrollment);
 		}
@@ -239,8 +254,30 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 	}
 
-	public void createSection(String eid, String title, String description, String category, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet) throws IdExistsException {
-		SectionImpl section = new SectionImpl(eid, title, description, category, parent, courseOffering, enrollmentSet);
+	public void createSection(String eid, String title, String description, String category,
+		String parentSectionEid, String courseOfferingEid, String enrollmentSetEid) throws IdExistsException {
+		
+		// The objects related to this section
+		Section parent = null;
+		CourseOffering co = null;
+		EnrollmentSet es = null;
+
+		// Get the enrollment set, if needed
+		if(courseOfferingEid != null) {
+			co = cmService.getCourseOffering(courseOfferingEid);
+		}
+
+		// Get the parent section, if needed
+		if(parentSectionEid != null) {
+			parent = cmService.getSection(parentSectionEid);
+		}
+		
+		// Get the enrollment set, if needed
+		if(enrollmentSetEid != null) {
+			es = cmService.getEnrollmentSet(enrollmentSetEid);
+		}
+
+		SectionImpl section = new SectionImpl(eid, title, description, category, parent, co, es);
 		try {
 			getHibernateTemplate().save(section);
 		} catch (DataIntegrityViolationException dive) {

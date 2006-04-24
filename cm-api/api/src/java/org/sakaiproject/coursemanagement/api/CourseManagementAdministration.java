@@ -60,10 +60,10 @@ public interface CourseManagementAdministration {
 	 * @param eid
 	 * @param title
 	 * @param description
-	 * @param parent The parent CourseSet, or null if none.
+	 * @param parentCourseSetEid The parent CourseSet's eid, or null if none.
 	 * @throws IdExistsException
 	 */
-	public void createCourseSet(String eid, String title, String description, CourseSet parent)
+	public void createCourseSet(String eid, String title, String description, String parentCourseSetEid)
 		throws IdExistsException;
 	
 	/**
@@ -133,13 +133,14 @@ public interface CourseManagementAdministration {
 	 * @param eid
 	 * @param title
 	 * @param description
-	 * @param academicSession
+	 * @param academicSessionEid
+	 * @param canonicalCourseEid
 	 * @param startDate
 	 * @param endDate
 	 * @throws IdExistsException
 	 */
 	public void createCourseOffering(String eid, String title, String description,
-			AcademicSession academicSession, Date startDate, Date endDate)
+			String academicSessionEid, String canonicalCourseEid, Date startDate, Date endDate)
 			throws IdExistsException;
 
 	/**
@@ -190,11 +191,12 @@ public interface CourseManagementAdministration {
 	 * @param description
 	 * @param category
 	 * @param defaultEnrollmentCredits
+	 * @param courseOfferingEid
 	 * @param officialGraders
 	 * @throws IdExistsException
 	 */
 	public void createEnrollmentSet(String eid, String title, String description,
-			String category, String defaultEnrollmentCredits, Set officialGraders)
+			String category, String defaultEnrollmentCredits, String courseOfferingEid, Set officialGraders)
 			throws IdExistsException;
 	
 	/**
@@ -209,12 +211,12 @@ public interface CourseManagementAdministration {
 	 * EnrollmentSet, the Enrollment record is updated for the user.
 	 * 
 	 * @param userId
-	 * @param enrollmentSet
+	 * @param enrollmentSetEid
 	 * @param enrollmentStatus
 	 * @param credits
 	 * @param gradingScheme
 	 */
-	public void addOrUpdateEnrollment(String userId, EnrollmentSet enrollmentSet,
+	public void addOrUpdateEnrollment(String userId, String enrollmentSetEid,
 			String enrollmentStatus, String credits, String gradingScheme);
 
 	/**
@@ -233,14 +235,14 @@ public interface CourseManagementAdministration {
 	 * @param title
 	 * @param description
 	 * @param category
-	 * @param parent
-	 * @param courseOffering
-	 * @param enrollmentSet
+	 * @param parentSectionEid
+	 * @param courseOfferingEid
+	 * @param enrollmentSetEid
 	 * @throws IdExistsException
 	 */
 	public void createSection(String eid, String title, String description,
-			String category, Section parent, CourseOffering courseOffering,
-			EnrollmentSet enrollmentSet) throws IdExistsException;
+			String category, String parentSectionEid, String courseOfferingEid,
+			String enrollmentSetEid) throws IdExistsException;
 	
 	/**
 	 * Updates an existing Section.

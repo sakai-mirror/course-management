@@ -37,12 +37,14 @@ public class EnrollmentSetImpl extends AbstractNamedCourseManagementObject
 	
 	public EnrollmentSetImpl () {}
 	
-	public EnrollmentSetImpl(String eid, String title, String description, String category, String defaultEnrollmentCredits, Set officialGraders) {
+	public EnrollmentSetImpl(String eid, String title, String description, String category,
+			String defaultEnrollmentCredits, CourseOffering courseOffering, Set officialGraders) {
 		this.eid = eid;
 		this.title = title;
 		this.description = description;
 		this.category = category;
 		this.defaultEnrollmentCredits = defaultEnrollmentCredits;
+		this.courseOffering = courseOffering;
 		this.officialGraders = officialGraders;
 	}
 	
