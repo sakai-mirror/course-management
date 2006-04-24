@@ -148,6 +148,25 @@ public interface CourseManagementService {
 	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException;
 
 	/**
+	 * Gets all of the course offerings in a course set that are current for any given
+	 * academic session (regardless of the courseOffering's start and end dates).
+	 * 
+	 * @param courseSetEid
+	 * @param academicSessionEid
+	 * @return The set of course offerings
+	 * @throws IdNotFoundException
+	 */
+	public Set getCourseOfferings(String courseSetEid, String academicSessionEid) throws IdNotFoundException;
+	
+	/**
+	 * Determines whether a CourseSet has any CanonicalCourses or CourseSets.
+	 * 
+	 * @param courseSetEid
+	 * @return
+	 */
+	public boolean isEmpty(String courseSetEid);
+
+	/**
 	 * Gets a Section by its eid.
 	 * 
 	 * @param eid

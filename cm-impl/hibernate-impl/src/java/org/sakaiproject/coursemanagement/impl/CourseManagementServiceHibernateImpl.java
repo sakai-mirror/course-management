@@ -263,7 +263,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				Query q = session.getNamedQuery("countEnrollments");
 				q.setParameter("userId", userId);
 				q.setParameterList("enrollmentSetEids", enrollmentSetEids);
-				return (Integer)q.iterate().next();
+				return q.iterate().next();
 			}
 		};
 		Integer i = (Integer)getHibernateTemplate().execute(hc);
@@ -355,5 +355,30 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		} else {
 			return member.getRole();
 		}
+	}
+
+
+	public Set getCourseOfferings(final String courseSetEid, final String academicSessionEid) throws IdNotFoundException {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findCourseOfferingsByCourseSetAndAcademicSession");
+				q.setParameter("courseSetEid", courseSetEid);
+				q.setParameter("academicSessionEid", academicSessionEid);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+
+
+	public boolean isEmpty(final String courseSetEid) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findNonEmptyCourseSet");
+				q.setParameter("eid", courseSetEid);
+				return new Boolean( ! q.iterate().hasNext());
+			}
+		};
+		return ((Boolean)getHibernateTemplate().execute(hc)).booleanValue();
 	}
 }

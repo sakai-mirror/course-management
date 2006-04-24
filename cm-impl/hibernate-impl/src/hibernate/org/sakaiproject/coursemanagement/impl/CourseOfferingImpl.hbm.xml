@@ -25,4 +25,13 @@
         ]]>
     </query>
 
+    <query name="findCourseOfferingsByCourseSetAndAcademicSession">
+        <![CDATA[
+        select co from CourseOfferingImpl as co, CourseSetImpl as cs where
+        	cs.eid=:courseSetEid and
+        	co.academicSession.eid = :academicSessionEid and
+        	cs in elements(co.courseSets)
+        ]]>
+    </query>
+
 </hibernate-mapping>

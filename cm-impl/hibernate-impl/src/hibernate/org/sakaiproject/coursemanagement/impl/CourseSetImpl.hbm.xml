@@ -41,12 +41,12 @@
         from CourseSetImpl as courseSet where courseSet.parent.eid=:parentEid
         ]]>
     </query>
-    
-    <!-- 
-    <query name="findCourseSetMembers">
+
+    <query name="findNonEmptyCourseSet">
         <![CDATA[
-        from MembershipImpl as member where member.memberContainer=:courseSet
+        from CourseSetImpl as cs where cs.eid=:eid and
+        	(size(cs.canonicalCourses) > 0 or size(cs.courseOfferings) > 0)
         ]]>
-    </query>    
-	-->
+    </query>
+
 </hibernate-mapping>

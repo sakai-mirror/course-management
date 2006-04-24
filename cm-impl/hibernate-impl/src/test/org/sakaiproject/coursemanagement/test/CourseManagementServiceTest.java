@@ -62,11 +62,11 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 	
 	public void testGetCourseSets() throws Exception {
-		Assert.assertEquals(1, cm.getCourseSets().size());		
+		Assert.assertEquals(2, cm.getCourseSets().size());		
 	}
 
 	public void testGetChildCourseSets() throws Exception {
-		CourseSet parent = (CourseSet)cm.getCourseSets().iterator().next();
+		CourseSet parent = (CourseSet)cm.getCourseSet("BIO_DEPT");
 		Assert.assertEquals(1, cm.getChildCourseSets(parent.getEid()).size());		
 		
 		try {
@@ -250,4 +250,14 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		} catch (IdNotFoundException ide) {}
 	}
 	
+	public void testGetCourseOfferingsByCourseSetAndAcademicSession() throws Exception {
+		Assert.assertEquals(1, cm.getCourseOfferings("BIO_DEPT", "F2006").size());
+	}
+
+	public void testIsCourseSetEmpty() throws Exception {
+		Assert.assertTrue(cm.isEmpty("EMPTY_COURSE_SET"));
+		Assert.assertFalse(cm.isEmpty("BIO_DEPT"));
+		Assert.assertFalse(cm.isEmpty("BIO_CHEM_GROUP"));
+	}
+
 }

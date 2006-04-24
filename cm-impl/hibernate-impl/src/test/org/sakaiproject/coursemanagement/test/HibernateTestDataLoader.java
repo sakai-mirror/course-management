@@ -108,6 +108,12 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		cSetChild.setDescription("Biochemistry group, Department of Biology");
 		cSetChild.setParent(cSet);
 		getHibernateTemplate().save(cSetChild);
+		
+		CourseSetImpl cSetEmpty = new CourseSetImpl();
+		cSetEmpty.setEid("EMPTY_COURSE_SET");
+		cSetEmpty.setTitle("Empty CourseSet");
+		cSetEmpty.setDescription("Empty CourseSet");
+		getHibernateTemplate().save(cSetEmpty);
 	}
 
 	void loadCanonicalCourses() {
