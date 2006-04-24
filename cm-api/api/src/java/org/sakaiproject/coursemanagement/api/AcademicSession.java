@@ -24,15 +24,18 @@ package org.sakaiproject.coursemanagement.api;
 import java.util.Date;
 
 /**
+ * <p>
  * An institutional context for CourseOfferings, distinguishing one instance of
- * a course from another.  In higher educational institutions, it almost always
+ * a CanonicalCourse from another.  In higher educational institutions, it almost always
  * includes a time range. However, self-paced "sessions" are apparently also
  * possible.
+ * </p>
  * 
+ * <p>
  * AcademicSession includes a notion of ordering and currency to support queries
  * such as "Find all current course offerings" and "Sort past course offerings
  * in reverse session order".
- * 
+ * </p>
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
 public interface AcademicSession {

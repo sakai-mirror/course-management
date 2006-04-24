@@ -29,6 +29,8 @@ import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 
 /**
  * A service that provides for the administration of enterprise-defined course data.
+ * This service is typically not used inside Sakai, and should not be exposed until
+ * appropriate permission and reconciliation issues are solved.
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
@@ -297,7 +299,7 @@ public interface CourseManagementAdministration {
 	 * 
 	 * @param userId
 	 * @param role
-	 * @param SectionEid
+	 * @param sectionEid
 	 */
 	public void addOrUpdateSectionMembership(String userId, String role, String sectionEid);
 	
@@ -305,7 +307,7 @@ public interface CourseManagementAdministration {
 	 * Removes a user from a Section.
 	 * 
 	 * @param userId
-	 * @param SectionEid
+	 * @param sectionEid
 	 * @return Whether the user was a member of the Section and was removed.
 	 */
 	public boolean removeSectionMembership(String userId, String sectionEid);

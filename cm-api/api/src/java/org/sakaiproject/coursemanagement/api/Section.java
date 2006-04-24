@@ -65,9 +65,4 @@ public interface Section {
 	 */
 	public EnrollmentSet getEnrollmentSet();
 	
-	/**
-	 * Gets the Course Offering to which this Section belongs.
-	 * @return
-	 */
-	public CourseOffering getCourseOffering();
 }

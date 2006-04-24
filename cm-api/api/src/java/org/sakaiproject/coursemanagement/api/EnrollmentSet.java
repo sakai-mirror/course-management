@@ -24,8 +24,9 @@ package org.sakaiproject.coursemanagement.api;
 import java.util.Set;
 
 /**
- * Defines who is allowed to submit the final grade for this student, and what
- * is the grade for?
+ * Defines a group of students who are somehow associated with a CourseOffering
+ * or a Section for credit.  Defines who is allowed to submit the final grade for this
+ * student, and what the grade is for.
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
