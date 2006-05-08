@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -28,8 +29,11 @@ import java.util.Set;
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
-public class CrossListing extends AbstractPersistentCourseManagementObject {
+public class CrossListing extends AbstractPersistentCourseManagementObject
+	implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * The set of canonicalCourses that are associated together in this CrossListing
 	 */

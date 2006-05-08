@@ -21,10 +21,14 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
+
 import org.sakaiproject.coursemanagement.api.Membership;
 
 public class MembershipImpl extends AbstractPersistentCourseManagementObject
-	implements Membership {
+	implements Membership, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String userId;
 	private String role;

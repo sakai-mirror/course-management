@@ -30,25 +30,26 @@ package org.sakaiproject.coursemanagement.api;
 public interface Section {
 
 	/**
-	 * Gets the unique enterprise id of this MembershipContainer.
+	 * Gets the unique enterprise id of this Section.
 	 * @return
 	 */
 	public String getEid();
 
 	/**
-	 * Gets the title of this MembershipContainer.
+	 * Gets the title of this Section.
 	 * @return
 	 */
 	public String getTitle();
 	
 	/**
-	 * Gets the description of this MembershipContainer.
+	 * Gets the description of this Section.
 	 * @return
 	 */
 	public String getDescription();
 
 	/**
-	 * A category
+	 * A category for this Section.  A category might be lecture, lab, discussion, or some
+	 * other kind of classification.
 	 * @return
 	 */
 	public String getCategory();

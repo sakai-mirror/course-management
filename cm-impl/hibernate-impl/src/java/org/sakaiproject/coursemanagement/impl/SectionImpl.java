@@ -21,12 +21,16 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
+
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
 
 public class SectionImpl extends AbstractMembershipContainer
-	implements Section {
+	implements Section, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String category;
 	private CourseOffering courseOffering;

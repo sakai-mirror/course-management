@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseOffering;
@@ -28,7 +29,9 @@ import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
 
 public class EnrollmentSetImpl extends AbstractNamedCourseManagementObject
-	implements EnrollmentSet {
+	implements EnrollmentSet, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String category;
 	private String defaultEnrollmentCredits;

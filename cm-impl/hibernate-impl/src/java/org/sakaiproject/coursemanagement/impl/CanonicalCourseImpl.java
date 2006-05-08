@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -28,8 +29,10 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 
 public class CanonicalCourseImpl extends CrossListable
-	implements CanonicalCourse {
+	implements CanonicalCourse, Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	private CrossListing crossListing;
 	private Set courseSets;
 

@@ -21,9 +21,12 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
 
-public abstract class AbstractNamedCourseManagementObject extends AbstractPersistentCourseManagementObject
- {
+
+public abstract class AbstractNamedCourseManagementObject
+	extends AbstractPersistentCourseManagementObject  implements Serializable {
+	
 	protected String title;
 	protected String description;
 	protected String eid;

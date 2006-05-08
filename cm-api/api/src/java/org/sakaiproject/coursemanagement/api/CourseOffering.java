@@ -31,25 +31,25 @@ import java.util.Date;
 public interface CourseOffering {
 
 	/**
-	 * Gets the unique enterprise id of this MembershipContainer.
+	 * Gets the unique enterprise id of this CourseOffering.
 	 * @return
 	 */
 	public String getEid();
 
 	/**
-	 * Gets the title of this MembershipContainer.
+	 * Gets the title of this CourseOffering.
 	 * @return
 	 */
 	public String getTitle();
 	
 	/**
-	 * Gets the description of this MembershipContainer.
+	 * Gets the description of this CourseOffering.
 	 * @return
 	 */
 	public String getDescription();
 
 	/**
-	 * The AcademicSession for this course
+	 * The AcademicSession for this course offering
 	 * @return
 	 */
 	public AcademicSession getAcademicSession();

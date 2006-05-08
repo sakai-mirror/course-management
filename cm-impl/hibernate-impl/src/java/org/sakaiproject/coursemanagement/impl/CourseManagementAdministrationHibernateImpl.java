@@ -231,7 +231,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 	public void addOrUpdateEnrollment(String userId, String enrollmentSetEid, String enrollmentStatus, String credits, String gradingScheme) {
 		if(cmService.isEnrolled(userId,enrollmentSetEid)) {
-			EnrollmentImpl enrollment = (EnrollmentImpl)cmService.getEnrollment(userId, enrollmentSetEid);
+			EnrollmentImpl enrollment = (EnrollmentImpl)cmService.findEnrollment(userId, enrollmentSetEid);
 			enrollment.setEnrollmentStatus(enrollmentStatus);
 			enrollment.setCredits(credits);
 			enrollment.setGradingScheme(gradingScheme);
@@ -244,7 +244,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeEnrollment(String userId, String enrollmentSetEid) {
-		EnrollmentImpl enr = (EnrollmentImpl)cmService.getEnrollment(userId, enrollmentSetEid);
+		EnrollmentImpl enr = (EnrollmentImpl)cmService.findEnrollment(userId, enrollmentSetEid);
 		if(enr == null) {
 			return false;
 		} else {

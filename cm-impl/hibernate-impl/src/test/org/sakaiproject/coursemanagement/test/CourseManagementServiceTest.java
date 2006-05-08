@@ -194,18 +194,18 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 	
 	public void testGetEnrollment() throws Exception {
-		Assert.assertNotNull(cm.getEnrollment("josh", "BIO101_F2006_01_ES01"));
-		Assert.assertNull(cm.getEnrollment("josh", "bad eid"));
+		Assert.assertNotNull(cm.findEnrollment("josh", "BIO101_F2006_01_ES01"));
+		Assert.assertNull(cm.findEnrollment("josh", "bad eid"));
 	}
 
 	public void testGetOfficialGraders() throws Exception {
-		Set graders = cm.getOfficialGraderIds("BIO101_F2006_01_ES01");
+		Set graders = cm.getInstructorsOfRecordIds("BIO101_F2006_01_ES01");
 		Assert.assertTrue(graders.contains("grader1"));
 		Assert.assertTrue(graders.contains("grader2"));
 		Assert.assertTrue( ! graders.contains("josh"));
 		
 		try {
-			cm.getOfficialGraderIds("bad eid");
+			cm.getInstructorsOfRecordIds("bad eid");
 			fail();
 		} catch(IdNotFoundException ide) {}
 	}
@@ -227,18 +227,18 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	public void testGetEnrolledEnrollmentSets() throws Exception {
 		// User "josh" is enrolled in two EnrollmentSets.  One is only current in 2036.
 		// The other is always current.
-		Set enrSets = cm.getCurrentlyEnrolledEnrollmentSets("josh");
+		Set enrSets = cm.findCurrentlyEnrolledEnrollmentSets("josh");
 		Assert.assertEquals(1, enrSets.size());
 	}
 	
 	public void testGetGradableEnrollmentSets() throws Exception {
-		Set gradableEnrollmentSets = cm.getCurrentlyGradableEnrollmentSets("grader1");
+		Set gradableEnrollmentSets = cm.findCurrentlyInstructingEnrollmentSets("grader1");
 		Assert.assertEquals(1, gradableEnrollmentSets.size());
 	}
 
 	public void testGetCurrentSectionMemberships() throws Exception {
 		// Even though this user is a member of two sections, one is in the future
-		Assert.assertEquals(1, cm.getCurrentSectionsWithMember("josh").size());
+		Assert.assertEquals(1, cm.findCurrentSectionsWithMember("josh").size());
 	}
 	
 	public void testGetSectionRole() throws Exception {
@@ -251,7 +251,7 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 	
 	public void testGetCourseOfferingsByCourseSetAndAcademicSession() throws Exception {
-		Assert.assertEquals(1, cm.getCourseOfferings("BIO_DEPT", "F2006").size());
+		Assert.assertEquals(1, cm.findCourseOfferings("BIO_DEPT", "F2006").size());
 	}
 
 	public void testIsCourseSetEmpty() throws Exception {

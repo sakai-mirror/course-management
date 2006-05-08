@@ -203,7 +203,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.addOrUpdateEnrollment("josh", "es1", "enrolled", "4", "pass/fail");
 		
 		// Ensure that the enrollment exists
-		Assert.assertNotNull(cm.getEnrollment("josh", "es1"));
+		Assert.assertNotNull(cm.findEnrollment("josh", "es1"));
 	}
 
 	public void testUpdateEnrollment() throws Exception {
@@ -220,7 +220,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.addOrUpdateEnrollment("josh", "es1", "waitlisted", "3", "lettter gradel");
 		
 		// Ensure that the enrollment has been updated
-		Assert.assertEquals("waitlisted", cm.getEnrollment("josh", "es1").getEnrollmentStatus());
+		Assert.assertEquals("waitlisted", cm.findEnrollment("josh", "es1").getEnrollmentStatus());
 	}
 
 	public void testDropEnrollment() throws Exception {

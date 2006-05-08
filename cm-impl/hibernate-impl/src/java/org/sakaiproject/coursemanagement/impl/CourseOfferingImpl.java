@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -29,7 +30,9 @@ import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 
 public class CourseOfferingImpl extends CrossListable
-	implements CourseOffering {
+	implements CourseOffering, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private CanonicalCourse canonicalCourse;
 	private AcademicSession academicSession;

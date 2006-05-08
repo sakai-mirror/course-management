@@ -21,10 +21,12 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public class AbstractMembershipContainer extends
-		AbstractNamedCourseManagementObject {
+public abstract class AbstractMembershipContainer extends
+		AbstractNamedCourseManagementObject implements Serializable {
+
 
 	private Set members;
 

@@ -148,7 +148,7 @@ public interface CourseManagementService {
 	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException;
 
 	/**
-	 * Gets all of the course offerings in a course set that are current for any given
+	 * Finds all of the course offerings in a course set that are current for any given
 	 * academic session (regardless of the courseOffering's start and end dates).
 	 * 
 	 * @param courseSetEid
@@ -156,7 +156,7 @@ public interface CourseManagementService {
 	 * @return The set of course offerings
 	 * @throws IdNotFoundException
 	 */
-	public Set getCourseOfferings(String courseSetEid, String academicSessionEid) throws IdNotFoundException;
+	public Set findCourseOfferings(String courseSetEid, String academicSessionEid) throws IdNotFoundException;
 	
 	/**
 	 * Determines whether a CourseSet has any CanonicalCourses or CourseSets.
@@ -241,14 +241,15 @@ public interface CourseManagementService {
 	public Set getEnrollments(String enrollmentSetEid) throws IdNotFoundException;
 
 	/**
-	 * Gets the set of user ids that are sanctioned by the enterprise to grade
-	 * students enrolled in this EnrollmentSet.
+	 * Gets the set of user ids that are, according to the enterprise, responsible for
+	 * the EnrollmentSet.  Responsibilities usually include submitting the final grades
+	 * for students enrolled in the EnrollmentSet.
 	 * 
 	 * @param enrollmentSetEid
-	 * @return The set of ids for users who can grade students in this EnrollmentSet
+	 * @return The set of ids for users who are responsible for this EnrollmentSet
 	 * @throws IdNotFoundException If the eid is not associated with any EnrollmentSet
 	 */
-	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException;
+	public Set getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException;
 	
 	/**
 	 * Determines whether a user is enrolled in an EnrollmentSet.  This
@@ -271,7 +272,7 @@ public interface CourseManagementService {
 
 
 	/**
-	 * Returns the Enrollment for a user in an EnrollmentSet.  If the user isn't in the
+	 * Finds the Enrollment for a user in an EnrollmentSet.  If the user isn't in the
 	 * EnrollmentSet, or the EnrollmentSet doesn't exist, this returns null.
 	 * 
 	 * TODO Should this throw more descriptive exceptions e.g. when the EnrollmentSet doesn't exist?
@@ -280,10 +281,10 @@ public interface CourseManagementService {
 	 * @param eid
 	 * @return
 	 */
-	public Enrollment getEnrollment(String userId, String eid);
+	public Enrollment findEnrollment(String userId, String eid);
 
 	/**
-	 * Gets the set of current EnrollmentSets for which a user is enrolled.
+	 * Finds the set of current EnrollmentSets for which a user is enrolled.
 	 * An EnrollmentSet is considered current if its CourseOffering's start date
 	 * (is null or prior to the current date/time) and its end date (is null or
 	 * after the current date/time).
@@ -291,21 +292,21 @@ public interface CourseManagementService {
 	 * @param userId
 	 * @return
 	 */
-	public Set getCurrentlyEnrolledEnrollmentSets(String userId);
+	public Set findCurrentlyEnrolledEnrollmentSets(String userId);
 
 	/**
-	 * Gets the set of current EnrollmentSets for which a user is an official grader.
-	 * An EnrollmentSet is considered current if its CourseOffering's start date
-	 * (is null or prior to the current date/time) and its end date (is null or
+	 * Finds the set of current EnrollmentSets for which a user is an instructor of
+	 * record.  An EnrollmentSet is considered current if its CourseOffering's start
+	 * date (is null or prior to the current date/time) and its end date (is null or
 	 * after the current date/time).
 	 * 
 	 * @param userId
 	 * @return
 	 */
-	public Set getCurrentlyGradableEnrollmentSets(String userId);
+	public Set findCurrentlyInstructingEnrollmentSets(String userId);
 
 	/**
-	 * Gets the set of Memberships for all Sections belonging to a current CourseOffering.
+	 * Finds the set of Memberships for all Sections belonging to a current CourseOffering.
 	 * A CourseOffering is considered current if its start date
 	 * (is null or prior to the current date/time) and its end date (is null or
 	 * after the current date/time).
@@ -313,5 +314,5 @@ public interface CourseManagementService {
 	 * @param userId
 	 * @return
 	 */
-	public Set getCurrentSectionsWithMember(String userId);
+	public Set findCurrentSectionsWithMember(String userId);
 }

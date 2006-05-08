@@ -21,13 +21,16 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 
 public class AcademicSessionImpl extends AbstractNamedCourseManagementObject
-	implements AcademicSession {
+	implements AcademicSession, Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	private Date startDate;
 	private Date endDate;
 	

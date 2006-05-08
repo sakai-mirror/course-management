@@ -21,12 +21,15 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseSet;
 
 public class CourseSetImpl extends AbstractMembershipContainer
-	implements CourseSet {
+	implements CourseSet, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private CourseSet parent;
 	private Set courseOfferings;

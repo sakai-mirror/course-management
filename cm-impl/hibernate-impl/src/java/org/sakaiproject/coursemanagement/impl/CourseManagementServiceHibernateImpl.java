@@ -277,7 +277,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return isEnrolled(userId, enrollmentSetEids);
 	}
 	
-	public Enrollment getEnrollment(final String userId, final String enrollmentSetEid) {
+	public Enrollment findEnrollment(final String userId, final String enrollmentSetEid) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findEnrollment");
@@ -289,13 +289,13 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (Enrollment)getHibernateTemplate().execute(hc);
 	}
 	
-	public Set getOfficialGraderIds(String enrollmentSetEid) throws IdNotFoundException {
+	public Set getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException {
 		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
 		return es.getOfficialGraders();
 	}
 
 
-	public Set getCurrentlyEnrolledEnrollmentSets(final String userId) {
+	public Set findCurrentlyEnrolledEnrollmentSets(final String userId) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findCurrentlyEnrolledEnrollmentSets");
@@ -307,7 +307,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 
-	public Set getCurrentlyGradableEnrollmentSets(final String userId) {
+	public Set findCurrentlyInstructingEnrollmentSets(final String userId) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findCurrentlyGradableEnrollmentSets");
@@ -318,7 +318,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getCurrentSectionsWithMember(final String userId) {
+	public Set findCurrentSectionsWithMember(final String userId) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findCurrentSectionsWithMember");
@@ -358,7 +358,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 
-	public Set getCourseOfferings(final String courseSetEid, final String academicSessionEid) throws IdNotFoundException {
+	public Set findCourseOfferings(final String courseSetEid, final String academicSessionEid) throws IdNotFoundException {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findCourseOfferingsByCourseSetAndAcademicSession");
