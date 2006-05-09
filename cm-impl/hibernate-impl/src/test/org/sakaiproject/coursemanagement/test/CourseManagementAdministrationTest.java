@@ -83,17 +83,17 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 	}
 
 	public void testCreateCourseSet() throws Exception {
-		cmAdmin.createCourseSet("cs1", "set 1", "a course set", null);
+		cmAdmin.createCourseSet("cs1", "set 1", "a course set", null, null);
 		Assert.assertTrue(cm.getCourseSet("cs1").getTitle().equals("set 1"));
 		
 		try {
-			cmAdmin.createCourseSet("cs1", "another set 1", "another cset", null);
+			cmAdmin.createCourseSet("cs1", "another set 1", "another cset", null, null);
 			fail();
 		} catch (IdExistsException ide) {}
 	}
 
 	public void testAddCanonicalCourseToCourseSet() throws Exception {
-		cmAdmin.createCourseSet("cs1", "course set", "course set", null);
+		cmAdmin.createCourseSet("cs1", "course set", "course set", null, null);
 		cmAdmin.createCanonicalCourse("cc1", "canon course 1", "canon course");
 		cmAdmin.addCanonicalCourseToCourseSet("cs1", "cc1");
 		CanonicalCourse cc = cm.getCanonicalCourse("cc1");
@@ -101,7 +101,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 	}
 	
 	public void testRemoveCanonicalCourseFromCourseSet() throws Exception {
-		cmAdmin.createCourseSet("cs1", "course set", "course set", null);
+		cmAdmin.createCourseSet("cs1", "course set", "course set", null, null);
 		cmAdmin.createCanonicalCourse("cc1", "canon course 1", "canon course");
 		cmAdmin.addCanonicalCourseToCourseSet("cs1", "cc1");
 		cmAdmin.removeCanonicalCourseFromCourseSet("cs1", "cc1");
@@ -110,7 +110,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 	}
 
 	public void testAddCourseOfferingToCourseSet() throws Exception {
-		cmAdmin.createCourseSet("cs1", "course set", "course set", null);
+		cmAdmin.createCourseSet("cs1", "course set", "course set", null, null);
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
@@ -120,7 +120,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 	}
 	
 	public void testRemoveCourseOfferingFromCourseSet() throws Exception {
-		cmAdmin.createCourseSet("cs1", "course set", "course set", null);
+		cmAdmin.createCourseSet("cs1", "course set", "course set",null,  null);
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
@@ -242,7 +242,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 	
 	public void testAddCourseSetMembership() throws Exception {
 		// Create a course set
-		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null);
+		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null, null);
 		
 		// Create a membership in the courseSet
 		cmAdmin.addOrUpdateCourseSetMembership("josh", "student", "cs1");
@@ -260,7 +260,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 
 	public void testRemoveCourseSetMembers() throws Exception {
 		// Create a course set
-		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null);
+		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null, null);
 		
 		// Create a membership in the courseSet
 		cmAdmin.addOrUpdateCourseSetMembership("josh", "student", "cs1");

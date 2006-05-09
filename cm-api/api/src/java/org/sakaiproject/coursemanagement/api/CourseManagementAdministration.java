@@ -62,10 +62,11 @@ public interface CourseManagementAdministration {
 	 * @param eid
 	 * @param title
 	 * @param description
+	 * @param category
 	 * @param parentCourseSetEid The parent CourseSet's eid, or null if none.
 	 * @throws IdExistsException
 	 */
-	public void createCourseSet(String eid, String title, String description, String parentCourseSetEid)
+	public void createCourseSet(String eid, String title, String description, String category, String parentCourseSetEid)
 		throws IdExistsException;
 	
 	/**

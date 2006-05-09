@@ -90,10 +90,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	}
 	
 	void loadCourseSetsAndMembers() {
-		CourseSetImpl cSet = new CourseSetImpl();
-		cSet.setEid("BIO_DEPT");
-		cSet.setTitle("Biology Department");
-		cSet.setDescription("Department of Biology");
+		CourseSetImpl cSet = new CourseSetImpl("BIO_DEPT", "Biology Department", "Department of Biology", "DEPT", null);
 		getHibernateTemplate().save(cSet);
 
 		MembershipImpl courseSetMember = new MembershipImpl();
@@ -102,17 +99,10 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		courseSetMember.setMemberContainer(cSet);
 		getHibernateTemplate().save(courseSetMember);
 		
-		CourseSetImpl cSetChild = new CourseSetImpl();
-		cSetChild.setEid("BIO_CHEM_GROUP");
-		cSetChild.setTitle("Biochem Group");
-		cSetChild.setDescription("Biochemistry group, Department of Biology");
-		cSetChild.setParent(cSet);
+		CourseSetImpl cSetChild = new CourseSetImpl("BIO_CHEM_GROUP", "Biochem Group", "Biochemistry group, Department of Biology", "DEPT_GROUP", cSet);
 		getHibernateTemplate().save(cSetChild);
 		
-		CourseSetImpl cSetEmpty = new CourseSetImpl();
-		cSetEmpty.setEid("EMPTY_COURSE_SET");
-		cSetEmpty.setTitle("Empty CourseSet");
-		cSetEmpty.setDescription("Empty CourseSet");
+		CourseSetImpl cSetEmpty = new CourseSetImpl("EMPTY_COURSE_SET", "Empty CourseSet", "Empty CourseSet", null, null);
 		getHibernateTemplate().save(cSetEmpty);
 	}
 

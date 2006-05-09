@@ -32,15 +32,17 @@ public class CourseSetImpl extends AbstractMembershipContainer
 	private static final long serialVersionUID = 1L;
 
 	private CourseSet parent;
+	private String category;
 	private Set courseOfferings;
 	private Set canonicalCourses;
 
 	public CourseSetImpl() {}
 	
-	public CourseSetImpl(String eid, String title, String description, CourseSet parent) {
+	public CourseSetImpl(String eid, String title, String description, String category, CourseSet parent) {
 		this.eid = eid;
 		this.title = title;
 		this.description = description;
+		this.category = category;
 		this.parent = parent;
 	}
 	
@@ -63,5 +65,12 @@ public class CourseSetImpl extends AbstractMembershipContainer
 	}
 	public void setCanonicalCourses(Set canonicalCourses) {
 		this.canonicalCourses = canonicalCourses;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }

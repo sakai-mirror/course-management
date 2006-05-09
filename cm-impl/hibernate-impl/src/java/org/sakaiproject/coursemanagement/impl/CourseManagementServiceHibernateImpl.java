@@ -414,4 +414,16 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		};
 		return ((Boolean)getHibernateTemplate().execute(hc)).booleanValue();
 	}
+
+
+	public List findCourseSets(final String category) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findCourseSetByCategory");
+				q.setParameter("category", category);
+				return q.list();
+			}
+		};
+		return getHibernateTemplate().executeFind(hc);
+	}
 }

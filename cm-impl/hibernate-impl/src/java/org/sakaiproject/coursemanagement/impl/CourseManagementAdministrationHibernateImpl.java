@@ -71,13 +71,13 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(academicSession);
 	}
 
-	public void createCourseSet(String eid, String title, String description,
+	public void createCourseSet(String eid, String title, String description, String category,
 			String parentCourseSetEid) throws IdExistsException {
 		CourseSet parent = null;
 		if(parentCourseSetEid != null) {
 			parent = cmService.getCourseSet(parentCourseSetEid);
 		}
-		CourseSetImpl courseSet = new CourseSetImpl(eid, title, description, parent);
+		CourseSetImpl courseSet = new CourseSetImpl(eid, title, description, category, parent);
 		try {
 			getHibernateTemplate().save(courseSet);
 		} catch (DataIntegrityViolationException dive) {

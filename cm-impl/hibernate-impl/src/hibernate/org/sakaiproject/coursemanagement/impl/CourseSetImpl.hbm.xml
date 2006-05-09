@@ -4,7 +4,9 @@
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 	<subclass name="org.sakaiproject.coursemanagement.impl.CourseSetImpl"
 			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainer">
-			
+
+		<property name="category" column="CATEGORY" type="string" />
+
 		<many-to-one name="parent" column="PARENT_COURSE_SET" index="CM_COURSE_SET_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.CourseSetImpl" />
 	
 		<!-- 
@@ -46,6 +48,12 @@
         <![CDATA[
         from CourseSetImpl as cs where cs.eid=:eid and
         	(size(cs.canonicalCourses) > 0 or size(cs.courseOfferings) > 0)
+        ]]>
+    </query>
+
+    <query name="findCourseSetByCategory">
+        <![CDATA[
+        from CourseSetImpl as cs where cs.category=:category
         ]]>
     </query>
 

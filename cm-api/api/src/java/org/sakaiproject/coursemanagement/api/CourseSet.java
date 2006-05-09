@@ -47,6 +47,12 @@ public interface CourseSet {
 	public String getDescription();
 
 	/**
+	 * A category
+	 * @return
+	 */
+	public String getCategory();
+
+	/**
 	 * Gets the parent CourseSet for this CourseSet, or null if this is a top-level CourseSet.
 	 * 
 	 * @return

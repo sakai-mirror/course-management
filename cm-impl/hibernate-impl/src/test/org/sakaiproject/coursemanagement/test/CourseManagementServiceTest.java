@@ -22,6 +22,7 @@
 package org.sakaiproject.coursemanagement.test;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -272,6 +273,12 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Assert.assertTrue(cm.isEmpty("EMPTY_COURSE_SET"));
 		Assert.assertFalse(cm.isEmpty("BIO_DEPT"));
 		Assert.assertFalse(cm.isEmpty("BIO_CHEM_GROUP"));
+	}
+	
+	public void testFindCourseSetByCategory() throws Exception {
+		List courseSets = cm.findCourseSets("DEPT");
+		Assert.assertEquals(1, courseSets.size());
+		Assert.assertEquals("BIO_DEPT", ((CourseSet)courseSets.get(0)).getEid());
 	}
 
 }

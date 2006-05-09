@@ -167,6 +167,13 @@ public interface CourseManagementService {
 	public Set findCourseOfferings(String courseSetEid, String academicSessionEid) throws IdNotFoundException;
 	
 	/**
+	 * Finds all course sets in a given category.  Useful for listing the departments
+	 * @param category
+	 * @return The list of course sets, sorted by title, ascending
+	 */
+	public List findCourseSets(String category);
+	
+	/**
 	 * Determines whether a CourseSet has any CanonicalCourses or CourseSets.
 	 * 
 	 * @param courseSetEid
