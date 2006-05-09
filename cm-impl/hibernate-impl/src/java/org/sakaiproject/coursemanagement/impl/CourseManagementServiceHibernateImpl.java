@@ -22,6 +22,7 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -128,14 +129,24 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return ((CourseSetImpl)getCourseSet(courseSetEid)).getCanonicalCourses();
 	}
 
-	public Set getAcademicSessions() {
+	public List getAcademicSessions() {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findAcademicSessions");
 				return q.list();
 			}
 		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
+		return getHibernateTemplate().executeFind(hc);
+	}
+
+	public List getCurrentAcademicSessions() {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findCurrentAcademicSessions");
+				return q.list();
+			}
+		};
+		return getHibernateTemplate().executeFind(hc);
 	}
 
 	public AcademicSession getAcademicSession(final String eid) throws IdNotFoundException {
@@ -291,7 +302,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	
 	public Set getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException {
 		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
-		return es.getOfficialGraders();
+		return es.getOfficialInstructors();
 	}
 
 
@@ -310,7 +321,29 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	public Set findCurrentlyInstructingEnrollmentSets(final String userId) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery("findCurrentlyGradableEnrollmentSets");
+				Query q = session.getNamedQuery("findCurrentlyInstructingEnrollmentSets");
+				q.setParameter("userId", userId);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+
+	public Set findCurrentlyInstructingCourseOfferings(final String userId) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findCurrentlyInstructingCourseOfferings");
+				q.setParameter("userId", userId);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+
+	public Set findAllInstructingCourseOfferings(final String userId) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findAllInstructingCourseOfferings");
 				q.setParameter("userId", userId);
 				return q.list();
 			}

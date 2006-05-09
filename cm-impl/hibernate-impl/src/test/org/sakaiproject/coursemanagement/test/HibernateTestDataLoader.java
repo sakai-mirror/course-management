@@ -284,7 +284,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		Set graders = new HashSet();
 		graders.add("grader1");
 		graders.add("grader2");
-		enrollmentSet.setOfficialGraders(graders);
+		enrollmentSet.setOfficialInstructors(graders);
 		
 		getHibernateTemplate().save(enrollmentSet);
 		

@@ -67,5 +67,5 @@ public interface EnrollmentSet {
 	 * The official grader(s) for this EnrollmentSet.
 	 * @return
 	 */
-	public Set getOfficialGraders();
+	public Set getOfficialInstructors();
 }

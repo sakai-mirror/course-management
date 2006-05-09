@@ -29,7 +29,16 @@
     
     <query name="findAcademicSessions">
         <![CDATA[
-        from AcademicSessionImpl as term
+        from AcademicSessionImpl as term order by term.startDate
+        ]]>
+    </query>
+
+    <query name="findCurrentAcademicSessions">
+        <![CDATA[
+        from AcademicSessionImpl as term where
+        	(term.startDate is null or term.startDate <= sysdate) and
+        	(term.endDate is null or term.endDate >= sysdate)
+        	order by term.startDate
         ]]>
     </query>
 

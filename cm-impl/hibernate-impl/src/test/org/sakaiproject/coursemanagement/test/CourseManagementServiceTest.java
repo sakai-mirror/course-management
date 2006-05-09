@@ -52,6 +52,10 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Assert.assertEquals(1, cm.getAcademicSessions().size());
 	}
 	
+	public void testGetCurrentAcademicSessions() throws Exception {
+		Assert.assertEquals(1, cm.getCurrentAcademicSessions().size());
+	}	
+	
 	public void testGetAcademicSessionById() throws Exception {
 		AcademicSession term = cm.getAcademicSession("F2006");
 		Assert.assertEquals("Fall 2006", term.getTitle());
@@ -233,6 +237,16 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	
 	public void testGetGradableEnrollmentSets() throws Exception {
 		Set gradableEnrollmentSets = cm.findCurrentlyInstructingEnrollmentSets("grader1");
+		Assert.assertEquals(1, gradableEnrollmentSets.size());
+	}
+
+	public void testGetCurrentInstructingCourseOfferings() throws Exception {
+		Set gradableEnrollmentSets = cm.findCurrentlyInstructingCourseOfferings("grader1");
+		Assert.assertEquals(1, gradableEnrollmentSets.size());
+	}
+
+	public void testGetAllInstructingCourseOfferings() throws Exception {
+		Set gradableEnrollmentSets = cm.findAllInstructingCourseOfferings("grader1");
 		Assert.assertEquals(1, gradableEnrollmentSets.size());
 	}
 

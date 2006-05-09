@@ -24,9 +24,9 @@
 		<property name="category" column="CATEGORY" type="string" not-null="true" />
 		<property name="defaultEnrollmentCredits" column="DEFAULT_CREDITS" type="string" not-null="true" />
 
-		<set name="officialGraders" table="CM_OFFICIAL_GRADERS_T" cascade="save-update">
+		<set name="officialInstructors" table="CM_OFFICIAL_INSTRUCTORS_T" cascade="save-update">
 			<key column="ENROLLMENT_SET_ID" />
-			<element type="string" column="GRADER_ID" />
+			<element type="string" column="INSTRUCTOR_ID" />
 		</set>
 
 		<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_ENR_SET_CO_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
@@ -46,11 +46,29 @@
         ]]>
     </query>
 
-	<query name="findCurrentlyGradableEnrollmentSets">
+	<query name="findCurrentlyInstructingEnrollmentSets">
         <![CDATA[
-        from EnrollmentSetImpl as enrollmentSet where :userId in elements(enrollmentSet.officialGraders) and
+        from EnrollmentSetImpl as enrollmentSet where :userId in elements(enrollmentSet.officialInstructors) and
         	(enrollmentSet.courseOffering.startDate is null or enrollmentSet.courseOffering.startDate <= sysdate) and
         	(enrollmentSet.courseOffering.endDate is null or enrollmentSet.courseOffering.endDate >= sysdate)
+        ]]>
+    </query>
+
+	<query name="findCurrentlyInstructingCourseOfferings">
+        <![CDATA[
+        select co from CourseOfferingImpl as co, EnrollmentSetImpl as enrollmentSet
+        	where :userId in elements(enrollmentSet.officialInstructors) and
+        	co = enrollmentSet.courseOffering and
+        	(enrollmentSet.courseOffering.startDate is null or enrollmentSet.courseOffering.startDate <= sysdate) and
+        	(enrollmentSet.courseOffering.endDate is null or enrollmentSet.courseOffering.endDate >= sysdate)
+        ]]>
+    </query>
+
+	<query name="findAllInstructingCourseOfferings">
+        <![CDATA[
+        select co from CourseOfferingImpl as co, EnrollmentSetImpl as enrollmentSet
+        	where :userId in elements(enrollmentSet.officialInstructors) and
+        	co = enrollmentSet.courseOffering
         ]]>
     </query>
 

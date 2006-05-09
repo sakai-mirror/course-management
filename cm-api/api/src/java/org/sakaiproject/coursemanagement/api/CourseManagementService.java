@@ -21,6 +21,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api;
 
+import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
@@ -95,11 +96,18 @@ public interface CourseManagementService {
 	public Set getCanonicalCourses(String courseSetEid) throws IdNotFoundException;
 
 	/**
-	 * Gets the set of all known AcademicSessions.
+	 * Gets the list of all known AcademicSessions, sorted by start date.
 	 * 
 	 * @return
 	 */
-	public Set getAcademicSessions();
+	public List getAcademicSessions();
+	
+	/**
+	 * Gets the list of current AcademicSessions, sorted by start date.
+	 * 
+	 * @return
+	 */
+	public List getCurrentAcademicSessions();
 	
 	/**
 	 * Gets a AcademicSession by its eid.
@@ -304,6 +312,26 @@ public interface CourseManagementService {
 	 * @return
 	 */
 	public Set findCurrentlyInstructingEnrollmentSets(String userId);
+
+	/**
+	 * Finds the set of current CourseOfferings that contain an EnrollmentSet for
+	 * which a user is an instructor of record.  An EnrollmentSet is considered current
+	 * if its CourseOffering's start date (is null or prior to the current date/time) and
+	 * its end date (is null or after the current date/time).
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public Set findCurrentlyInstructingCourseOfferings(String userId);
+	
+	/**
+	 * Finds all CourseOfferings that contain an EnrollmentSet for
+	 * which a user is an instructor of record.
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public Set findAllInstructingCourseOfferings(String userId);
 
 	/**
 	 * Finds the set of Memberships for all Sections belonging to a current CourseOffering.

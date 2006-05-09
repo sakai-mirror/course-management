@@ -36,19 +36,19 @@ public class EnrollmentSetImpl extends AbstractNamedCourseManagementObject
 	private String category;
 	private String defaultEnrollmentCredits;
 	private CourseOffering courseOffering;
-	private Set officialGraders;
+	private Set officialInstructors;
 	
 	public EnrollmentSetImpl () {}
 	
 	public EnrollmentSetImpl(String eid, String title, String description, String category,
-			String defaultEnrollmentCredits, CourseOffering courseOffering, Set officialGraders) {
+			String defaultEnrollmentCredits, CourseOffering courseOffering, Set officialInstructors) {
 		this.eid = eid;
 		this.title = title;
 		this.description = description;
 		this.category = category;
 		this.defaultEnrollmentCredits = defaultEnrollmentCredits;
 		this.courseOffering = courseOffering;
-		this.officialGraders = officialGraders;
+		this.officialInstructors = officialInstructors;
 	}
 	
 	/**
@@ -86,11 +86,11 @@ public class EnrollmentSetImpl extends AbstractNamedCourseManagementObject
 		this.section = section;
 	}
 	
-	public Set getOfficialGraders() {
-		return officialGraders;
+	public Set getOfficialInstructors() {
+		return officialInstructors;
 	}
-	public void setOfficialGraders(Set officialGraders) {
-		this.officialGraders = officialGraders;
+	public void setOfficialInstructors(Set officialInstructors) {
+		this.officialInstructors = officialInstructors;
 	}
 	
 }
