@@ -53,7 +53,7 @@
 
     <query name="findCourseSetByCategory">
         <![CDATA[
-        from CourseSetImpl as cs where cs.category=:category
+        from CourseSetImpl as cs where cs.category=:category order by cs.title
         ]]>
     </query>
 
