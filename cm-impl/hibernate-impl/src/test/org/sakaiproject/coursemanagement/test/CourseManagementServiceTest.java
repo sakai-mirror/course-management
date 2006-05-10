@@ -251,6 +251,11 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Assert.assertEquals(1, gradableEnrollmentSets.size());
 	}
 
+	public void testGetInstructingCourseOfferingsByAcademicSession() throws Exception {
+		Set gradableEnrollmentSets = cm.findInstructingCourseOfferings("grader1", "F2006");
+		Assert.assertEquals(1, gradableEnrollmentSets.size());
+	}
+
 	public void testGetCurrentSectionMemberships() throws Exception {
 		// Even though this user is a member of two sections, one is in the future
 		Assert.assertEquals(1, cm.findCurrentSectionsWithMember("josh").size());

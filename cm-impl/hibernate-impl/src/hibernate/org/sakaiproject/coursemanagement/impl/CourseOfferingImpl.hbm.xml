@@ -34,4 +34,31 @@
         ]]>
     </query>
 
+	<query name="findCurrentlyInstructingCourseOfferings">
+        <![CDATA[
+        select co from CourseOfferingImpl as co, EnrollmentSetImpl as enrollmentSet
+        	where :userId in elements(enrollmentSet.officialInstructors) and
+        	co = enrollmentSet.courseOffering and
+        	(enrollmentSet.courseOffering.startDate is null or enrollmentSet.courseOffering.startDate <= sysdate) and
+        	(enrollmentSet.courseOffering.endDate is null or enrollmentSet.courseOffering.endDate >= sysdate)
+        ]]>
+    </query>
+
+	<query name="findAllInstructingCourseOfferings">
+        <![CDATA[
+        select co from CourseOfferingImpl as co, EnrollmentSetImpl as enrollmentSet
+        	where :userId in elements(enrollmentSet.officialInstructors) and
+        	co = enrollmentSet.courseOffering
+        ]]>
+    </query>
+    
+	<query name="findInstructingCourseOfferingsByAcademicSession">
+        <![CDATA[
+        select co from CourseOfferingImpl as co, EnrollmentSetImpl as enrollmentSet
+        	where :userId in elements(enrollmentSet.officialInstructors) and
+        	co = enrollmentSet.courseOffering and co.academicSession.eid = :academicSessionEid
+        ]]>
+    </query>
+
+
 </hibernate-mapping>

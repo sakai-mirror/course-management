@@ -351,6 +351,18 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
+	public Set findInstructingCourseOfferings(final String userId, final String academicSessionEid) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findInstructingCourseOfferingsByAcademicSession");
+				q.setParameter("userId", userId);
+				q.setParameter("academicSessionEid", academicSessionEid);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
+	}
+
 	public Set findCurrentSectionsWithMember(final String userId) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
@@ -426,4 +438,6 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		};
 		return getHibernateTemplate().executeFind(hc);
 	}
+
+
 }

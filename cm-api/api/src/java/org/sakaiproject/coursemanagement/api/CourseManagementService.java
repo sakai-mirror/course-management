@@ -350,4 +350,14 @@ public interface CourseManagementService {
 	 * @return
 	 */
 	public Set findCurrentSectionsWithMember(String userId);
+
+	/**
+	 * Finds the CourseOfferings in a given AcademicSession that contain an
+	 * EnrollmentSet for which a user is an instructor of record.
+	 * 
+	 * @param userId
+	 * @param academicSessionEid
+	 * @return
+	 */
+	public Set findInstructingCourseOfferings(String userId, String academicSessionEid);
 }
