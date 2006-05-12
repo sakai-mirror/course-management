@@ -51,11 +51,6 @@ public class EnrollmentSetImpl extends AbstractNamedCourseManagementObject
 		this.officialInstructors = officialInstructors;
 	}
 	
-	/**
-	 * The Section associated with this EnrollmentSet.  This may be null.
-	 */
-	private Section section;
-
 	public String getCategory() {
 		return category;
 	}
@@ -79,13 +74,6 @@ public class EnrollmentSetImpl extends AbstractNamedCourseManagementObject
 		this.defaultEnrollmentCredits = defaultEnrollmentCredits;
 	}
 
-	public Section getSection() {
-		return section;
-	}
-	public void setSection(Section section) {
-		this.section = section;
-	}
-	
 	public Set getOfficialInstructors() {
 		return officialInstructors;
 	}

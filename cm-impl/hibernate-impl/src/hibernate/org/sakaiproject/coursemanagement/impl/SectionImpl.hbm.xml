@@ -41,27 +41,21 @@
         ]]>
     </query>
 
-<!-- 
-	<query name="findMembersInCurrentSections">
+	<query name="findInstructingSections">
         <![CDATA[
-        select member from MembershipImpl as member, SectionImpl as section
-        	where member.userId=:userId and
-        	member.memberContainer=section and
-        	(section.courseOffering.startDate is null or section.courseOffering.startDate <= sysdate) and
-        	(section.courseOffering.endDate is null or section.courseOffering.endDate >= sysdate)
+        select sec from SectionImpl as sec, EnrollmentSetImpl as es
+        	where :userId in elements(es.officialInstructors) and
+        	sec.enrollmentSet = es
         ]]>
     </query>
--->
 
-<!-- 
-    <query name="findSectionMembership">
+	<query name="findInstructingSectionsByAcademicSession">
         <![CDATA[
-        select member from MembershipImpl as member, SectionImpl as section
-        	where member.memberContainer=section
-        	and section.eid=:sectionEid
-        	and member.userId=:userId
+        select sec from SectionImpl as sec, EnrollmentSetImpl as es
+        	where :userId in elements(es.officialInstructors) and
+        	sec.enrollmentSet = es and
+        	sec.courseOffering.academicSession.eid=:academicSessionEid
         ]]>
     </query>
--->
 
 </hibernate-mapping>

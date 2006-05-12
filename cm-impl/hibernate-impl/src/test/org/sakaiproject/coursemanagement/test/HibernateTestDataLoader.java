@@ -269,14 +269,15 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		enrollmentSet.setDescription("An enrollment set description");
 		enrollmentSet.setEid("BIO101_F2006_01_ES01");
 		enrollmentSet.setTitle("The lab enrollment set");
-		enrollmentSet.setSection(cm.getSection("BIO101_F2006_01_SEC01"));
-		
-		Set graders = new HashSet();
-		graders.add("grader1");
-		graders.add("grader2");
-		enrollmentSet.setOfficialInstructors(graders);
-		
+		Set officialInstructors = new HashSet();
+		officialInstructors.add("grader1");
+		officialInstructors.add("grader2");
+		enrollmentSet.setOfficialInstructors(officialInstructors);
 		getHibernateTemplate().save(enrollmentSet);
+
+		SectionImpl section = (SectionImpl)cm.getSection("BIO101_F2006_01_SEC01");
+		section.setEnrollmentSet(enrollmentSet);
+		getHibernateTemplate().update(section);
 		
 		EnrollmentSetImpl enrollmentSet2 = new EnrollmentSetImpl();
 		enrollmentSet2.setCategory("lab");

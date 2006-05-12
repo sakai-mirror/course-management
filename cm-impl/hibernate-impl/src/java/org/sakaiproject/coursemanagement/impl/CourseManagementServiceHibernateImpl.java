@@ -329,10 +329,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set findCurrentlyInstructingCourseOfferings(final String userId) {
+	public Set findInstructingSections(final String userId) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery("findCurrentlyInstructingCourseOfferings");
+				Query q = session.getNamedQuery("findInstructingSections");
 				q.setParameter("userId", userId);
 				return q.list();
 			}
@@ -340,21 +340,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set findAllInstructingCourseOfferings(final String userId) {
+	public Set findInstructingSections(final String userId, final String academicSessionEid) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery("findAllInstructingCourseOfferings");
-				q.setParameter("userId", userId);
-				return q.list();
-			}
-		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
-	}
-
-	public Set findInstructingCourseOfferings(final String userId, final String academicSessionEid) {
-		HibernateCallback hc = new HibernateCallback() {
-			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery("findInstructingCourseOfferingsByAcademicSession");
+				Query q = session.getNamedQuery("findInstructingSectionsByAcademicSession");
 				q.setParameter("userId", userId);
 				q.setParameter("academicSessionEid", academicSessionEid);
 				return q.list();

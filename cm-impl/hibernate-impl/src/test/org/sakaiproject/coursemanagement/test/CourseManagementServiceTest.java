@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 
 public class CourseManagementServiceTest extends CourseManagementTestBase {
@@ -241,22 +242,19 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Assert.assertEquals(1, gradableEnrollmentSets.size());
 	}
 
-	public void testGetCurrentInstructingCourseOfferings() throws Exception {
-		Set gradableEnrollmentSets = cm.findCurrentlyInstructingCourseOfferings("grader1");
-		Assert.assertEquals(1, gradableEnrollmentSets.size());
+	public void testFindInstructingSections() throws Exception {
+		Section section = (Section)cm.getSections("BIO101_F2006_01").iterator().next();
+		log.debug(section.getTitle() + " contains these instructors: " + section.getEnrollmentSet().getOfficialInstructors());
+		Set sections = cm.findInstructingSections("grader1");
+		Assert.assertEquals(1, sections.size());
 	}
 
-	public void testGetAllInstructingCourseOfferings() throws Exception {
-		Set gradableEnrollmentSets = cm.findAllInstructingCourseOfferings("grader1");
-		Assert.assertEquals(1, gradableEnrollmentSets.size());
+	public void testFindInstructingSectionsByAcademicSession() throws Exception {
+		Set sections = cm.findInstructingSections("grader1", "F2006");
+		Assert.assertEquals(1, sections.size());
 	}
 
-	public void testGetInstructingCourseOfferingsByAcademicSession() throws Exception {
-		Set gradableEnrollmentSets = cm.findInstructingCourseOfferings("grader1", "F2006");
-		Assert.assertEquals(1, gradableEnrollmentSets.size());
-	}
-
-	public void testGetCurrentSectionMemberships() throws Exception {
+	public void testFindCurrentSectionMemberships() throws Exception {
 		// Even though this user is a member of two sections, one is in the future
 		Assert.assertEquals(1, cm.findCurrentSectionsWithMember("josh").size());
 	}

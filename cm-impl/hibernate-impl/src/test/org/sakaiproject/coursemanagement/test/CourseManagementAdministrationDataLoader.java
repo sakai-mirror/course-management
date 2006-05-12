@@ -35,7 +35,7 @@ import junit.framework.TestCase;
  * so it's easy to execute via maven.
  * 
  * If you want to load data into a database, just modify this class, set your db connection
- * information in hibernate.properties, and run 'maven load-data'.
+ * information in hibernate.dataload.properties, and run 'maven load-data'.
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
@@ -60,7 +60,7 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		endCal.set(2007, 6, 1);
 		cmAdmin.createAcademicSession("sp2007", "Spring 2007", "The spring term, 2007", startCal.getTime(), endCal.getTime());
 		
-		cmAdmin.createAcademicSession("IND", "Independent Studies", "Ongoing session for independent study", null, null);
+		cmAdmin.createAcademicSession("IND", "Ongoing Courses", "Ongoing session for independent study", null, null);
 		
 		// Canonical Courses
 		cmAdmin.createCanonicalCourse("bio101", "Intro to Biology", "An introduction to biology");

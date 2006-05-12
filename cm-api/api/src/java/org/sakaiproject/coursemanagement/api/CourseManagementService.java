@@ -319,26 +319,26 @@ public interface CourseManagementService {
 	 * @return
 	 */
 	public Set findCurrentlyInstructingEnrollmentSets(String userId);
-
-	/**
-	 * Finds the set of current CourseOfferings that contain an EnrollmentSet for
-	 * which a user is an instructor of record.  An EnrollmentSet is considered current
-	 * if its CourseOffering's start date (is null or prior to the current date/time) and
-	 * its end date (is null or after the current date/time).
-	 * 
-	 * @param userId
-	 * @return
-	 */
-	public Set findCurrentlyInstructingCourseOfferings(String userId);
 	
 	/**
-	 * Finds all CourseOfferings that contain an EnrollmentSet for
+	 * Finds all Sections that are linked to an EnrollmentSet for
 	 * which a user is an instructor of record.
 	 * 
 	 * @param userId
 	 * @return
 	 */
-	public Set findAllInstructingCourseOfferings(String userId);
+	public Set findInstructingSections(String userId);
+
+	/**
+	 * Finds all Sections that are linked to an EnrollmentSet for which a user is an
+	 * instructor of record and which are part of a CourseOffering in a given
+	 * AcademicSession.
+	 * 
+	 * @param userId
+	 * @param academicSessionEid
+	 * @return
+	 */
+	public Set findInstructingSections(String userId, String academicSessionEid);
 
 	/**
 	 * Finds the set of Memberships for all Sections belonging to a current CourseOffering.
@@ -350,14 +350,4 @@ public interface CourseManagementService {
 	 * @return
 	 */
 	public Set findCurrentSectionsWithMember(String userId);
-
-	/**
-	 * Finds the CourseOfferings in a given AcademicSession that contain an
-	 * EnrollmentSet for which a user is an instructor of record.
-	 * 
-	 * @param userId
-	 * @param academicSessionEid
-	 * @return
-	 */
-	public Set findInstructingCourseOfferings(String userId, String academicSessionEid);
 }
