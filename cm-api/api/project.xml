@@ -2,7 +2,7 @@
 
 <project>
 	<pomVersion>3</pomVersion>
-    <extend>${basedir}/../../project.xml</extend>
+    <extend>${basedir}/../../../master/project.xml</extend>
 	<name>sakai-coursemanagement-api</name>
 	<groupId>sakaiproject</groupId>
     <id>sakai-coursemanagement-api</id>

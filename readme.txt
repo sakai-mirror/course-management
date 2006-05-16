@@ -1,1 +1,1 @@
-See xdocs/readme.txt for information on building and using this module.  See license.txt for the license and copyright.
+See xdocs/readme.txt for information on building and using this module.
