@@ -23,54 +23,43 @@ package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
 
-import org.sakaiproject.coursemanagement.api.CourseOffering;
-import org.sakaiproject.coursemanagement.api.EnrollmentSet;
-import org.sakaiproject.coursemanagement.api.Section;
+import org.sakaiproject.coursemanagement.api.Membership;
 
-public class SectionImpl extends AbstractMembershipContainer
-	implements Section, Serializable {
+public class MembershipCmImpl extends AbstractPersistentCourseManagementObjectCmImpl
+	implements Membership, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String category;
-	private CourseOffering courseOffering;
-	private Section parent;
-	private EnrollmentSet enrollmentSet;
+	private String userId;
+	private String role;
+	private AbstractMembershipContainerCmImpl memberContainer;
 	
-	public SectionImpl() {}
+	public MembershipCmImpl() {}
 	
-	public SectionImpl(String eid, String title, String description, String category, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet) {
-		this.eid = eid;
-		this.title = title;
-		this.description = description;
-		this.category = category;
-		this.parent = parent;
-		this.courseOffering = courseOffering;
-		this.enrollmentSet = enrollmentSet;
+	public MembershipCmImpl(String userId, String role, AbstractMembershipContainerCmImpl memberContainer) {
+		this.userId = userId;
+		this.role = role;
+		this.memberContainer = memberContainer;
+	}
+	
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public String getCategory() {
-		return category;
+	public AbstractMembershipContainerCmImpl getMemberContainer() {
+		return memberContainer;
 	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
-	public CourseOffering getCourseOffering() {
-		return courseOffering;
-	}
-	public void setCourseOffering(CourseOffering courseOffering) {
-		this.courseOffering = courseOffering;
-	}
-	public Section getParent() {
-		return parent;
-	}
-	public void setParent(Section parent) {
-		this.parent = parent;
-	}
-	public EnrollmentSet getEnrollmentSet() {
-		return enrollmentSet;
-	}
-	public void setEnrollmentSet(EnrollmentSet enrollmentSet) {
-		this.enrollmentSet = enrollmentSet;
+
+	public void setMemberContainer(AbstractMembershipContainerCmImpl memberContainer) {
+		this.memberContainer = memberContainer;
 	}
 }

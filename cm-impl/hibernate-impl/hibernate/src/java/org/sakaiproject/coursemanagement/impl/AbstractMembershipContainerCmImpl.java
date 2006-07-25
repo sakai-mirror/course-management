@@ -22,44 +22,18 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
+import java.util.Set;
 
-import org.sakaiproject.coursemanagement.api.Membership;
+public abstract class AbstractMembershipContainerCmImpl extends
+		AbstractNamedCourseManagementObjectCmImpl implements Serializable {
 
-public class MembershipImpl extends AbstractPersistentCourseManagementObject
-	implements Membership, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private Set members;
 
-	private String userId;
-	private String role;
-	private AbstractMembershipContainer memberContainer;
-	
-	public MembershipImpl() {}
-	
-	public MembershipImpl(String userId, String role, AbstractMembershipContainer memberContainer) {
-		this.userId = userId;
-		this.role = role;
-		this.memberContainer = memberContainer;
+	public Set getMembers() {
+		return members;
 	}
-	
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public AbstractMembershipContainer getMemberContainer() {
-		return memberContainer;
-	}
-
-	public void setMemberContainer(AbstractMembershipContainer memberContainer) {
-		this.memberContainer = memberContainer;
+	public void setMembers(Set members) {
+		this.members = members;
 	}
 }

@@ -24,45 +24,53 @@ package org.sakaiproject.coursemanagement.impl;
 import java.io.Serializable;
 import java.util.Set;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sakaiproject.coursemanagement.api.CanonicalCourse;
+import org.sakaiproject.coursemanagement.api.CourseSet;
 
-public class CanonicalCourseImpl extends CrossListable
-	implements CanonicalCourse, Serializable {
-	
+public class CourseSetCmImpl extends AbstractMembershipContainerCmImpl
+	implements CourseSet, Serializable {
+
 	private static final long serialVersionUID = 1L;
 
-	private CrossListing crossListing;
-	private Set courseSets;
+	private CourseSet parent;
+	private String category;
+	private Set courseOfferings;
+	private Set canonicalCourses;
 
-	public CanonicalCourseImpl() {}
-	public CanonicalCourseImpl(String eid, String title, String description) {
+	public CourseSetCmImpl() {}
+	
+	public CourseSetCmImpl(String eid, String title, String description, String category, CourseSet parent) {
 		this.eid = eid;
 		this.title = title;
 		this.description = description;
+		this.category = category;
+		this.parent = parent;
 	}
 	
-	public Set getCourseSets() {
-		return courseSets;
+	public CourseSet getParent() {
+		return parent;
 	}
-	public void setCourseSets(Set courseSets) {
-		this.courseSets = courseSets;
-	}
-	
-	public CrossListing getCrossListing() {
-		return crossListing;
-	}
-	public void setCrossListing(CrossListing crossListing) {
-		this.crossListing = crossListing;
+	public void setParent(CourseSet parent) {
+		this.parent = parent;
 	}
 	
-	public boolean equals(Object o) {
-		CanonicalCourse other = (CanonicalCourse)o;
-		return new EqualsBuilder().append(this.eid, other.getEid()).isEquals();
+	public Set getCourseOfferings() {
+		return courseOfferings;
 	}
-	
-	public int hashCode() {
-		return new HashCodeBuilder().append(eid).toHashCode();
+	public void setCourseOfferings(Set courseOfferings) {
+		this.courseOfferings = courseOfferings;
+	}
+
+	public Set getCanonicalCourses() {
+		return canonicalCourses;
+	}
+	public void setCanonicalCourses(Set canonicalCourses) {
+		this.canonicalCourses = canonicalCourses;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }

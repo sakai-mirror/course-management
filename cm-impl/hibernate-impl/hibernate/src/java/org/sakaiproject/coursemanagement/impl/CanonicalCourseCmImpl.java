@@ -21,13 +21,48 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-/**
- * A CrossListable is a CM entity that can be cross-listed.  This does not belong
- * in the API, since the CrossListing object is specific to the hibernate implementation.
- * 
- * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
- */
-public abstract class CrossListable extends AbstractMembershipContainer {
-	public abstract CrossListing getCrossListing();
-	public abstract void setCrossListing(CrossListing crossListing);
+import java.io.Serializable;
+import java.util.Set;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sakaiproject.coursemanagement.api.CanonicalCourse;
+
+public class CanonicalCourseCmImpl extends CrossListableCmImpl
+	implements CanonicalCourse, Serializable {
+	
+	private static final long serialVersionUID = 1L;
+
+	private CrossListingCmImpl crossListingCmImpl;
+	private Set courseSets;
+
+	public CanonicalCourseCmImpl() {}
+	public CanonicalCourseCmImpl(String eid, String title, String description) {
+		this.eid = eid;
+		this.title = title;
+		this.description = description;
+	}
+	
+	public Set getCourseSets() {
+		return courseSets;
+	}
+	public void setCourseSets(Set courseSets) {
+		this.courseSets = courseSets;
+	}
+	
+	public CrossListingCmImpl getCrossListing() {
+		return crossListingCmImpl;
+	}
+	public void setCrossListing(CrossListingCmImpl crossListingCmImpl) {
+		this.crossListingCmImpl = crossListingCmImpl;
+	}
+	
+	public boolean equals(Object o) {
+		CanonicalCourse other = (CanonicalCourse)o;
+		return new EqualsBuilder().append(this.eid, other.getEid()).isEquals();
+	}
+	
+	public int hashCode() {
+		return new HashCodeBuilder().append(eid).toHashCode();
+	}
 }

@@ -22,55 +22,31 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
-import java.util.Set;
 
-import org.sakaiproject.coursemanagement.api.CourseSet;
 
-public class CourseSetImpl extends AbstractMembershipContainer
-	implements CourseSet, Serializable {
-
-	private static final long serialVersionUID = 1L;
-
-	private CourseSet parent;
-	private String category;
-	private Set courseOfferings;
-	private Set canonicalCourses;
-
-	public CourseSetImpl() {}
+public abstract class AbstractNamedCourseManagementObjectCmImpl
+	extends AbstractPersistentCourseManagementObjectCmImpl  implements Serializable {
 	
-	public CourseSetImpl(String eid, String title, String description, String category, CourseSet parent) {
-		this.eid = eid;
-		this.title = title;
+	protected String title;
+	protected String description;
+	protected String eid;
+	
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
 		this.description = description;
-		this.category = category;
-		this.parent = parent;
 	}
-	
-	public CourseSet getParent() {
-		return parent;
+	public String getTitle() {
+		return title;
 	}
-	public void setParent(CourseSet parent) {
-		this.parent = parent;
+	public void setTitle(String title) {
+		this.title = title;
 	}
-	
-	public Set getCourseOfferings() {
-		return courseOfferings;
+	public String getEid() {
+		return eid;
 	}
-	public void setCourseOfferings(Set courseOfferings) {
-		this.courseOfferings = courseOfferings;
-	}
-
-	public Set getCanonicalCourses() {
-		return canonicalCourses;
-	}
-	public void setCanonicalCourses(Set canonicalCourses) {
-		this.canonicalCourses = canonicalCourses;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
+	public void setEid(String eid) {
+		this.eid = eid;
+	}	
 }

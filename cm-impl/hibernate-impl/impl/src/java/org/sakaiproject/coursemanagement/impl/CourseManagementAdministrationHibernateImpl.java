@@ -59,7 +59,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	
 	public void createAcademicSession(String eid, String title,
 			String description, Date startDate, Date endDate) throws IdExistsException {
-		AcademicSessionImpl academicSession = new AcademicSessionImpl(eid, title, description, startDate, endDate);
+		AcademicSessionCmImpl academicSession = new AcademicSessionCmImpl(eid, title, description, startDate, endDate);
 		try {
 			getHibernateTemplate().save(academicSession);
 		} catch (DataIntegrityViolationException dive) {
@@ -77,7 +77,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		if(parentCourseSetEid != null) {
 			parent = cmService.getCourseSet(parentCourseSetEid);
 		}
-		CourseSetImpl courseSet = new CourseSetImpl(eid, title, description, category, parent);
+		CourseSetCmImpl courseSet = new CourseSetCmImpl(eid, title, description, category, parent);
 		try {
 			getHibernateTemplate().save(courseSet);
 		} catch (DataIntegrityViolationException dive) {
@@ -90,7 +90,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void createCanonicalCourse(String eid, String title, String description) throws IdExistsException {
-		CanonicalCourseImpl canonCourse = new CanonicalCourseImpl(eid, title, description);
+		CanonicalCourseCmImpl canonCourse = new CanonicalCourseCmImpl(eid, title, description);
 		try {
 			getHibernateTemplate().save(canonCourse);
 		} catch (DataIntegrityViolationException dive) {
@@ -103,8 +103,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void addCanonicalCourseToCourseSet(String courseSetEid, String canonicalCourseEid) throws IdNotFoundException {
-		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
-		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)cmService.getCanonicalCourse(canonicalCourseEid);
+		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
+		CanonicalCourseCmImpl canonCourse = (CanonicalCourseCmImpl)cmService.getCanonicalCourse(canonicalCourseEid);
 		Set canonCourses = courseSet.getCanonicalCourses();
 		if(canonCourses == null) {
 			canonCourses = new HashSet();
@@ -115,8 +115,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeCanonicalCourseFromCourseSet(String courseSetEid, String canonicalCourseEid) {
-		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
-		CanonicalCourseImpl canonCourse = (CanonicalCourseImpl)cmService.getCanonicalCourse(canonicalCourseEid);
+		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
+		CanonicalCourseCmImpl canonCourse = (CanonicalCourseCmImpl)cmService.getCanonicalCourse(canonicalCourseEid);
 		Set courses = courseSet.getCanonicalCourses();
 		if(courses == null || ! courses.contains(canonCourse)) {
 			return false;
@@ -127,13 +127,13 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	private void setEquivalents(Set crossListables) {
-		CrossListing newCrossListing = new CrossListing();
+		CrossListingCmImpl newCrossListing = new CrossListingCmImpl();
 		getHibernateTemplate().save(newCrossListing);
 		Set oldCrossListings = new HashSet();
 
 		for(Iterator iter = crossListables.iterator(); iter.hasNext();) {
-			CrossListable clable = (CrossListable)iter.next();
-			CrossListing oldCrossListing = clable.getCrossListing();
+			CrossListableCmImpl clable = (CrossListableCmImpl)iter.next();
+			CrossListingCmImpl oldCrossListing = clable.getCrossListing();
 			if(oldCrossListing != null) {
 				oldCrossListings.add(oldCrossListing);
 			}
@@ -150,7 +150,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		setEquivalents(canonicalCourses);
 	}
 
-	private boolean removeEquiv(CrossListable impl) {
+	private boolean removeEquiv(CrossListableCmImpl impl) {
 		boolean hadCrossListing = impl.getCrossListing() != null;
 		impl.setCrossListing(null);
 		getHibernateTemplate().update(impl);
@@ -158,14 +158,14 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 	
 	public boolean removeEquivalency(CanonicalCourse canonicalCourse) {
-		return removeEquiv((CanonicalCourseImpl)canonicalCourse);
+		return removeEquiv((CanonicalCourseCmImpl)canonicalCourse);
 	}
 
 	public void createCourseOffering(String eid, String title, String description,
 			String academicSessionEid, String canonicalCourseEid, Date startDate, Date endDate) throws IdExistsException {
 		AcademicSession as = cmService.getAcademicSession(academicSessionEid);
 		CanonicalCourse cc = cmService.getCanonicalCourse(canonicalCourseEid);
-		CourseOfferingImpl co = new CourseOfferingImpl(eid, title, description, as, cc, startDate, endDate);
+		CourseOfferingCmImpl co = new CourseOfferingCmImpl(eid, title, description, as, cc, startDate, endDate);
 		try {
 			getHibernateTemplate().save(co);
 		} catch (DataIntegrityViolationException dive) {
@@ -182,12 +182,12 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeEquivalency(CourseOffering courseOffering) {
-		return removeEquiv((CrossListable)courseOffering);
+		return removeEquiv((CrossListableCmImpl)courseOffering);
 	}
 
 	public void addCourseOfferingToCourseSet(String courseSetEid, String courseOfferingEid) {
 		// CourseSet's set of courses are controlled on the CourseSet side of the bi-directional relationship
-		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
 		CourseOffering courseOffering = cmService.getCourseOffering(courseOfferingEid);
 		Set offerings = courseSet.getCourseOfferings();
 		if(offerings == null) {
@@ -199,7 +199,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeCourseOfferingFromCourseSet(String courseSetEid, String courseOfferingEid) {
-		CourseSetImpl courseSet = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
+		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
 		CourseOffering courseOffering = cmService.getCourseOffering(courseOfferingEid);
 		Set offerings = courseSet.getCourseOfferings();
 		if(offerings == null || ! offerings.contains(courseOffering)) {
@@ -217,7 +217,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			throw new IllegalArgumentException("You can not create an EnrollmentSet without specifying a courseOffering");
 		}
 		CourseOffering co = cmService.getCourseOffering(courseOfferingEid);
-		EnrollmentSetImpl enrollmentSet = new EnrollmentSetImpl(eid, title, description, category, defaultEnrollmentCredits, co, officialGraders);
+		EnrollmentSetCmImpl enrollmentSet = new EnrollmentSetCmImpl(eid, title, description, category, defaultEnrollmentCredits, co, officialGraders);
 		try {
 			getHibernateTemplate().save(enrollmentSet);
 		} catch (DataIntegrityViolationException dive) {
@@ -231,20 +231,20 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 	public void addOrUpdateEnrollment(String userId, String enrollmentSetEid, String enrollmentStatus, String credits, String gradingScheme) {
 		if(cmService.isEnrolled(userId,enrollmentSetEid)) {
-			EnrollmentImpl enrollment = (EnrollmentImpl)cmService.findEnrollment(userId, enrollmentSetEid);
+			EnrollmentCmImpl enrollment = (EnrollmentCmImpl)cmService.findEnrollment(userId, enrollmentSetEid);
 			enrollment.setEnrollmentStatus(enrollmentStatus);
 			enrollment.setCredits(credits);
 			enrollment.setGradingScheme(gradingScheme);
 			getHibernateTemplate().update(enrollment);
 		} else {
 			EnrollmentSet enrollmentSet = cmService.getEnrollmentSet(enrollmentSetEid);
-			EnrollmentImpl enrollment = new EnrollmentImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
+			EnrollmentCmImpl enrollment = new EnrollmentCmImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
 			getHibernateTemplate().save(enrollment);
 		}
 	}
 
 	public boolean removeEnrollment(String userId, String enrollmentSetEid) {
-		EnrollmentImpl enr = (EnrollmentImpl)cmService.findEnrollment(userId, enrollmentSetEid);
+		EnrollmentCmImpl enr = (EnrollmentCmImpl)cmService.findEnrollment(userId, enrollmentSetEid);
 		if(enr == null) {
 			return false;
 		} else {
@@ -277,7 +277,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			es = cmService.getEnrollmentSet(enrollmentSetEid);
 		}
 
-		SectionImpl section = new SectionImpl(eid, title, description, category, parent, co, es);
+		SectionCmImpl section = new SectionCmImpl(eid, title, description, category, parent, co, es);
 		try {
 			getHibernateTemplate().save(section);
 		} catch (DataIntegrityViolationException dive) {
@@ -290,11 +290,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 	
 	public void addOrUpdateCourseSetMembership(final String userId, String role, final String courseSetEid) throws IdNotFoundException {
-		CourseSetImpl cs = (CourseSetImpl)cmService.getCourseSet(courseSetEid);
-		MembershipImpl member =getMembership(userId, cs);
+		CourseSetCmImpl cs = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
+		MembershipCmImpl member =getMembership(userId, cs);
 		if(member == null) {
 			// Add the new member
-			member = new MembershipImpl(userId, role, cs);
+			member = new MembershipCmImpl(userId, role, cs);
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
@@ -304,7 +304,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeCourseSetMembership(String userId, String courseSetEid) {
-		MembershipImpl member = getMembership(userId, (CourseSetImpl)cmService.getCourseSet(courseSetEid));
+		MembershipCmImpl member = getMembership(userId, (CourseSetCmImpl)cmService.getCourseSet(courseSetEid));
 		if(member == null) {
 			return false;
 		} else {
@@ -314,11 +314,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid) {
-		CourseOfferingImpl co = (CourseOfferingImpl)cmService.getCourseOffering(courseOfferingEid);
-		MembershipImpl member =getMembership(userId, co);
+		CourseOfferingCmImpl co = (CourseOfferingCmImpl)cmService.getCourseOffering(courseOfferingEid);
+		MembershipCmImpl member =getMembership(userId, co);
 		if(member == null) {
 			// Add the new member
-			member = new MembershipImpl(userId, role, co);
+			member = new MembershipCmImpl(userId, role, co);
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
@@ -328,8 +328,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeCourseOfferingMembership(String userId, String courseOfferingEid) {
-		CourseOfferingImpl courseOffering = (CourseOfferingImpl)cmService.getCourseOffering(courseOfferingEid);
-		MembershipImpl member = getMembership(userId, courseOffering);
+		CourseOfferingCmImpl courseOffering = (CourseOfferingCmImpl)cmService.getCourseOffering(courseOfferingEid);
+		MembershipCmImpl member = getMembership(userId, courseOffering);
 		if(member == null) {
 			return false;
 		} else {
@@ -339,11 +339,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 	
 	public void addOrUpdateSectionMembership(String userId, String role, String sectionEid) {
-		SectionImpl sec = (SectionImpl)cmService.getSection(sectionEid);
-		MembershipImpl member =getMembership(userId, sec);
+		SectionCmImpl sec = (SectionCmImpl)cmService.getSection(sectionEid);
+		MembershipCmImpl member =getMembership(userId, sec);
 		if(member == null) {
 			// Add the new member
-			member = new MembershipImpl(userId, role, sec);
+			member = new MembershipCmImpl(userId, role, sec);
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
@@ -353,8 +353,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeSectionMembership(String userId, String sectionEid) {
-		SectionImpl sec = (SectionImpl)cmService.getSection(sectionEid);
-		MembershipImpl member = getMembership(userId, sec);
+		SectionCmImpl sec = (SectionCmImpl)cmService.getSection(sectionEid);
+		MembershipCmImpl member = getMembership(userId, sec);
 		if(member == null) {
 			return false;
 		} else {
@@ -363,8 +363,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 	}
 	
-	private MembershipImpl getMembership(final String userId, final AbstractMembershipContainer container) {
-        final StringBuffer sb = new StringBuffer("select member from MembershipImpl as member, ");
+	private MembershipCmImpl getMembership(final String userId, final AbstractMembershipContainerCmImpl container) {
+        final StringBuffer sb = new StringBuffer("select member from MembershipCmImpl as member, ");
 		sb.append(container.getClass().getName());
         sb.append(" as container where member.memberContainer=container ");
         sb.append("and container.eid=:eid ");
@@ -378,7 +378,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 				return q.uniqueResult();
 			}
 		};
-		return (MembershipImpl)getHibernateTemplate().execute(hc);
+		return (MembershipCmImpl)getHibernateTemplate().execute(hc);
 	}
 
 }

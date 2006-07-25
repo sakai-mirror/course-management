@@ -3,7 +3,7 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 
-	<class name="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" table="CM_ENROLLMENT_SET_T">
+	<class name="org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl" table="CM_ENROLLMENT_SET_T">
 
 		<id name="key" column="ENROLLMENT_SET_ID" type="long">
 			<generator class="native">
@@ -29,26 +29,26 @@
 			<element type="string" column="INSTRUCTOR_ID" />
 		</set>
 
-		<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_ENR_SET_CO_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
+		<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_ENR_SET_CO_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl" />
 
 	</class>
 	
 	<query name="findEnrollmentSetByEid">
         <![CDATA[
-        from EnrollmentSetImpl as es where es.eid=:eid
+        from EnrollmentSetCmImpl as es where es.eid=:eid
         ]]>
     </query>
 
 
 	<query name="findEnrollmentSetsByCourseOffering">
         <![CDATA[
-        from EnrollmentSetImpl as es where es.courseOffering.eid=:courseOfferingEid
+        from EnrollmentSetCmImpl as es where es.courseOffering.eid=:courseOfferingEid
         ]]>
     </query>
 
 	<query name="findCurrentlyInstructingEnrollmentSets">
         <![CDATA[
-        from EnrollmentSetImpl as enrollmentSet where :userId in elements(enrollmentSet.officialInstructors) and
+        from EnrollmentSetCmImpl as enrollmentSet where :userId in elements(enrollmentSet.officialInstructors) and
         	(enrollmentSet.courseOffering.startDate is null or enrollmentSet.courseOffering.startDate <= sysdate) and
         	(enrollmentSet.courseOffering.endDate is null or enrollmentSet.courseOffering.endDate >= sysdate)
         ]]>

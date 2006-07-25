@@ -29,21 +29,21 @@ import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 
-public class CourseOfferingImpl extends CrossListable
+public class CourseOfferingCmImpl extends CrossListableCmImpl
 	implements CourseOffering, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private CanonicalCourse canonicalCourse;
 	private AcademicSession academicSession;
-	private CrossListing crossListing;
+	private CrossListingCmImpl crossListingCmImpl;
 	private Set courseSets;
 	private Date startDate;
 	private Date endDate;
 
-	public CourseOfferingImpl() {}
+	public CourseOfferingCmImpl() {}
 	
-	public CourseOfferingImpl(String eid, String title, String description, AcademicSession academicSession, CanonicalCourse canonicalCourse, Date startDate, Date endDate) {
+	public CourseOfferingCmImpl(String eid, String title, String description, AcademicSession academicSession, CanonicalCourse canonicalCourse, Date startDate, Date endDate) {
 		this.eid = eid;
 		this.title = title;
 		this.description = description;
@@ -60,11 +60,11 @@ public class CourseOfferingImpl extends CrossListable
 		this.courseSets = courseSets;
 	}
 
-	public CrossListing getCrossListing() {
-		return crossListing;
+	public CrossListingCmImpl getCrossListing() {
+		return crossListingCmImpl;
 	}
-	public void setCrossListing(CrossListing crossListing) {
-		this.crossListing = crossListing;
+	public void setCrossListing(CrossListingCmImpl crossListingCmImpl) {
+		this.crossListingCmImpl = crossListingCmImpl;
 	}
 
 	public CanonicalCourse getCanonicalCourse() {

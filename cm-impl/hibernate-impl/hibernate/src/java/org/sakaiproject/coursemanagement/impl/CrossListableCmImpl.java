@@ -21,19 +21,13 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import java.io.Serializable;
-import java.util.Set;
-
-public abstract class AbstractMembershipContainer extends
-		AbstractNamedCourseManagementObject implements Serializable {
-
-
-	private Set members;
-
-	public Set getMembers() {
-		return members;
-	}
-	public void setMembers(Set members) {
-		this.members = members;
-	}
+/**
+ * A CrossListableCmImpl is a CM entity that can be cross-listed.  This does not belong
+ * in the API, since the CrossListingCmImpl object is specific to the hibernate implementation.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ */
+public abstract class CrossListableCmImpl extends AbstractMembershipContainerCmImpl {
+	public abstract CrossListingCmImpl getCrossListing();
+	public abstract void setCrossListing(CrossListingCmImpl crossListingCmImpl);
 }

@@ -2,38 +2,38 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
-	<subclass name="org.sakaiproject.coursemanagement.impl.SectionImpl"
-			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainer">
+	<subclass name="org.sakaiproject.coursemanagement.impl.SectionCmImpl"
+			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl">
 
 		<property name="category" column="CATEGORY" type="string" />
 
-		<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_SECTION_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl" />
-		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl" />
-		<many-to-one name="parent" column="PARENT_SECTION" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionImpl" />
+		<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_SECTION_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl" />
+		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl" />
+		<many-to-one name="parent" column="PARENT_SECTION" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionCmImpl" />
 
 	</subclass>
 
     <query name="findSectionByEid">
         <![CDATA[
-        from SectionImpl as sec where sec.eid=:eid
+        from SectionCmImpl as sec where sec.eid=:eid
         ]]>
     </query>
 
     <query name="findTopLevelSectionsInCourseOffering">
         <![CDATA[
-        from SectionImpl as sec where sec.courseOffering=:courseOffering and sec.parent is null
+        from SectionCmImpl as sec where sec.courseOffering=:courseOffering and sec.parent is null
         ]]>
     </query>
 
     <query name="findChildSections">
         <![CDATA[
-        from SectionImpl as sec where sec.parent.eid=:parentEid
+        from SectionCmImpl as sec where sec.parent.eid=:parentEid
         ]]>
     </query>
 
 	<query name="findCurrentSectionsWithMember">
         <![CDATA[
-        select section from SectionImpl as section, MembershipImpl as member
+        select section from SectionCmImpl as section, MembershipCmImpl as member
         	where member.userId=:userId and
         	member.memberContainer=section and
         	(section.courseOffering.startDate is null or section.courseOffering.startDate <= sysdate) and
@@ -43,7 +43,7 @@
 
 	<query name="findInstructingSections">
         <![CDATA[
-        select sec from SectionImpl as sec, EnrollmentSetImpl as es
+        select sec from SectionCmImpl as sec, EnrollmentSetCmImpl as es
         	where :userId in elements(es.officialInstructors) and
         	sec.enrollmentSet = es
         ]]>
@@ -51,7 +51,7 @@
 
 	<query name="findInstructingSectionsByAcademicSession">
         <![CDATA[
-        select sec from SectionImpl as sec, EnrollmentSetImpl as es
+        select sec from SectionCmImpl as sec, EnrollmentSetCmImpl as es
         	where :userId in elements(es.officialInstructors) and
         	sec.enrollmentSet = es and
         	sec.courseOffering.academicSession.eid=:academicSessionEid

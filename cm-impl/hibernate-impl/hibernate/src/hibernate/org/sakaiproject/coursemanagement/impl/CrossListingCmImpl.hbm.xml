@@ -3,7 +3,7 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 
-	<class name="org.sakaiproject.coursemanagement.impl.CrossListing" table="CM_CROSS_LISTING_T">
+	<class name="org.sakaiproject.coursemanagement.impl.CrossListingCmImpl" table="CM_CROSS_LISTING_T">
 
 		<id name="key" column="CROSS_LISTING_ID" type="long">
 			<generator class="native">
@@ -20,25 +20,25 @@
 
 		<set name="canonicalCourses" inverse="true">
 			<key column="ID" />
-			<one-to-many class="org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl"/>
+			<one-to-many class="org.sakaiproject.coursemanagement.impl.CanonicalCourseCmImpl"/>
 		</set>
 
 		<set name="courseOfferings" inverse="true">
 			<key column="ID" />
-			<one-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingImpl"/>
+			<one-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl"/>
 		</set>
 
 	</class>
 
     <query name="findEquivalentCanonicalCourses">
         <![CDATA[
-        from CanonicalCourseImpl as cc where cc.crossListing=:crossListing and cc != :canonicalCourse
+        from CanonicalCourseCmImpl as cc where cc.crossListing=:crossListing and cc != :canonicalCourse
         ]]>
     </query>
 
     <query name="findEquivalentCourseOfferings">
         <![CDATA[
-        from CourseOfferingImpl as co where co.crossListing=:crossListing and co != :courseOffering
+        from CourseOfferingCmImpl as co where co.crossListing=:crossListing and co != :courseOffering
         ]]>
     </query>
 

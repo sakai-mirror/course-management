@@ -26,7 +26,7 @@ import java.io.Serializable;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 
-public class EnrollmentImpl extends AbstractPersistentCourseManagementObject
+public class EnrollmentCmImpl extends AbstractPersistentCourseManagementObjectCmImpl
 	implements Enrollment, Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -38,9 +38,9 @@ public class EnrollmentImpl extends AbstractPersistentCourseManagementObject
 	private String gradingScheme;
 	private boolean dropped;
 	
-	public EnrollmentImpl() {}
+	public EnrollmentCmImpl() {}
 	
-	public EnrollmentImpl(String userId, EnrollmentSet enrollmentSet, String enrollmentStatus, String credits, String gradingScheme) {
+	public EnrollmentCmImpl(String userId, EnrollmentSet enrollmentSet, String enrollmentStatus, String credits, String gradingScheme) {
 		this.userId = userId;
 		this.enrollmentSet = enrollmentSet;
 		this.enrollmentStatus = enrollmentStatus;

@@ -76,7 +76,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	
 	
 	public CourseSet getCourseSet(String eid) throws IdNotFoundException {
-		return (CourseSet)getObjectByEid(eid, CourseSetImpl.class.getName(), "findCourseSetByEid");
+		return (CourseSet)getObjectByEid(eid, CourseSetCmImpl.class.getName(), "findCourseSetByEid");
 	}
 
 	public Set getChildCourseSets(final String parentCourseSetEid) {
@@ -105,15 +105,15 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getCourseSetMemberships(String courseSetEid) throws IdNotFoundException {
-		return getMemberships((CourseSetImpl)getCourseSet(courseSetEid));
+		return getMemberships((CourseSetCmImpl)getCourseSet(courseSetEid));
 	}
 
 	public CanonicalCourse getCanonicalCourse(String eid) throws IdNotFoundException {
-		return (CanonicalCourse)getObjectByEid(eid, CanonicalCourseImpl.class.getName(), "findCanonicalCourseByEid");
+		return (CanonicalCourse)getObjectByEid(eid, CanonicalCourseCmImpl.class.getName(), "findCanonicalCourseByEid");
 	}
 
 	public Set getEquivalentCanonicalCourses(String canonicalCourseEid) {
-		final CanonicalCourseImpl canonicalCourse = (CanonicalCourseImpl)getCanonicalCourse(canonicalCourseEid);
+		final CanonicalCourseCmImpl canonicalCourse = (CanonicalCourseCmImpl)getCanonicalCourse(canonicalCourseEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findEquivalentCanonicalCourses");
@@ -126,7 +126,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getCanonicalCourses(final String courseSetEid) throws IdNotFoundException {
-		return ((CourseSetImpl)getCourseSet(courseSetEid)).getCanonicalCourses();
+		return ((CourseSetCmImpl)getCourseSet(courseSetEid)).getCanonicalCourses();
 	}
 
 	public List getAcademicSessions() {
@@ -150,19 +150,19 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public AcademicSession getAcademicSession(final String eid) throws IdNotFoundException {
-		return (AcademicSession)getObjectByEid(eid, AcademicSessionImpl.class.getName(), "findAcademicSessionByEid");
+		return (AcademicSession)getObjectByEid(eid, AcademicSessionCmImpl.class.getName(), "findAcademicSessionByEid");
 	}
 	
 	public CourseOffering getCourseOffering(String eid) throws IdNotFoundException {
-		return (CourseOffering)getObjectByEid(eid, CourseOfferingImpl.class.getName(), "findCourseOfferingByEid");
+		return (CourseOffering)getObjectByEid(eid, CourseOfferingCmImpl.class.getName(), "findCourseOfferingByEid");
 	}
 
 	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException {
-		return ((CourseSetImpl)getCourseSet(courseSetEid)).getCourseOfferings();
+		return ((CourseSetCmImpl)getCourseSet(courseSetEid)).getCourseOfferings();
 	}
 
 	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {
-		final CourseOfferingImpl courseOffering = (CourseOfferingImpl)getCourseOffering(courseOfferingEid);
+		final CourseOfferingCmImpl courseOffering = (CourseOfferingCmImpl)getCourseOffering(courseOfferingEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findEquivalentCourseOfferings");
@@ -175,7 +175,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException {
-		return getMemberships((CourseOfferingImpl)getCourseOffering(courseOfferingEid));
+		return getMemberships((CourseOfferingCmImpl)getCourseOffering(courseOfferingEid));
 	}
 
 	/**
@@ -186,10 +186,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	 * @param container
 	 * @return
 	 */
-	private Set getMemberships(final AbstractMembershipContainer container) {
+	private Set getMemberships(final AbstractMembershipContainerCmImpl container) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				StringBuffer sb = new StringBuffer("select member from MembershipImpl as member, ");
+				StringBuffer sb = new StringBuffer("select member from MembershipCmImpl as member, ");
 					sb.append(container.getClass().getName());
 					sb.append(" as container where member.memberContainer=container ");
 					sb.append("and container.eid=:eid");
@@ -203,7 +203,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 
 
 	public Section getSection(String eid) throws IdNotFoundException {
-		return (Section)getObjectByEid(eid, SectionImpl.class.getName(), "findSectionByEid");
+		return (Section)getObjectByEid(eid, SectionCmImpl.class.getName(), "findSectionByEid");
 	}
 
 	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
@@ -233,11 +233,11 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getSectionMemberships(String sectionEid) throws IdNotFoundException {
-		return getMemberships((SectionImpl)getSection(sectionEid));
+		return getMemberships((SectionCmImpl)getSection(sectionEid));
 	}
 
 	public EnrollmentSet getEnrollmentSet(String eid) throws IdNotFoundException {
-		return (EnrollmentSet)getObjectByEid(eid, EnrollmentSetImpl.class.getName(), "findEnrollmentSetByEid");
+		return (EnrollmentSet)getObjectByEid(eid, EnrollmentSetCmImpl.class.getName(), "findEnrollmentSetByEid");
 	}
 
 	public Set getEnrollmentSets(final String courseOfferingEid) throws IdNotFoundException {
@@ -363,8 +363,8 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	private MembershipImpl getMembership(final String userId, final AbstractMembershipContainer container) {
-        final StringBuffer sb = new StringBuffer("select member from MembershipImpl as member, ");
+	private MembershipCmImpl getMembership(final String userId, final AbstractMembershipContainerCmImpl container) {
+        final StringBuffer sb = new StringBuffer("select member from MembershipCmImpl as member, ");
 		sb.append(container.getClass().getName());
         sb.append(" as container where member.memberContainer=container ");
         sb.append("and container.eid=:eid ");
@@ -378,11 +378,11 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				return q.uniqueResult();
 			}
 		};
-		return (MembershipImpl)getHibernateTemplate().execute(hc);
+		return (MembershipCmImpl)getHibernateTemplate().execute(hc);
 	}
 
 	public String getSectionRole(final String sectionEid, final String userId) {
-		SectionImpl section = (SectionImpl)getSection(sectionEid);
+		SectionCmImpl section = (SectionCmImpl)getSection(sectionEid);
 		Membership member = getMembership(userId, section);
 		if(member == null) {
 			return null;

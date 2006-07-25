@@ -22,31 +22,38 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import org.sakaiproject.coursemanagement.api.AcademicSession;
 
-public abstract class AbstractNamedCourseManagementObject
-	extends AbstractPersistentCourseManagementObject  implements Serializable {
+public class AcademicSessionCmImpl extends AbstractNamedCourseManagementObjectCmImpl
+	implements AcademicSession, Serializable {
 	
-	protected String title;
-	protected String description;
-	protected String eid;
+	private static final long serialVersionUID = 1L;
+
+	private Date startDate;
+	private Date endDate;
 	
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public String getEid() {
-		return eid;
-	}
-	public void setEid(String eid) {
+	public AcademicSessionCmImpl() {}
+	
+	public AcademicSessionCmImpl(String eid, String title, String description, Date startDate, Date endDate) {
 		this.eid = eid;
-	}	
+		this.title = title;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
 }

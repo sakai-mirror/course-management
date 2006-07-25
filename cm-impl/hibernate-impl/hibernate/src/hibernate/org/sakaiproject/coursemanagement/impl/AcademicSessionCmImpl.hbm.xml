@@ -3,7 +3,7 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 
-    <class name="org.sakaiproject.coursemanagement.impl.AcademicSessionImpl"
+    <class name="org.sakaiproject.coursemanagement.impl.AcademicSessionCmImpl"
         table="CM_ACADEMIC_SESSION_T">
 
         <id name="key" column="ACADEMIC_SESSION_ID" type="long">
@@ -29,13 +29,13 @@
     
     <query name="findAcademicSessions">
         <![CDATA[
-        from AcademicSessionImpl as term order by term.startDate
+        from AcademicSessionCmImpl as term order by term.startDate
         ]]>
     </query>
 
     <query name="findCurrentAcademicSessions">
         <![CDATA[
-        from AcademicSessionImpl as term where
+        from AcademicSessionCmImpl as term where
         	(term.startDate is null or term.startDate <= sysdate) and
         	(term.endDate is null or term.endDate >= sysdate)
         	order by term.startDate
@@ -44,7 +44,7 @@
 
     <query name="findAcademicSessionByEid">
         <![CDATA[
-        from AcademicSessionImpl as term where term.eid=:eid
+        from AcademicSessionCmImpl as term where term.eid=:eid
         ]]>
     </query>
 

@@ -22,38 +22,49 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Set;
 
-import org.sakaiproject.coursemanagement.api.AcademicSession;
+/**
+ * Models a cross listing between two CrossListableCmImpl entities.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ */
+public class CrossListingCmImpl extends AbstractPersistentCourseManagementObjectCmImpl
+	implements Serializable{
 
-public class AcademicSessionImpl extends AbstractNamedCourseManagementObject
-	implements AcademicSession, Serializable {
-	
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * The set of canonicalCourses that are associated together in this CrossListingCmImpl
+	 */
+	private Set canonicalCourses;
 
-	private Date startDate;
-	private Date endDate;
-	
-	public AcademicSessionImpl() {}
-	
-	public AcademicSessionImpl(String eid, String title, String description, Date startDate, Date endDate) {
-		this.eid = eid;
-		this.title = title;
-		this.description = description;
-		this.startDate = startDate;
-		this.endDate = endDate;
+	/**
+	 * The set of courseOfferings that are associated together in this CrossListingCmImpl
+	 */
+	private Set courseOfferings;
+
+	/**
+	 * Whether this CrossListingCmImpl is defined by the enterprise
+	 */
+	private boolean enterpriseManaged;
+
+	public Set getCanonicalCourses() {
+		return canonicalCourses;
 	}
-	
-	public Date getEndDate() {
-		return endDate;
+	public void setCanonicalCourses(Set canonicalCourses) {
+		this.canonicalCourses = canonicalCourses;
 	}
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public Set getCourseOfferings() {
+		return courseOfferings;
 	}
-	public Date getStartDate() {
-		return startDate;
+	public void setCourseOfferings(Set courseOfferings) {
+		this.courseOfferings = courseOfferings;
 	}
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public boolean isEnterpriseManaged() {
+		return enterpriseManaged;
+	}
+	public void setEnterpriseManaged(boolean enterpriseManaged) {
+		this.enterpriseManaged = enterpriseManaged;
 	}
 }

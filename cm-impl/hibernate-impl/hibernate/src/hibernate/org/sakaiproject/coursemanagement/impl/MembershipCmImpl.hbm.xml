@@ -3,7 +3,7 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
 
-	<class name="org.sakaiproject.coursemanagement.impl.MembershipImpl" table="CM_MEMBERSHIP_T">
+	<class name="org.sakaiproject.coursemanagement.impl.MembershipCmImpl" table="CM_MEMBERSHIP_T">
 
 		<id name="key" column="MEMBER_ID" type="long">
 			<generator class="native">
@@ -16,7 +16,7 @@
 		<property name="userId" column="USER_ID" type="string" not-null="true" />
 		<property name="role" column="ROLE" type="string" not-null="true" />
 
-		<many-to-one name="memberContainer" column="MEMBER_CONTAINER_ID" class="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainer" />
+		<many-to-one name="memberContainer" column="MEMBER_CONTAINER_ID" class="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl" />
 
 	</class>
 

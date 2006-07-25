@@ -32,15 +32,15 @@ import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
-import org.sakaiproject.coursemanagement.impl.AcademicSessionImpl;
-import org.sakaiproject.coursemanagement.impl.CanonicalCourseImpl;
-import org.sakaiproject.coursemanagement.impl.CourseOfferingImpl;
-import org.sakaiproject.coursemanagement.impl.CourseSetImpl;
-import org.sakaiproject.coursemanagement.impl.CrossListing;
-import org.sakaiproject.coursemanagement.impl.EnrollmentImpl;
-import org.sakaiproject.coursemanagement.impl.EnrollmentSetImpl;
-import org.sakaiproject.coursemanagement.impl.MembershipImpl;
-import org.sakaiproject.coursemanagement.impl.SectionImpl;
+import org.sakaiproject.coursemanagement.impl.AcademicSessionCmImpl;
+import org.sakaiproject.coursemanagement.impl.CanonicalCourseCmImpl;
+import org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl;
+import org.sakaiproject.coursemanagement.impl.CourseSetCmImpl;
+import org.sakaiproject.coursemanagement.impl.CrossListingCmImpl;
+import org.sakaiproject.coursemanagement.impl.EnrollmentCmImpl;
+import org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl;
+import org.sakaiproject.coursemanagement.impl.MembershipCmImpl;
+import org.sakaiproject.coursemanagement.impl.SectionCmImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
@@ -82,7 +82,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	}
 	
 	void loadAcademicSessions() {
-		AcademicSessionImpl term = new AcademicSessionImpl();
+		AcademicSessionCmImpl term = new AcademicSessionCmImpl();
 		term.setEid("F2006");
 		term.setTitle("Fall 2006");
 		term.setDescription("Fall 2006, starts Sept 1, 2006");
@@ -90,51 +90,51 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	}
 	
 	void loadCourseSetsAndMembers() {
-		CourseSetImpl cSet = new CourseSetImpl("BIO_DEPT", "Biology Department", "Department of Biology", "DEPT", null);
+		CourseSetCmImpl cSet = new CourseSetCmImpl("BIO_DEPT", "Biology Department", "Department of Biology", "DEPT", null);
 		getHibernateTemplate().save(cSet);
 
-		MembershipImpl courseSetMember = new MembershipImpl();
+		MembershipCmImpl courseSetMember = new MembershipCmImpl();
 		courseSetMember.setRole("departmentAdmin");
 		courseSetMember.setUserId("user1");
 		courseSetMember.setMemberContainer(cSet);
 		getHibernateTemplate().save(courseSetMember);
 		
-		CourseSetImpl cSetChild = new CourseSetImpl("BIO_CHEM_GROUP", "Biochem Group", "Biochemistry group, Department of Biology", "DEPT_GROUP", cSet);
+		CourseSetCmImpl cSetChild = new CourseSetCmImpl("BIO_CHEM_GROUP", "Biochem Group", "Biochemistry group, Department of Biology", "DEPT_GROUP", cSet);
 		getHibernateTemplate().save(cSetChild);
 		
-		CourseSetImpl cSetEmpty = new CourseSetImpl("EMPTY_COURSE_SET", "Empty CourseSet", "Empty CourseSet", null, null);
+		CourseSetCmImpl cSetEmpty = new CourseSetCmImpl("EMPTY_COURSE_SET", "Empty CourseSet", "Empty CourseSet", null, null);
 		getHibernateTemplate().save(cSetEmpty);
 	}
 
 	void loadCanonicalCourses() {
 		// Cross-list bio and chem (but not English)
-		CrossListing cl = new CrossListing();
+		CrossListingCmImpl cl = new CrossListingCmImpl();
 		getHibernateTemplate().save(cl);
 
 		// Build and save the CanonicalCourses
-		CanonicalCourseImpl cc1 = new CanonicalCourseImpl();
+		CanonicalCourseCmImpl cc1 = new CanonicalCourseCmImpl();
 		cc1.setEid("BIO101");
 		cc1.setTitle("Biology 101");
 		cc1.setDescription("An intro to biology");
 		cc1.setCrossListing(cl);
 		getHibernateTemplate().save(cc1);
 				
-		CanonicalCourseImpl cc2 = new CanonicalCourseImpl();
+		CanonicalCourseCmImpl cc2 = new CanonicalCourseCmImpl();
 		cc2.setEid("CHEM101");
 		cc2.setTitle("Chem 101");
 		cc2.setDescription("An intro to chemistry");
 		cc2.setCrossListing(cl);
 		getHibernateTemplate().save(cc2);
 				
-		CanonicalCourseImpl cc3 = new CanonicalCourseImpl();
+		CanonicalCourseCmImpl cc3 = new CanonicalCourseCmImpl();
 		cc3.setEid("ENG101");
 		cc3.setTitle("English 101");
 		cc3.setDescription("An intro to English");
 		getHibernateTemplate().save(cc3);
 				
 		// Add these canonical courses to course sets
-		CourseSetImpl bioCset = (CourseSetImpl)cm.getCourseSet("BIO_DEPT");
-		CourseSetImpl bioChemCset = (CourseSetImpl)cm.getCourseSet("BIO_CHEM_GROUP");
+		CourseSetCmImpl bioCset = (CourseSetCmImpl)cm.getCourseSet("BIO_DEPT");
+		CourseSetCmImpl bioChemCset = (CourseSetCmImpl)cm.getCourseSet("BIO_CHEM_GROUP");
 		
 		Set bioCourses = new HashSet();
 		bioCourses.add(cc1);
@@ -152,15 +152,15 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	void loadCourseOfferings() {
 		// Get the object dependencies
 		AcademicSession term = cm.getAcademicSession("F2006");
-		CanonicalCourseImpl cc1 = (CanonicalCourseImpl)cm.getCanonicalCourse("BIO101");
-		CanonicalCourseImpl cc2 = (CanonicalCourseImpl)cm.getCanonicalCourse("CHEM101");
-		CanonicalCourseImpl cc3 = (CanonicalCourseImpl)cm.getCanonicalCourse("ENG101");
+		CanonicalCourseCmImpl cc1 = (CanonicalCourseCmImpl)cm.getCanonicalCourse("BIO101");
+		CanonicalCourseCmImpl cc2 = (CanonicalCourseCmImpl)cm.getCanonicalCourse("CHEM101");
+		CanonicalCourseCmImpl cc3 = (CanonicalCourseCmImpl)cm.getCanonicalCourse("ENG101");
 
 		// Cross list bio and chem, but not English
-		CrossListing cl = new CrossListing();
+		CrossListingCmImpl cl = new CrossListingCmImpl();
 		getHibernateTemplate().save(cl);
 
-		CourseOfferingImpl co1 = new CourseOfferingImpl();
+		CourseOfferingCmImpl co1 = new CourseOfferingCmImpl();
 		co1.setAcademicSession(term);
 		co1.setCanonicalCourse(cc1);
 		co1.setCrossListing(cl);
@@ -174,7 +174,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 
 		getHibernateTemplate().save(co1);
 
-		CourseOfferingImpl co2 = new CourseOfferingImpl();
+		CourseOfferingCmImpl co2 = new CourseOfferingCmImpl();
 		co2.setAcademicSession(term);
 		co2.setCanonicalCourse(cc2);
 		co2.setCrossListing(cl);
@@ -188,7 +188,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 
 		getHibernateTemplate().save(co2);
 
-		CourseOfferingImpl co3 = new CourseOfferingImpl();
+		CourseOfferingCmImpl co3 = new CourseOfferingCmImpl();
 		co3.setAcademicSession(term);
 		co3.setCanonicalCourse(cc3);
 		co3.setEid("ENG101_F2006_01");
@@ -197,8 +197,8 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		getHibernateTemplate().save(co3);
 
 		// Add these course offerings to course sets
-		CourseSetImpl bioCset = (CourseSetImpl)cm.getCourseSet("BIO_DEPT");
-		CourseSetImpl bioChemCset = (CourseSetImpl)cm.getCourseSet("BIO_CHEM_GROUP");
+		CourseSetCmImpl bioCset = (CourseSetCmImpl)cm.getCourseSet("BIO_DEPT");
+		CourseSetCmImpl bioChemCset = (CourseSetCmImpl)cm.getCourseSet("BIO_CHEM_GROUP");
 		
 		Set bioCourses = new HashSet();
 		bioCourses.add(co1);
@@ -217,7 +217,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		CourseOffering co = cm.getCourseOffering("BIO101_F2006_01");
 
 		// Add a section
-		SectionImpl section = new SectionImpl();
+		SectionCmImpl section = new SectionCmImpl();
 		section.setCategory("lecture");
 		section.setCourseOffering(co);
 		section.setDescription("The lecture");
@@ -226,14 +226,14 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		getHibernateTemplate().save(section);
 
 		// Add a membership to this section
-		MembershipImpl member = new MembershipImpl();
+		MembershipCmImpl member = new MembershipCmImpl();
 		member.setRole("student");
 		member.setUserId("josh");
 		member.setMemberContainer(section);
 		getHibernateTemplate().save(member);
 
 		// Add a child section
-		SectionImpl childSection = new SectionImpl();
+		SectionCmImpl childSection = new SectionCmImpl();
 		childSection.setCategory("lab");
 		childSection.setCourseOffering(co);
 		childSection.setDescription("Joe's monday morning lab");
@@ -245,7 +245,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		// Add a section for the future course offering
 		CourseOffering futureCo = cm.getCourseOffering("CHEM101_F2006_01");
 		
-		SectionImpl futureSection = new SectionImpl();
+		SectionCmImpl futureSection = new SectionCmImpl();
 		futureSection.setCategory("lab");
 		futureSection.setCourseOffering(futureCo);
 		futureSection.setDescription("Future lab");
@@ -254,7 +254,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		getHibernateTemplate().save(futureSection);
 
 		// Add a member to this future section
-		MembershipImpl member2 = new MembershipImpl();
+		MembershipCmImpl member2 = new MembershipCmImpl();
 		member2.setRole("student");
 		member2.setUserId("josh");
 		member2.setMemberContainer(futureSection);
@@ -262,7 +262,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	}
 	
 	void loadEnrollmentSets() {
-		EnrollmentSetImpl enrollmentSet = new EnrollmentSetImpl();
+		EnrollmentSetCmImpl enrollmentSet = new EnrollmentSetCmImpl();
 		enrollmentSet.setCategory("lab");
 		enrollmentSet.setCourseOffering(cm.getCourseOffering("BIO101_F2006_01"));
 		enrollmentSet.setDefaultEnrollmentCredits("3");
@@ -275,11 +275,11 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		enrollmentSet.setOfficialInstructors(officialInstructors);
 		getHibernateTemplate().save(enrollmentSet);
 
-		SectionImpl section = (SectionImpl)cm.getSection("BIO101_F2006_01_SEC01");
+		SectionCmImpl section = (SectionCmImpl)cm.getSection("BIO101_F2006_01_SEC01");
 		section.setEnrollmentSet(enrollmentSet);
 		getHibernateTemplate().update(section);
 		
-		EnrollmentSetImpl enrollmentSet2 = new EnrollmentSetImpl();
+		EnrollmentSetCmImpl enrollmentSet2 = new EnrollmentSetCmImpl();
 		enrollmentSet2.setCategory("lab");
 		enrollmentSet2.setCourseOffering(cm.getCourseOffering("CHEM101_F2006_01"));
 		enrollmentSet2.setDefaultEnrollmentCredits("3");
@@ -292,7 +292,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	
 	void loadEnrollments() {
 		EnrollmentSet enrollmentSet = cm.getEnrollmentSet("BIO101_F2006_01_ES01");
-		EnrollmentImpl enrollment = new EnrollmentImpl();
+		EnrollmentCmImpl enrollment = new EnrollmentCmImpl();
 		enrollment.setCredits("3");
 		enrollment.setEnrollmentSet(enrollmentSet);
 		enrollment.setEnrollmentStatus("waitlisted");
@@ -301,7 +301,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		getHibernateTemplate().save(enrollment);
 		
 		EnrollmentSet enrollmentSet2 = cm.getEnrollmentSet("CHEM101_F2006_01_ES01");
-		EnrollmentImpl enrollment2 = new EnrollmentImpl();
+		EnrollmentCmImpl enrollment2 = new EnrollmentCmImpl();
 		enrollment2.setCredits("3");
 		enrollment2.setEnrollmentSet(enrollmentSet2);
 		enrollment2.setEnrollmentStatus("officially enrolled");

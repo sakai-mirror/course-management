@@ -7,16 +7,16 @@
 		class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
 		<property name="mappingResources">
 			<list>
-                <value>org/sakaiproject/coursemanagement/impl/AcademicSessionImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/MembershipContainer.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/CanonicalCourseImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/CourseOfferingImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/CourseSetImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/CrossListing.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/EnrollmentImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/EnrollmentSetImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/MembershipImpl.hbm.xml</value>
-                <value>org/sakaiproject/coursemanagement/impl/SectionImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/AcademicSessionCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/MembershipContainerCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/CanonicalCourseCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/CourseOfferingCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/CourseSetCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/CrossListingCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/EnrollmentCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/EnrollmentSetCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/MembershipCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/SectionCmImpl.hbm.xml</value>
 			</list>
 		</property>
 	</bean>

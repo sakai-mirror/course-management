@@ -24,7 +24,7 @@ package org.sakaiproject.coursemanagement.impl;
 import java.io.Serializable;
 import java.util.Date;
 
-public abstract class AbstractPersistentCourseManagementObject implements Serializable {
+public abstract class AbstractPersistentCourseManagementObjectCmImpl implements Serializable {
 
 	/**
 	 * The DB's primary key for this object / record.
