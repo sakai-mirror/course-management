@@ -39,6 +39,12 @@ public interface EnrollmentSet {
 	public String getEid();
 
 	/**
+	 * What authority defines this object?
+	 * @return 
+	 */
+	public String getAuthority();
+
+	/**
 	 * The title
 	 * @return
 	 */

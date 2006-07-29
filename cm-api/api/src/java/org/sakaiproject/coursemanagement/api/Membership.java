@@ -38,4 +38,11 @@ public interface Membership {
 	 * @return
 	 */
 	public String getRole();
+
+
+	/**
+	 * What authority defines this object?
+	 * @return 
+	 */
+	public String getAuthority();
 }

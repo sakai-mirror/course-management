@@ -79,7 +79,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (CourseSet)getObjectByEid(eid, CourseSetCmImpl.class.getName(), "findCourseSetByEid");
 	}
 
-	public Set getChildCourseSets(final String parentCourseSetEid) {
+	public Set getChildCourseSets(final String parentCourseSetEid) throws IdNotFoundException {
 		// Ensure that the parent exists
 		// TODO Add exists() methods rather than loading the entire object
 		getCourseSet(parentCourseSetEid);

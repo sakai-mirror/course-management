@@ -37,6 +37,12 @@ public interface CanonicalCourse {
 	public String getEid();
 
 	/**
+	 * What authority defines this object?
+	 * @return 
+	 */
+	public String getAuthority();
+
+	/**
 	 * The title
 	 * @return
 	 */

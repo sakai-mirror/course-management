@@ -26,6 +26,8 @@ import java.util.Date;
 
 public abstract class AbstractPersistentCourseManagementObjectCmImpl implements Serializable {
 
+	public static final String AUTHORITY = "Sakai";
+	
 	/**
 	 * The DB's primary key for this object / record.
 	 */
@@ -93,5 +95,9 @@ public abstract class AbstractPersistentCourseManagementObjectCmImpl implements 
 	}
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
+	}
+	
+	public String getAuthority() {
+		return AUTHORITY;
 	}
 }

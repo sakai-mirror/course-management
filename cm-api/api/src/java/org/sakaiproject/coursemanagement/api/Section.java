@@ -36,6 +36,12 @@ public interface Section {
 	public String getEid();
 
 	/**
+	 * What authority defines this object?
+	 * @return 
+	 */
+	public String getAuthority();
+
+	/**
 	 * Gets the title of this Section.
 	 * @return
 	 */
