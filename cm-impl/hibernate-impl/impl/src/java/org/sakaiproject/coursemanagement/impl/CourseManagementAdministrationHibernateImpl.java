@@ -10,7 +10,7 @@
  * understand, and will comply with the terms and conditions of the Educational Community License.
  * You may obtain a copy of the License at:
  * 
- *      https://source.sakaiproject.org/svn/sakai/trunk/sakai_license_1_0.html
+ *      http://www.opensource.org/licenses/ecl1.txt
  * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
  * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
@@ -46,6 +46,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
+/**
+ * Manipulates course and enrollment data stored in sakai's local hibernate tables.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ *
+ */
 public class CourseManagementAdministrationHibernateImpl extends
 		HibernateDaoSupport implements CourseManagementAdministration {
 

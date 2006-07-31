@@ -1,3 +1,24 @@
+/**********************************************************************************
+ * $URL$
+ * $Id$
+ **********************************************************************************
+ *
+ * Copyright (c) 2005 The Regents of the University of California
+ * 
+ * Licensed under the Educational Community License Version 1.0 (the "License");
+ * By obtaining, using and/or copying this Original Work, you agree that you have read,
+ * understand, and will comply with the terms and conditions of the Educational Community License.
+ * You may obtain a copy of the License at:
+ * 
+ *      http://www.opensource.org/licenses/ecl1.txt
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+ * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
 import java.util.ArrayList;
@@ -21,14 +42,28 @@ import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 
 /**
+ * <p>
  * Federates multiple CourseManagementService implementations.  Each individual implementation
  * must follow the following pattern to participate in federation:
+ * </p>
  * 
- * If the implementation doesn't have any information about a particular method, it should:
+ * <p>
+ * If the implementation doesn't have any information about a particular method and would
+ * like to defer to other impls in the chain, it should:
  * 
- * -- Throw an IdNotFoundException if the return type is an object and the method throws this exception
- * -- Return null if the return type is an object and the method does not throw IdNotFoundException
- * -- Throw UnsupportedOperationException if the return type is a primitive
+ * <ul>
+ * 	<li>Throw an IdNotFoundException if the return type is an object and the method throws this exception</li>
+ * 	<li>Return null if the return type is an object and the method does not throw IdNotFoundException</li>
+ * 	<li>Throw UnsupportedOperationException if the return type is a primitive</li>
+ * </ul>
+ * 
+ * Please ensure that your implementation is internally consistent.  If you implement
+ * getEnrollments(String enrollmentSetEid), for instance, you should also implement
+ * the isEnrolled() methods.  If you implement one but not the other, the data
+ * provided by the CourseManagementService will be dependent on <i>how</i>
+ * the client calls the API, rather than getting a consistent picture no matter which
+ * methods are called.
+ * </p>
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  *
