@@ -182,4 +182,7 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 		throw new UnsupportedOperationException();
 	}
 
+	public Set findEnrolledSections(String userId) {
+		return null;
+	}
 }

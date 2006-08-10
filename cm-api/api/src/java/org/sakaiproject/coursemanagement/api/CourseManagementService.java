@@ -223,10 +223,10 @@ public interface CourseManagementService {
 	 * member of the Section.
 	 * 
 	 * @param sectionEid The Section's eid
-	 * @param userId The user's id
+	 * @param userEid The user's id
 	 * @return The enterprise-defined role string
 	 */
-	public String getSectionRole(String sectionEid, String userId);
+	public String getSectionRole(String sectionEid, String userEid);
 	
 	/**
 	 * Gets an EnrollmentSet by its eid.
@@ -270,20 +270,20 @@ public interface CourseManagementService {
 	 * Determines whether a user is enrolled in an EnrollmentSet.  This
 	 * method is needed to implement Sakai's GroupProvider.
 	 * 
-	 * @param userId The student's userId
+	 * @param userEid The student's userEid
 	 * @param enrollmentSetEids The set of EnrollmentSetEids
 	 * @return
 	 */
-	public boolean isEnrolled(String userId, Set enrollmentSetEids);
+	public boolean isEnrolled(String userEid, Set enrollmentSetEids);
 
 	/**
 	 * Convenience method for checking whether a user is enrolled in an EnrollmentSet.
 	 * 
-	 * @param userId
+	 * @param userEid
 	 * @param enrollmentSetEid
 	 * @return
 	 */
-	public boolean isEnrolled(String userId, String enrollmentSetEid);
+	public boolean isEnrolled(String userEid, String enrollmentSetEid);
 
 
 	/**
@@ -292,11 +292,11 @@ public interface CourseManagementService {
 	 * 
 	 * TODO Should this throw more descriptive exceptions e.g. when the EnrollmentSet doesn't exist?
 	 * 
-	 * @param userId
+	 * @param userEid
 	 * @param enrollmentSetEid
 	 * @return
 	 */
-	public Enrollment findEnrollment(String userId, String enrollmentSetEid);
+	public Enrollment findEnrollment(String userEid, String enrollmentSetEid);
 
 	/**
 	 * Finds the set of current EnrollmentSets for which a user is enrolled.
@@ -304,10 +304,10 @@ public interface CourseManagementService {
 	 * (is null or prior to the current date/time) and its end date (is null or
 	 * after the current date/time).
 	 * 
-	 * @param userId
+	 * @param userEid
 	 * @return
 	 */
-	public Set findCurrentlyEnrolledEnrollmentSets(String userId);
+	public Set findCurrentlyEnrolledEnrollmentSets(String userEid);
 
 	/**
 	 * Finds the set of current EnrollmentSets for which a user is an instructor of
@@ -315,30 +315,39 @@ public interface CourseManagementService {
 	 * date (is null or prior to the current date/time) and its end date (is null or
 	 * after the current date/time).
 	 * 
-	 * @param userId
+	 * @param userEid
 	 * @return
 	 */
-	public Set findCurrentlyInstructingEnrollmentSets(String userId);
+	public Set findCurrentlyInstructingEnrollmentSets(String userEid);
 	
 	/**
 	 * Finds all Sections that are linked to an EnrollmentSet for
 	 * which a user is an instructor of record.
 	 * 
-	 * @param userId
+	 * @param userEid
 	 * @return
 	 */
-	public Set findInstructingSections(String userId);
+	public Set findInstructingSections(String userEid);
+
+	/**
+	 * Finds all Sections that are linked to an EnrollmentSet for
+	 * which a user is enrolled.
+	 * 
+	 * @param userEid
+	 * @return
+	 */
+	public Set findEnrolledSections(String userEid);
 
 	/**
 	 * Finds all Sections that are linked to an EnrollmentSet for which a user is an
 	 * instructor of record and which are part of a CourseOffering in a given
 	 * AcademicSession.
 	 * 
-	 * @param userId
+	 * @param userEid
 	 * @param academicSessionEid
 	 * @return
 	 */
-	public Set findInstructingSections(String userId, String academicSessionEid) throws IdNotFoundException;
+	public Set findInstructingSections(String userEid, String academicSessionEid) throws IdNotFoundException;
 
 	/**
 	 * Finds the set of Memberships for all Sections belonging to a current CourseOffering.
@@ -346,8 +355,8 @@ public interface CourseManagementService {
 	 * (is null or prior to the current date/time) and its end date (is null or
 	 * after the current date/time).
 	 * 
-	 * @param userId
+	 * @param userEid
 	 * @return
 	 */
-	public Set findCurrentSectionsWithMember(String userId);
+	public Set findCurrentSectionsWithMember(String userEid);
 }

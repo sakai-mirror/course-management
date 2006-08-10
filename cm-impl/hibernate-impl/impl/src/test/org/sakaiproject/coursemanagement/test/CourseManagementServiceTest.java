@@ -199,6 +199,10 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		} catch(IdNotFoundException ide) {}
 	}
 	
+	public void testFindEnrolledSections() throws Exception {
+		Assert.assertEquals(2, cm.findEnrolledSections("josh").size());
+	}
+
 	public void testGetEnrollment() throws Exception {
 		Assert.assertNotNull(cm.findEnrollment("josh", "BIO101_F2006_01_ES01"));
 		Assert.assertNull(cm.findEnrollment("josh", "bad eid"));

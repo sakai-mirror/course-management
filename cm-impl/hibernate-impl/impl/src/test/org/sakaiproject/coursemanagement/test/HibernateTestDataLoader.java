@@ -262,22 +262,22 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	}
 	
 	void loadEnrollmentSets() {
-		EnrollmentSetCmImpl enrollmentSet = new EnrollmentSetCmImpl();
-		enrollmentSet.setCategory("lab");
-		enrollmentSet.setCourseOffering(cm.getCourseOffering("BIO101_F2006_01"));
-		enrollmentSet.setDefaultEnrollmentCredits("3");
-		enrollmentSet.setDescription("An enrollment set description");
-		enrollmentSet.setEid("BIO101_F2006_01_ES01");
-		enrollmentSet.setTitle("The lab enrollment set");
+		EnrollmentSetCmImpl enrollmentSet1 = new EnrollmentSetCmImpl();
+		enrollmentSet1.setCategory("lab");
+		enrollmentSet1.setCourseOffering(cm.getCourseOffering("BIO101_F2006_01"));
+		enrollmentSet1.setDefaultEnrollmentCredits("3");
+		enrollmentSet1.setDescription("An enrollment set description");
+		enrollmentSet1.setEid("BIO101_F2006_01_ES01");
+		enrollmentSet1.setTitle("The lab enrollment set");
 		Set officialInstructors = new HashSet();
 		officialInstructors.add("grader1");
 		officialInstructors.add("grader2");
-		enrollmentSet.setOfficialInstructors(officialInstructors);
-		getHibernateTemplate().save(enrollmentSet);
+		enrollmentSet1.setOfficialInstructors(officialInstructors);
+		getHibernateTemplate().save(enrollmentSet1);
 
-		SectionCmImpl section = (SectionCmImpl)cm.getSection("BIO101_F2006_01_SEC01");
-		section.setEnrollmentSet(enrollmentSet);
-		getHibernateTemplate().update(section);
+		SectionCmImpl section1 = (SectionCmImpl)cm.getSection("BIO101_F2006_01_SEC01");
+		section1.setEnrollmentSet(enrollmentSet1);
+		getHibernateTemplate().update(section1);
 		
 		EnrollmentSetCmImpl enrollmentSet2 = new EnrollmentSetCmImpl();
 		enrollmentSet2.setCategory("lab");
@@ -288,7 +288,11 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		enrollmentSet2.setTitle("The lab enrollment set");
 
 		getHibernateTemplate().save(enrollmentSet2);
-	}
+
+		SectionCmImpl section2 = (SectionCmImpl)cm.getSection("CHEM101_F2006_01_SEC01");
+		section2.setEnrollmentSet(enrollmentSet2);
+		getHibernateTemplate().update(section2);
+}
 	
 	void loadEnrollments() {
 		EnrollmentSet enrollmentSet = cm.getEnrollmentSet("BIO101_F2006_01_ES01");

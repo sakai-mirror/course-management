@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="false">
 	<subclass name="org.sakaiproject.coursemanagement.impl.SectionCmImpl"
 			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl">
 
@@ -55,6 +55,14 @@
         	where :userId in elements(es.officialInstructors) and
         	sec.enrollmentSet = es and
         	sec.courseOffering.academicSession.eid=:academicSessionEid
+        ]]>
+    </query>
+
+	<query name="findEnrolledSections">
+        <![CDATA[
+        select sec from SectionCmImpl as sec, EnrollmentCmImpl as enr
+        	where enr.userId = :userId and
+        	sec.enrollmentSet = enr.enrollmentSet
         ]]>
     </query>
 

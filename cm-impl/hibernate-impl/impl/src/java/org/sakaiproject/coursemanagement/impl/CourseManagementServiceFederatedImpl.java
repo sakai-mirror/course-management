@@ -683,4 +683,16 @@ public class CourseManagementServiceFederatedImpl implements
 			return as1.getStartDate().compareTo(as2.getStartDate());
 		}
 	};
+
+	public Set findEnrolledSections(String userId) {
+		Set resultSet = new HashSet();
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			Set set = cm.findEnrolledSections(userId);
+			if(set != null) {
+				resultSet.addAll(set);
+			}
+		}
+		return resultSet;
+	}
 }
