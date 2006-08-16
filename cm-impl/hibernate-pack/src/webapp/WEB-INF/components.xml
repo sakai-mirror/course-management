@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springkernel.org/dtd/spring-beans.dtd">
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
 
@@ -79,5 +79,27 @@
         </property>
 	</bean>
 
+	<!-- CourseManagement Group Provider -->
+<!-- 
+	<bean id="org.sakaiproject.authz.api.GroupProvider"
+			class="org.sakaiproject.coursemanagement.impl.CourseManagementGroupProvider"
+			init-method="init"
+			destroy-method="destroy"
+			singleton="true">
+			<property name="cmService">
+				<ref bean="org.sakaiproject.coursemanagement.api.CourseManagementService"/>
+			</property>
+			<property name="roleMap">
+				<map>
+					<entry key="I" value="Instructor" />
+					<entry key="S" value="Student" />
+					<entry key="CE" value="Student" />					
+				</map>
+			</property>
+			<property name="defaultSakaiRole" value="Student" />
+			<property name="enrollmentRole" value="Student" />
+	</bean>
+ -->
+ 	
 </beans>
 
