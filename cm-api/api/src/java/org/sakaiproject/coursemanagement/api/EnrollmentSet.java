@@ -36,30 +36,35 @@ public interface EnrollmentSet {
 	 * @return
 	 */
 	public String getEid();
+	public void setEid(String eid);
 
 	/**
 	 * What authority defines this object?
 	 * @return 
 	 */
 	public String getAuthority();
+	public void setAuthority(String authority);
 
 	/**
 	 * The title
 	 * @return
 	 */
 	public String getTitle();
+	public void setTitle(String title);
 
 	/**
 	 * A description
 	 * @return
 	 */
 	public String getDescription();
+	public void setDescription(String description);
 
 	/**
 	 * A category
 	 * @return
 	 */
 	public String getCategory();
+	public void setCategory(String category);
 	
 	/**
 	 * The default credits an Enrollment should have, if not specified by the
@@ -67,10 +72,12 @@ public interface EnrollmentSet {
 	 * @return
 	 */
 	public String getDefaultEnrollmentCredits();
+	public void setDefaultEnrollmentCredits(String defaultEnrollmentCredits);
 	
 	/**
 	 * The official grader(s) for this EnrollmentSet.
 	 * @return
 	 */
 	public Set getOfficialInstructors();
+	public void setOfficialInstructors(Set officialInstructors);
 }

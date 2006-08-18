@@ -43,34 +43,40 @@ public interface AcademicSession {
 	 * @return
 	 */
 	public String getEid();
+	public void setEid(String eid);
 	
 	/**
 	 * What authority defines this object?
 	 * @return 
 	 */
 	public String getAuthority();
+	public void setAuthority(String authority);
 
 	/**
 	 * The title
 	 * @return
 	 */
 	public String getTitle();
+	public void setTitle(String title);
 	
 	/**
 	 * A description
 	 * @return
 	 */
 	public String getDescription();
+	public void setDescription(String description);
 	
 	/**
 	 * The date this AcademicSession starts (if any).
 	 * @return
 	 */
 	public Date getStartDate();
+	public void setStartDate(Date startDate);
 	
 	/**
 	 * The date this AcademicSession ends (if any).
 	 * @return
 	 */
 	public Date getEndDate();
+	public void setEndDate(Date endDate);
 }

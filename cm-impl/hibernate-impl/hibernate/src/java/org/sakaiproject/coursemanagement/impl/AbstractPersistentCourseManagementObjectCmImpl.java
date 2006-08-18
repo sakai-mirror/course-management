@@ -23,6 +23,8 @@ package org.sakaiproject.coursemanagement.impl;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.naming.OperationNotSupportedException;
+
 public abstract class AbstractPersistentCourseManagementObjectCmImpl implements Serializable {
 
 	public static final String AUTHORITY = "Sakai";
@@ -98,5 +100,10 @@ public abstract class AbstractPersistentCourseManagementObjectCmImpl implements 
 	
 	public String getAuthority() {
 		return AUTHORITY;
+	}
+	
+	public void setAuthority(String authority) {
+		throw new RuntimeException("You can not change the authority of this CM object.  Authority = " +
+				AbstractPersistentCourseManagementObjectCmImpl.AUTHORITY);
 	}
 }

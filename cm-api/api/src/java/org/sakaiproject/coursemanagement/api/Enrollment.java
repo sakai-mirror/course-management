@@ -29,8 +29,17 @@ package org.sakaiproject.coursemanagement.api;
  */
 public interface Enrollment {
 	public String getUserId();
+	public void setUserId(String userId);
+
 	public String getAuthority();
+	public void setAuthority(String authority);
+	
 	public String getEnrollmentStatus();
+	public void setEnrollmentStatus(String enrollmentStatus);
+	
 	public String getCredits();
+	public void setCredits(String credits);
+	
 	public String getGradingScheme();
+	public void setGradingScheme(String gradingScheme);
 }

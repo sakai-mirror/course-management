@@ -62,6 +62,14 @@ public class CourseManagementAdministrationHibernateImpl extends
 		this.cmService = cmService;
 	}
 	
+	public void init() {
+		log.info("Initializing " + getClass().getName());
+	}
+
+	public void destroy() {
+		log.info("Destroying " + getClass().getName());
+	}
+	
 	public void createAcademicSession(String eid, String title,
 			String description, Date startDate, Date endDate) throws IdExistsException {
 		AcademicSessionCmImpl academicSession = new AcademicSessionCmImpl(eid, title, description, startDate, endDate);

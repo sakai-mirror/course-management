@@ -34,30 +34,35 @@ public interface CourseOffering {
 	 * @return
 	 */
 	public String getEid();
+	public void setEid(String eid);
 
 	/**
 	 * What authority defines this object?
 	 * @return 
 	 */
 	public String getAuthority();
+	public void setAuthority(String authority);
 
 	/**
 	 * Gets the title of this CourseOffering.
 	 * @return
 	 */
 	public String getTitle();
+	public void setTitle(String title);
 	
 	/**
 	 * Gets the description of this CourseOffering.
 	 * @return
 	 */
 	public String getDescription();
+	public void setDescription(String description);
 
 	/**
 	 * The AcademicSession for this course offering
 	 * @return
 	 */
 	public AcademicSession getAcademicSession();
+	public void setAcademicSession(AcademicSession academicSession);
 
 	/**
 	 * The date this CourseOffering starts (if any).  Typically, a CourseOffering
@@ -67,6 +72,7 @@ public interface CourseOffering {
 	 * @return
 	 */
 	public Date getStartDate();
+	public void setStartDate(Date startDate);
 	
 	/**
 	 * The date this CourseOffering ends (if any).  Typically, a CourseOffering
@@ -76,4 +82,5 @@ public interface CourseOffering {
 	 * @return
 	 */
 	public Date getEndDate();	
+	public void setEndDate(Date endDate);
 }

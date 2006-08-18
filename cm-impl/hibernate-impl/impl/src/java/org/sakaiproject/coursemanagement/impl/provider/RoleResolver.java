@@ -18,42 +18,27 @@
  * limitations under the License.
  *
  **********************************************************************************/
-package org.sakaiproject.coursemanagement.api;
+package org.sakaiproject.coursemanagement.impl.provider;
 
-/**
- * A CanonicalCourse represents the aspects of a course that stay the same across
- * instances of a course. A CanonicalCourse exists whether there are any instances
- * of the course or not.
- * 
- * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
- */
-public interface CanonicalCourse {
+import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.Section;
+
+public interface RoleResolver {
 
 	/**
-	 * A unique enterprise id
-	 * @return
+	 * Used to communicate with the CM Group Provider
 	 */
-	public String getEid();
-	public void setEid(String eid);
-
-	/**
-	 * What authority defines this object?
-	 * @return 
-	 */
-	public String getAuthority();
-	public void setAuthority(String authority);
-
-	/**
-	 * The title
-	 * @return
-	 */
-	public String getTitle();
-	public void setTitle(String title);
+	public static final String ENROLLMENT_ROLE="sakai.cm.enrollment";
 	
 	/**
-	 * A description
-	 * @return
+	 * Gets the user's role in a CM object.  A RoleResolver implementation
+	 * will typically use the cmService to look "up" from the section in the CM
+	 * hierarchy to find the object it's interested in, then find any membership roles
+	 * associated with the user.
+	 * 
+	 * @param userEid The user's enterprise ID
+	 * @param section The section from which to start searching "up" the hierarchy
+	 * @return The user's role, or null if the user has no role in this CM object
 	 */
-	public String getDescription();
-	public void setDescription(String description);
+	public String getUserRole(CourseManagementService cmService, String userEid, Section section);
 }

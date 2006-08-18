@@ -58,31 +58,69 @@
 	</bean>
 
 
+	<!--
+		This is a complex bean that's hard to read, so here's the "wrapper hierarchy":
+
+		Transaction Proxy
+			Authz Proxy
+				CM Admin Hibernate Impl
+
+		Note that is service operates only on the CM data managed by hibernate.  Any
+		other data that is federated with the hibernate data (see the
+		org.sakaiproject.coursemanagement.api.CourseManagementService bean for
+		details on federation) is not available for manipulation by the CM Admin service.
+	-->
 	<bean id="org.sakaiproject.coursemanagement.api.CourseManagementAdministration"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
 		</property>
-        <property name="transactionAttributes">
-            <props>
-                <prop key="*">PROPAGATION_REQUIRED</prop>
-            </props>
-        </property>
-        <property name="target">
-            <bean class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl">
-        		<property name="sessionFactory">
-	        		<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+		<property name="target">
+			<bean class="org.springframework.aop.framework.ProxyFactoryBean">
+				<property name="proxyInterfaces">
+					<value>org.sakaiproject.coursemanagement.api.CourseManagementAdministration</value>
 				</property>
-        		<!-- Use the internal hibernate service only, not the federated service -->
-	        	<property name="cmService"><ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl"/></property>
-            </bean>
-        </property>
+				<property name="interceptorNames">
+					<list><value>cmAdminAuthzAdvisor</value></list>
+				</property>
+				<property name="target">
+					<bean class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl"
+						init-method="init" destroy-method="destroy">
+						<property name="sessionFactory">
+							<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+						</property>
+						<!-- Use the internal hibernate service only, not the federated service -->
+						<property name="cmService">
+							<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" />
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</property>
 	</bean>
 
+	<!-- AOP Advisor performs Authz checks for the CM Admin service -->
+	<bean id="cmAdminAuthzAdvisor" 
+	    class="org.springframework.aop.support.DefaultPointcutAdvisor">
+	    <property name="advice">
+	    	<bean class="org.sakaiproject.coursemanagement.impl.aop.CourseManagementAdministrationAuthzAdvisor">
+				<property name="securityService">
+					<ref bean="org.sakaiproject.authz.api.SecurityService" />
+				</property>
+	    	</bean>
+	    </property>
+	</bean>
+   
+
 	<!-- CourseManagement Group Provider -->
-<!-- 
+<!--
 	<bean id="org.sakaiproject.authz.api.GroupProvider"
-			class="org.sakaiproject.coursemanagement.impl.CourseManagementGroupProvider"
+			class="org.sakaiproject.coursemanagement.impl.provider.CourseManagementGroupProvider"
 			init-method="init"
 			destroy-method="destroy"
 			singleton="true">
@@ -98,8 +136,14 @@
 			</property>
 			<property name="defaultSakaiRole" value="Student" />
 			<property name="enrollmentRole" value="Student" />
+			<property name="roleResolvers">
+				<list>
+					<bean class="org.sakaiproject.coursemanagement.impl.provider.SectionRoleResolver"/>
+					<bean class="org.sakaiproject.coursemanagement.impl.provider.CourseOfferingRoleResolver"/>
+				</list>
+			</property>
 	</bean>
- -->
+-->
  	
 </beans>
 

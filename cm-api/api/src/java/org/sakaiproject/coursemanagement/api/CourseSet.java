@@ -32,30 +32,35 @@ public interface CourseSet {
 	 * @return
 	 */
 	public String getEid();
+	public void setEid(String eid);
 
 	/**
 	 * What authority defines this object?
 	 * @return 
 	 */
 	public String getAuthority();
+	public void setAuthority(String authority);
 
 	/**
 	 * Gets the title of this MembershipContainer.
 	 * @return
 	 */
 	public String getTitle();
+	public void setTitle(String title);
 	
 	/**
 	 * Gets the description of this MembershipContainer.
 	 * @return
 	 */
 	public String getDescription();
+	public void setDescription(String description);
 
 	/**
 	 * A category
 	 * @return
 	 */
 	public String getCategory();
+	public void setCategory(String category);
 
 	/**
 	 * Gets the parent CourseSet for this CourseSet, or null if this is a top-level CourseSet.
@@ -63,4 +68,5 @@ public interface CourseSet {
 	 * @return
 	 */
 	public CourseSet getParent();
+	public void setParent(CourseSet parent);
 }

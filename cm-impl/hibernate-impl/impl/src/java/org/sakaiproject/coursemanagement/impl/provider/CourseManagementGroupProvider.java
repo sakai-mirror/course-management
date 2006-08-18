@@ -18,10 +18,11 @@
  * limitations under the License.
  *
  **********************************************************************************/
-package org.sakaiproject.coursemanagement.impl;
+package org.sakaiproject.coursemanagement.impl.provider;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
+import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.authz.api.GroupProvider;
 
 /**
@@ -47,6 +49,7 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	Map roleMap;
 	String defaultSakaiRole;
 	String enrollmentRole;
+	List roleResolvers;
 	
 	// GroupProvider methods
 	
@@ -66,31 +69,25 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	 * role is returned.  TODO What should happen in this case?
 	 */
 	public String getRole(String id, String user) {
-		if(log.isDebugEnabled()) log.debug("------------------CMGP.getRole(" + id + ", " + user + ")");
-		String[] sectionEids = unpackId(id);
-		if(log.isDebugEnabled()) log.debug("Found " + sectionEids.length + " mapped sections for " + id);
-		for(int i=0; i < sectionEids.length; i++) {
-			String sectionEid = sectionEids[i];
-			
-			// If this user has a role in a higher-level structure, return that role
-
-			// If this user has a role as a section member, return it
-			String sectionRole = cmService.getSectionRole(sectionEid, user);
-			if(log.isDebugEnabled()) log.debug(user + "'s section role is " + sectionRole);
-			if(sectionRole != null) {
-				return convertRole(sectionRole);
-			}
-			
-			// Even though they are not a member, they may be enrolled in an attached EnrollmentSet
-			Section section = cmService.getSection(sectionEid);
-			EnrollmentSet enrSet = section.getEnrollmentSet();
-			if(log.isDebugEnabled()) log.debug( "EnrollmentSet  " + enrSet + " is attached to section " + sectionEid);
-			if(enrSet != null && cmService.isEnrolled(user, enrSet.getEid())) {
+		Section section;
+		try {
+			section = cmService.getSection(id);
+		} catch (IdNotFoundException ide) {
+			if(log.isInfoEnabled()) log.info(this.getClass().getName() + " called with an invalid section EID: " + id);
+			return null;
+		}
+		for(Iterator iter = roleResolvers.iterator(); iter.hasNext();) {
+			RoleResolver rr = (RoleResolver)iter.next();
+			String role = rr.getUserRole(cmService, user, section);
+			if(RoleResolver.ENROLLMENT_ROLE.equals(role)) {
 				return enrollmentRole;
 			}
+			if(role != null) {
+				return role;
+			}
 		}
-		// The user isn't a member of the section, and isn't enrolled in any attached EnrollmentSet
-		if(log.isDebugEnabled()) log.debug("User " + user + " is not associated with any sections in " + sectionEids + " , sakai Ref=" + id);
+		// The user has no role in the section or any of its parent objects
+		if(log.isDebugEnabled()) log.debug("User " + user + " is not associated with sections " + id);
 		return null;
 	}
 		
@@ -209,5 +206,9 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	
 	public void setEnrollmentRole(String enrollmentRole) {
 		this.enrollmentRole = enrollmentRole;
+	}
+
+	public void setRoleResolvers(List roleResolvers) {
+		this.roleResolvers = roleResolvers;
 	}
 }

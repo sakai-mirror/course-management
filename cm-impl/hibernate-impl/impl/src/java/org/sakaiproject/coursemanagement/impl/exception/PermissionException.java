@@ -18,42 +18,13 @@
  * limitations under the License.
  *
  **********************************************************************************/
-package org.sakaiproject.coursemanagement.api;
+package org.sakaiproject.coursemanagement.impl.exception;
 
-/**
- * A CanonicalCourse represents the aspects of a course that stay the same across
- * instances of a course. A CanonicalCourse exists whether there are any instances
- * of the course or not.
- * 
- * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
- */
-public interface CanonicalCourse {
-
-	/**
-	 * A unique enterprise id
-	 * @return
-	 */
-	public String getEid();
-	public void setEid(String eid);
-
-	/**
-	 * What authority defines this object?
-	 * @return 
-	 */
-	public String getAuthority();
-	public void setAuthority(String authority);
-
-	/**
-	 * The title
-	 * @return
-	 */
-	public String getTitle();
-	public void setTitle(String title);
+public class PermissionException extends RuntimeException {
 	
-	/**
-	 * A description
-	 * @return
-	 */
-	public String getDescription();
-	public void setDescription(String description);
+	private static final long serialVersionUID = 1L;
+
+	public PermissionException(String message) {
+		super(message);
+	}
 }
