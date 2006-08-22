@@ -1,6 +1,7 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
@@ -12,6 +13,7 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 	private static final long serialVersionUID = 1L;
 
 	private String category;
+	private Set meetings;
 	private CourseOffering courseOffering;
 	private Section parent;
 	private EnrollmentSet enrollmentSet;
@@ -37,6 +39,12 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 	public CourseOffering getCourseOffering() {
 		return courseOffering;
 	}
+	public String getCourseOfferingEid() {
+		if(courseOffering == null) {
+			return null;
+		}
+		return courseOffering.getEid();
+	}
 	public void setCourseOffering(CourseOffering courseOffering) {
 		this.courseOffering = courseOffering;
 	}
@@ -51,5 +59,11 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 	}
 	public void setEnrollmentSet(EnrollmentSet enrollmentSet) {
 		this.enrollmentSet = enrollmentSet;
+	}
+	public Set getMeetings() {
+		return meetings;
+	}
+	public void setMeetings(Set meetings) {
+		this.meetings = meetings;
 	}
 }

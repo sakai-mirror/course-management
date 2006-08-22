@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
+import org.sakaiproject.coursemanagement.api.Section;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import junit.framework.TestCase;
@@ -69,14 +70,14 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		// Course Offerings
 		startCal.set(2006, 8, 1);
 		endCal.set(2006, 12, 1);
-		cmAdmin.createCourseOffering("bio101_f2006", "Bio 101, Fall 2006", "Intro to Biology, Fall 06", "f2006", "bio101", startCal.getTime(), endCal.getTime());
+		cmAdmin.createCourseOffering("bio101_f2006", "Bio 101, Fall 2006", "Intro to Biology, Fall 06", "open", "f2006", "bio101", startCal.getTime(), endCal.getTime());
 
 		startCal.set(2007, 3, 1);
 		endCal.set(2007, 6, 1);
-		cmAdmin.createCourseOffering("bio101_sp2007", "Bio 101, Spring 2007", "Intro to Biology, Spring 07", "sp2007", "bio101", startCal.getTime(), endCal.getTime());
+		cmAdmin.createCourseOffering("bio101_sp2007", "Bio 101, Spring 2007", "Intro to Biology, Spring 07", "open", "sp2007", "bio101", startCal.getTime(), endCal.getTime());
 		
 		cmAdmin.createCourseOffering("indep_study_bio_molecular_research", "Independent study in molecular research", "Details to be determined by student and sponsor",
-				"IND", "indep_study_bio", null, null);
+				"open", "IND", "indep_study_bio", null, null);
 		
 		// Enrollment sets
 		Set instructors = new HashSet();
@@ -102,10 +103,16 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		cmAdmin.addOrUpdateEnrollment("student3", "bio101_f2006_lab2", "waitlisted", "1", "standard");
 
 		// Sections
-		cmAdmin.createSection("bio101_f2006_lec1", "Bio 101, Lecture", "Intro to Biology, Fall 06, Lecture", "lecture", null, "bio101_f2006", "bio101_f2006_lec1");
+		Section lec1 = cmAdmin.createSection("bio101_f2006_lec1", "Bio 101, Lecture", "Intro to Biology, Fall 06, Lecture", "lecture", null, "bio101_f2006", "bio101_f2006_lec1");
 		cmAdmin.createSection("bio101_f2006_lab1", "Lab 1", "Intro to Biology, Fall 06, Lab 1", "lab", null, "bio101_f2006", "bio101_f2006_lab1");
 		cmAdmin.createSection("bio101_f2006_lab2", "Lab 2", "Intro to Biology, Fall 06, Lab 2", "lab", null, "bio101_f2006", "bio101_f2006_lab2");
-				
+		
+		// Meetings
+		Set lecMeetings = new HashSet();
+		lecMeetings.add(cmAdmin.newSectionMeeting("bio101_f2006_lec1", "someplace", "sometime", "somenotes"));
+		lec1.setMeetings(lecMeetings);
+		cmAdmin.updateSection(lec1);
+
 	}
 
 }

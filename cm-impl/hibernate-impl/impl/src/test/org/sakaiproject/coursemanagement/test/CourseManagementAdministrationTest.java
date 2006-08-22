@@ -32,7 +32,9 @@ import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
+import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Membership;
+import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 
 public class CourseManagementAdministrationTest extends CourseManagementTestBase {
@@ -72,11 +74,11 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 	public void testCreateCourseOffering() throws Exception {
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "co 1", "a course offering", "as1","cc1",  null, null);
+		cmAdmin.createCourseOffering("co1", "co 1", "a course offering", "open", "as1","cc1",  null, null);
 		Assert.assertTrue(cm.getCourseOffering("co1").getTitle().equals("co 1"));
 		
 		try {
-			cmAdmin.createCourseOffering("co1", "another course", "another course", "as1", "cc1", null, null);
+			cmAdmin.createCourseOffering("co1", "another course", "another course", "open", "as1", "cc1", null, null);
 			fail();
 		} catch (IdExistsException ide) {}
 	}
@@ -112,7 +114,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseSet("cs1", "course set", "course set", null, null);
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		cmAdmin.addCourseOfferingToCourseSet("cs1", "co1");
 		CourseOffering co = cm.getCourseOffering("co1");
 		Assert.assertTrue(cm.getCourseOfferings("cs1").contains(co));
@@ -122,7 +124,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseSet("cs1", "course set", "course set",null,  null);
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		cmAdmin.addCourseOfferingToCourseSet("cs1", "co1");
 		cmAdmin.removeCourseOfferingFromCourseSet("cs1", "co1");
 		CourseOffering co = cm.getCourseOffering("co1");
@@ -181,7 +183,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 	public void testCreateEnrollmentSet() throws Exception {
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		cmAdmin.createEnrollmentSet("es1", "enr set 1", "an enr set", "lecture", "3", "co1", null);
 		Assert.assertTrue(cm.getEnrollmentSet("es1").getTitle().equals("enr set 1"));
 		
@@ -195,7 +197,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Create the EnrollmentSet
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		cmAdmin.createEnrollmentSet("es1", "enr set 1", "an enr set", "lecture", "3", "co1", null);
 		
 		// Add an enrollment
@@ -209,7 +211,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Create the EnrollmentSet
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		cmAdmin.createEnrollmentSet("es1", "enr set 1", "an enr set", "lecture", "3", "co1", null);
 		
 		// Add an enrollment
@@ -226,7 +228,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Create the EnrollmentSet
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		cmAdmin.createEnrollmentSet("es1", "enr set 1", "an enr set", "lecture", "3", "co1", null);
 		
 		// Add an enrollment
@@ -275,7 +277,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Create a course offering
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Create a membership in the courseOffering
 		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "student", "co1");
@@ -295,7 +297,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Create a course offering
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Create a membership in the courseOffering
 		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "student", "co1");
@@ -311,7 +313,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Create a course offering
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 
 		cmAdmin.createSection("sec1", "sec 1", "a sec", "lecture", null, "co1", null);
 		Assert.assertTrue(cm.getSection("sec1").getTitle().equals("sec 1"));
@@ -326,7 +328,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Create a course offering
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Add a section
 		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
@@ -349,7 +351,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Create a course offering
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
-		cmAdmin.createCourseOffering("co1", "course 1", "course", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Add a section
 		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
@@ -362,6 +364,28 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		
 		// Try to remove it again (should return false)
 		Assert.assertFalse(cmAdmin.removeSectionMembership("josh", "sec1"));
+	}
+	
+	public void testMeetingCascading() throws Exception {
+		// Create a course offering
+		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
+		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
+		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
+		
+		// Add a section
+		Section section1 = cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
+		
+		// Add some meetings for the section
+		Meeting meeting1 = cmAdmin.newSectionMeeting("sec1","a lecture hall", "8am sharp", "If you're late, I won't let you in.");
+		section1.getMeetings().add(meeting1);
+		
+		// Update the section
+		cmAdmin.updateSection(section1);
+		
+		// Ensure that the section has the right meetings
+		Section section2 = cm.getSection("sec1");
+		Assert.assertEquals(1, section2.getMeetings().size());
+		Assert.assertEquals("a lecture hall", ((Meeting)section2.getMeetings().iterator().next()).getLocation());
 	}
 
 }

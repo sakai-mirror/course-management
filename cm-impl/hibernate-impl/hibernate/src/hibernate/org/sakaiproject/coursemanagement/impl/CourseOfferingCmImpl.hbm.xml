@@ -5,6 +5,8 @@
 	<subclass name="org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl"
 			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl">
 
+        <property name="status" column="STATUS" type="string" />
+
 		<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListingCmImpl" />
         <property name="startDate" column="START_DATE" type="timestamp" not-null="false" />
         <property name="endDate" column="END_DATE" type="timestamp" not-null="false" />

@@ -21,11 +21,14 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
+import org.sakaiproject.coursemanagement.api.CourseSet;
 
 public class CanonicalCourseCmImpl extends CrossListableCmImpl
 	implements CanonicalCourse, Serializable {
@@ -34,6 +37,9 @@ public class CanonicalCourseCmImpl extends CrossListableCmImpl
 
 	private CrossListingCmImpl crossListingCmImpl;
 	private Set courseSets;
+	
+	/** A cache of courseSetEids */
+	private Set courseSetEids;
 
 	public CanonicalCourseCmImpl() {}
 	public CanonicalCourseCmImpl(String eid, String title, String description) {
@@ -47,6 +53,17 @@ public class CanonicalCourseCmImpl extends CrossListableCmImpl
 	}
 	public void setCourseSets(Set courseSets) {
 		this.courseSets = courseSets;
+		
+		// Update our cache of courseSetEids
+		if(courseSets == null) {
+			courseSetEids = null;
+			return;
+		}
+		courseSetEids = new HashSet(courseSets.size());
+		for(Iterator iter = courseSets.iterator(); iter.hasNext();) {
+			CourseSet courseSet = (CourseSet)iter.next();
+			courseSetEids.add(courseSet.getEid());
+		}
 	}
 	
 	public CrossListingCmImpl getCrossListing() {
@@ -63,5 +80,8 @@ public class CanonicalCourseCmImpl extends CrossListableCmImpl
 	
 	public int hashCode() {
 		return new HashCodeBuilder().append(eid).toHashCode();
+	}
+	public Set getCourseSetEids() {
+		return courseSetEids;
 	}
 }

@@ -45,7 +45,7 @@ public interface CourseManagementAdministration {
 	 * @param endDate
 	 * @throws IdExistsException
 	 */
-	public void createAcademicSession(String eid, String title, String description,
+	public AcademicSession createAcademicSession(String eid, String title, String description,
 			Date startDate, Date endDate) throws IdExistsException;
 
 	/**
@@ -65,7 +65,7 @@ public interface CourseManagementAdministration {
 	 * @param parentCourseSetEid The parent CourseSet's eid, or null if none.
 	 * @throws IdExistsException
 	 */
-	public void createCourseSet(String eid, String title, String description, String category, String parentCourseSetEid)
+	public CourseSet createCourseSet(String eid, String title, String description, String category, String parentCourseSetEid)
 		throws IdExistsException;
 	
 	/**
@@ -83,7 +83,7 @@ public interface CourseManagementAdministration {
 	 * @param description
 	 * @throws IdExistsException
 	 */
-	public void createCanonicalCourse(String eid, String title, String description)
+	public CanonicalCourse createCanonicalCourse(String eid, String title, String description)
 		throws IdExistsException;
 	
 	/**
@@ -141,8 +141,8 @@ public interface CourseManagementAdministration {
 	 * @param endDate
 	 * @throws IdExistsException
 	 */
-	public void createCourseOffering(String eid, String title, String description,
-			String academicSessionEid, String canonicalCourseEid, Date startDate, Date endDate)
+	public CourseOffering createCourseOffering(String eid, String title, String description,
+			String status, String academicSessionEid, String canonicalCourseEid, Date startDate, Date endDate)
 			throws IdExistsException;
 
 	/**
@@ -197,7 +197,7 @@ public interface CourseManagementAdministration {
 	 * @param officialGraders
 	 * @throws IdExistsException
 	 */
-	public void createEnrollmentSet(String eid, String title, String description,
+	public EnrollmentSet createEnrollmentSet(String eid, String title, String description,
 			String category, String defaultEnrollmentCredits, String courseOfferingEid, Set officialGraders)
 			throws IdExistsException;
 	
@@ -242,9 +242,20 @@ public interface CourseManagementAdministration {
 	 * @param enrollmentSetEid
 	 * @throws IdExistsException
 	 */
-	public void createSection(String eid, String title, String description,
+	public Section createSection(String eid, String title, String description,
 			String category, String parentSectionEid, String courseOfferingEid,
 			String enrollmentSetEid) throws IdExistsException;
+
+	
+	/**
+	 * Creates a new meeting instance.  The meeting must be associated with a section
+	 * and the section must be updated for the meeting to be persisted.
+	 * 
+	 * @param location The location of the meeting
+	 * @param time The time of this meeting
+	 * @param notes Optional notes about this meeting
+	 */
+	public Meeting newSectionMeeting(String sectionEid, String location, String time, String notes);
 	
 	/**
 	 * Updates an existing Section.

@@ -23,8 +23,6 @@ package org.sakaiproject.coursemanagement.impl;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.naming.OperationNotSupportedException;
-
 public abstract class AbstractPersistentCourseManagementObjectCmImpl implements Serializable {
 
 	public static final String AUTHORITY = "Sakai";

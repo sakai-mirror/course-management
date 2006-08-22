@@ -22,17 +22,21 @@ package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
+import org.sakaiproject.coursemanagement.api.CourseSet;
 
 public class CourseOfferingCmImpl extends CrossListableCmImpl
 	implements CourseOffering, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private String status;
 	private CanonicalCourse canonicalCourse;
 	private AcademicSession academicSession;
 	private CrossListingCmImpl crossListingCmImpl;
@@ -40,12 +44,16 @@ public class CourseOfferingCmImpl extends CrossListableCmImpl
 	private Date startDate;
 	private Date endDate;
 
+	/** A cache of courseSetEids */
+	private Set courseSetEids;
+
 	public CourseOfferingCmImpl() {}
 	
-	public CourseOfferingCmImpl(String eid, String title, String description, AcademicSession academicSession, CanonicalCourse canonicalCourse, Date startDate, Date endDate) {
+	public CourseOfferingCmImpl(String eid, String title, String description,String status, AcademicSession academicSession, CanonicalCourse canonicalCourse, Date startDate, Date endDate) {
 		this.eid = eid;
 		this.title = title;
 		this.description = description;
+		this.status = status;
 		this.academicSession = academicSession;
 		this.canonicalCourse = canonicalCourse;
 		this.startDate = startDate;
@@ -57,6 +65,17 @@ public class CourseOfferingCmImpl extends CrossListableCmImpl
 	}
 	public void setCourseSets(Set courseSets) {
 		this.courseSets = courseSets;
+
+		// Update our cache of courseSetEids
+		if(courseSets == null) {
+			courseSetEids = null;
+			return;
+		}
+		courseSetEids = new HashSet(courseSets.size());
+		for(Iterator iter = courseSets.iterator(); iter.hasNext();) {
+			CourseSet courseSet = (CourseSet)iter.next();
+			courseSetEids.add(courseSet.getEid());
+		}
 	}
 
 	public CrossListingCmImpl getCrossListing() {
@@ -91,5 +110,21 @@ public class CourseOfferingCmImpl extends CrossListableCmImpl
 	}
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+
+	public String getCanonicalCourseEid() {
+		return canonicalCourse.getEid();
+	}
+
+	public Set getCourseSetEids() {
+		return courseSetEids;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

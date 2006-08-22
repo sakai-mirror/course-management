@@ -20,6 +20,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api;
 
+import java.util.Set;
+
 /**
  * A CanonicalCourse represents the aspects of a course that stay the same across
  * instances of a course. A CanonicalCourse exists whether there are any instances
@@ -56,4 +58,10 @@ public interface CanonicalCourse {
 	 */
 	public String getDescription();
 	public void setDescription(String description);
+	
+	/**
+	 * Gets the Set <String> of course set EIDs that contain this canonical course.
+	 * @return
+	 */
+	public Set getCourseSetEids();
 }

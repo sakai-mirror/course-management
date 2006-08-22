@@ -21,6 +21,7 @@
 package org.sakaiproject.coursemanagement.api;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * An instance of a course.
@@ -58,6 +59,13 @@ public interface CourseOffering {
 	public void setDescription(String description);
 
 	/**
+	 * Gets the status of this CourseOffering.  This might be open, closed, planned, or discontinued, for example.
+	 * @return
+	 */
+	public String getStatus();
+	public void setStatus(String status);
+
+	/**
 	 * The AcademicSession for this course offering
 	 * @return
 	 */
@@ -83,4 +91,17 @@ public interface CourseOffering {
 	 */
 	public Date getEndDate();	
 	public void setEndDate(Date endDate);
+	
+	/**
+	 * Gets the enterprise ID of the CourseOffering's CanonicalCourse.
+	 * @return
+	 */
+	public String getCanonicalCourseEid();
+
+	/**
+	 * Gets the Set <String> of course set EIDs that contain this canonical course.
+	 * @return
+	 */
+	public Set getCourseSetEids();
+
 }

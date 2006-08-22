@@ -38,6 +38,7 @@ import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
@@ -70,11 +71,12 @@ public class CourseManagementAdministrationHibernateImpl extends
 		log.info("Destroying " + getClass().getName());
 	}
 	
-	public void createAcademicSession(String eid, String title,
+	public AcademicSession createAcademicSession(String eid, String title,
 			String description, Date startDate, Date endDate) throws IdExistsException {
 		AcademicSessionCmImpl academicSession = new AcademicSessionCmImpl(eid, title, description, startDate, endDate);
 		try {
 			getHibernateTemplate().save(academicSession);
+			return academicSession;
 		} catch (DataIntegrityViolationException dive) {
 			throw new IdExistsException(eid, AcademicSession.class.getName());
 		}
@@ -84,7 +86,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(academicSession);
 	}
 
-	public void createCourseSet(String eid, String title, String description, String category,
+	public CourseSet createCourseSet(String eid, String title, String description, String category,
 			String parentCourseSetEid) throws IdExistsException {
 		CourseSet parent = null;
 		if(parentCourseSetEid != null) {
@@ -93,6 +95,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		CourseSetCmImpl courseSet = new CourseSetCmImpl(eid, title, description, category, parent);
 		try {
 			getHibernateTemplate().save(courseSet);
+			return courseSet;
 		} catch (DataIntegrityViolationException dive) {
 			throw new IdExistsException(eid, CourseSet.class.getName());
 		}
@@ -102,10 +105,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(courseSet);
 	}
 
-	public void createCanonicalCourse(String eid, String title, String description) throws IdExistsException {
+	public CanonicalCourse createCanonicalCourse(String eid, String title, String description) throws IdExistsException {
 		CanonicalCourseCmImpl canonCourse = new CanonicalCourseCmImpl(eid, title, description);
 		try {
 			getHibernateTemplate().save(canonCourse);
+			return canonCourse;
 		} catch (DataIntegrityViolationException dive) {
 			throw new IdExistsException(eid, CanonicalCourse.class.getName());
 		}
@@ -174,13 +178,14 @@ public class CourseManagementAdministrationHibernateImpl extends
 		return removeEquiv((CanonicalCourseCmImpl)canonicalCourse);
 	}
 
-	public void createCourseOffering(String eid, String title, String description,
-			String academicSessionEid, String canonicalCourseEid, Date startDate, Date endDate) throws IdExistsException {
+	public CourseOffering createCourseOffering(String eid, String title, String description,
+			String status, String academicSessionEid, String canonicalCourseEid, Date startDate, Date endDate) throws IdExistsException {
 		AcademicSession as = cmService.getAcademicSession(academicSessionEid);
 		CanonicalCourse cc = cmService.getCanonicalCourse(canonicalCourseEid);
-		CourseOfferingCmImpl co = new CourseOfferingCmImpl(eid, title, description, as, cc, startDate, endDate);
+		CourseOfferingCmImpl co = new CourseOfferingCmImpl(eid, title, description, status, as, cc, startDate, endDate);
 		try {
 			getHibernateTemplate().save(co);
+			return co;
 		} catch (DataIntegrityViolationException dive) {
 			throw new IdExistsException(eid, CourseOffering.class.getName());
 		}
@@ -223,7 +228,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		return true;
 	}
 
-	public void createEnrollmentSet(String eid, String title, String description, String category,
+	public EnrollmentSet createEnrollmentSet(String eid, String title, String description, String category,
 			String defaultEnrollmentCredits, String courseOfferingEid, Set officialGraders)
 			throws IdExistsException {
 		if(courseOfferingEid == null) {
@@ -233,6 +238,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		EnrollmentSetCmImpl enrollmentSet = new EnrollmentSetCmImpl(eid, title, description, category, defaultEnrollmentCredits, co, officialGraders);
 		try {
 			getHibernateTemplate().save(enrollmentSet);
+			return enrollmentSet;
 		} catch (DataIntegrityViolationException dive) {
 			throw new IdExistsException(eid, EnrollmentSet.class.getName());
 		}
@@ -267,7 +273,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 	}
 
-	public void createSection(String eid, String title, String description, String category,
+	public Section createSection(String eid, String title, String description, String category,
 		String parentSectionEid, String courseOfferingEid, String enrollmentSetEid) throws IdExistsException {
 		
 		// The objects related to this section
@@ -293,6 +299,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		SectionCmImpl section = new SectionCmImpl(eid, title, description, category, parent, co, es);
 		try {
 			getHibernateTemplate().save(section);
+			return section;
 		} catch (DataIntegrityViolationException dive) {
 			throw new IdExistsException(eid, Section.class.getName());
 		}
@@ -392,6 +399,17 @@ public class CourseManagementAdministrationHibernateImpl extends
 			}
 		};
 		return (MembershipCmImpl)getHibernateTemplate().execute(hc);
+	}
+
+	public Meeting newSectionMeeting(String sectionEid, String location, String time, String notes) {
+		Section section = cmService.getSection(sectionEid);
+		MeetingCmImpl meeting = new MeetingCmImpl(section, location, time, notes);
+		Set meetings = section.getMeetings();
+		if(meetings == null) {
+			meetings = new HashSet();
+			section.setMeetings(meetings);
+		}
+		return meeting;
 	}
 
 }

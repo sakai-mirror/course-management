@@ -20,6 +20,8 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api;
 
+import java.util.Set;
+
 /**
  * Models a "cohort" (a stable group which enrolls in multiple courses as a unit)
  * as well as officially delimited course "groups" and "sections".
@@ -29,28 +31,32 @@ package org.sakaiproject.coursemanagement.api;
 public interface Section {
 
 	/**
-	 * Gets the unique enterprise id of this Section.
+	 * A unique enterprise id
 	 * @return
 	 */
 	public String getEid();
+	public void setEid(String eid);
 
 	/**
 	 * What authority defines this object?
 	 * @return 
 	 */
 	public String getAuthority();
+	public void setAuthority(String authority);
 
 	/**
-	 * Gets the title of this Section.
+	 * The title
 	 * @return
 	 */
 	public String getTitle();
-	
+	public void setTitle(String title);
+
 	/**
-	 * Gets the description of this Section.
+	 * A description
 	 * @return
 	 */
 	public String getDescription();
+	public void setDescription(String description);
 
 	/**
 	 * A category for this Section.  A category might be lecture, lab, discussion, or some
@@ -58,17 +64,33 @@ public interface Section {
 	 * @return
 	 */
 	public String getCategory();
+	public void setCategory(String category);
 	
+	/**
+	 * The meeting time for this section.
+	 * @return
+	 */
+	public Set getMeetings();
+	public void setMeetings(Set meetingTimes);
+
 	/**
 	 * Gets the parent Section for this Section, or null if this is not a subSection.
 	 * @return
 	 */
 	public Section getParent();
+	public void setParent(Section parent);
 
 	/**
 	 * Gets the EnrollmentSet associated with this Section, if any.
 	 * @return
 	 */
 	public EnrollmentSet getEnrollmentSet();
+	public void setEnrollmentSet(EnrollmentSet enrollmentSet);
+	
+	/**
+	 * Gets the enterprise ID of the Section's containing CourseOffering.
+	 * @return
+	 */
+	public String getCourseOfferingEid();
 	
 }

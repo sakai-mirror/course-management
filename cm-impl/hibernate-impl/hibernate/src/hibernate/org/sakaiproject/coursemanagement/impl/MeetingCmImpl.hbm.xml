@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="false">
+	<class name="org.sakaiproject.coursemanagement.impl.MeetingCmImpl" table="CM_MEETING_T">
+
+        <id name="key" column="MEETING_ID" type="long">
+            <generator class="native">
+                <param name="sequence">CM_MEETING_S</param>
+            </generator>
+        </id>
+
+		<property name="location" column="LOCATION" type="string" />
+		<property name="time" column="TIME_OF_DAY" type="string" />
+		<property name="notes" column="NOTES" type="string" />
+
+		<many-to-one name="section" column="SECTION_ID" class="org.sakaiproject.coursemanagement.impl.SectionCmImpl" not-null="true"/>
+
+	</class>
+
+</hibernate-mapping>
