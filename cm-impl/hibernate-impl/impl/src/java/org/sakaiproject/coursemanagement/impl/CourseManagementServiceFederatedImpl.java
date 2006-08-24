@@ -23,9 +23,11 @@ package org.sakaiproject.coursemanagement.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -121,17 +123,17 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set findCurrentSectionsWithMember(String userId) {
-		Set resultSet = new HashSet();
-		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
-			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = cm.findCurrentSectionsWithMember(userId);
-			if(set != null) {
-				resultSet.addAll(set);
-			}
-		}
-		return resultSet;
-	}
+//	public Set findSectionsWithMember(String userId) {
+//		Set resultSet = new HashSet();
+//		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+//			CourseManagementService cm = (CourseManagementService)implIter.next();
+//			Set set = cm.findSectionsWithMember(userId);
+//			if(set != null) {
+//				resultSet.addAll(set);
+//			}
+//		}
+//		return resultSet;
+//	}
 
 	public Set findCurrentlyEnrolledEnrollmentSets(String userId) {
 		Set resultSet = new HashSet();
@@ -587,16 +589,16 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public String getSectionRole(String sectionEid, String userId) {
-		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
-			CourseManagementService cm = (CourseManagementService)implIter.next();
-			String role = cm.getSectionRole(sectionEid, userId);
-			if(role != null) {
-				return role;
-			}
-		}
-		return null;
-	}
+//	public String getSectionRole(String sectionEid, String userId) {
+//		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+//			CourseManagementService cm = (CourseManagementService)implIter.next();
+//			String role = cm.getSectionRole(sectionEid, userId);
+//			if(role != null) {
+//				return role;
+//			}
+//		}
+//		return null;
+//	}
 
 	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
 		Set resultSet = new HashSet();
@@ -693,5 +695,65 @@ public class CourseManagementServiceFederatedImpl implements
 			}
 		}
 		return resultSet;
+	}
+
+	public Map findCourseOfferingRoles(String userEid) {
+		Map courseOfferingRoleMap = new HashMap();
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			Map map = cm.findCourseOfferingRoles(userEid);
+			if(map == null) {
+				continue;
+			}
+			for(Iterator mapIter = map.keySet().iterator(); mapIter.hasNext();) {
+				String courseSetEid = (String)mapIter.next();
+				String role = (String)map.get(courseSetEid);
+				// Earlier impls take precedence, so don't overwrite what's in the map
+				if( ! courseOfferingRoleMap.containsKey(courseSetEid)) {
+					courseOfferingRoleMap.put(courseSetEid, role);
+				}
+			}
+		}
+		return courseOfferingRoleMap;
+	}
+
+	public Map findCourseSetRoles(String userEid) {
+		Map courseSetRoleMap = new HashMap();
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			Map map = cm.findCourseSetRoles(userEid);
+			if(map == null) {
+				continue;
+			}
+			for(Iterator mapIter = map.keySet().iterator(); mapIter.hasNext();) {
+				String courseSetEid = (String)mapIter.next();
+				String role = (String)map.get(courseSetEid);
+				// Earlier impls take precedence, so don't overwrite what's in the map
+				if( ! courseSetRoleMap.containsKey(courseSetEid)) {
+					courseSetRoleMap.put(courseSetEid, role);
+				}
+			}
+		}
+		return courseSetRoleMap;
+	}
+
+	public Map findSectionRoles(String userEid) {
+		Map sectionRoleMap = new HashMap();
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			Map map = cm.findSectionRoles(userEid);
+			if(map == null) {
+				continue;
+			}
+			for(Iterator mapIter = map.keySet().iterator(); mapIter.hasNext();) {
+				String sectionEid = (String)mapIter.next();
+				String role = (String)map.get(sectionEid);
+				// Earlier impls take precedence, so don't overwrite what's in the map
+				if( ! sectionRoleMap.containsKey(sectionEid)) {
+					sectionRoleMap.put(sectionEid, role);
+				}
+			}
+		}
+		return sectionRoleMap;
 	}
 }

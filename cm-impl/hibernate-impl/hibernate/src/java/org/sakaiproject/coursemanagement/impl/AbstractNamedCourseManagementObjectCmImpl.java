@@ -23,6 +23,8 @@ package org.sakaiproject.coursemanagement.impl;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 
 public abstract class AbstractNamedCourseManagementObjectCmImpl
 	extends AbstractPersistentCourseManagementObjectCmImpl  implements Serializable {
@@ -49,4 +51,12 @@ public abstract class AbstractNamedCourseManagementObjectCmImpl
 	public void setEid(String eid) {
 		this.eid = eid;
 	}	
+
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append(getEid())
+			.append(getTitle())
+			.append(getDescription())
+			.toString();
+	}
 }

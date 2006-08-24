@@ -61,6 +61,10 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		cmAdmin.createAcademicSession("sp2007", "Spring 2007", "The spring term, 2007", startCal.getTime(), endCal.getTime());
 		
 		cmAdmin.createAcademicSession("IND", "Ongoing Courses", "Ongoing session for independent study", null, null);
+
+		// Course Sets
+		cmAdmin.createCourseSet("bio", "Biology Department", "We study wet things in the Bio Dept", "DEPT", null);
+		cmAdmin.addOrUpdateCourseSetMembership("da1","DA", "bio");
 		
 		// Canonical Courses
 		cmAdmin.createCanonicalCourse("bio101", "Intro to Biology", "An introduction to biology");
@@ -71,6 +75,7 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		startCal.set(2006, 8, 1);
 		endCal.set(2006, 12, 1);
 		cmAdmin.createCourseOffering("bio101_f2006", "Bio 101, Fall 2006", "Intro to Biology, Fall 06", "open", "f2006", "bio101", startCal.getTime(), endCal.getTime());
+		cmAdmin.addCourseOfferingToCourseSet("bio","bio101_f2006");
 
 		startCal.set(2007, 3, 1);
 		endCal.set(2007, 6, 1);

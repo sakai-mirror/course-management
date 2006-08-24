@@ -20,25 +20,55 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl.provider;
 
+import java.util.Map;
+
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.Section;
 
+/**
+ * Resolves users roles in sections.
+ * 
+ * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ *
+ */
 public interface RoleResolver {
 
 	/**
-	 * Used to communicate with the CM Group Provider
+	 * A key ued to communicate between the CM Group Provider and any role
+	 * resolver that uses enrollments to determine the group role.
 	 */
-	public static final String ENROLLMENT_ROLE="sakai.cm.enrollment";
-	
+	public static final String ENROLLMENT_ROLE="cm.enrollment";
+
 	/**
-	 * Gets the user's role in a CM object.  A RoleResolver implementation
+	 * A key ued to communicate between the CM Group Provider and any role
+	 * resolver that uses the official instructors for enrollment sets to determine
+	 * the group role.
+	 */
+	public static final String OFFICIAL_INSTRUCTOR_ROLE="cm.instructor";
+
+	/**
+	 * Gets users roles in a CM object.  A RoleResolver implementation
 	 * will typically use the cmService to look "up" from the section in the CM
 	 * hierarchy to find the object it's interested in, then find any membership roles
 	 * associated with the user.
 	 * 
-	 * @param userEid The user's enterprise ID
-	 * @param section The section from which to start searching "up" the hierarchy
+	 * @param section The section from which to start searching "up" the hierarchy,
+	 * if necessary
+	 * @param cmService The CM service impl.  We pass this in rather than injecting
+	 * it into every RoleResolver
+	 * 
 	 * @return The user's role, or null if the user has no role in this CM object
 	 */
-	public String getUserRole(CourseManagementService cmService, String userEid, Section section);
+	public Map getUserRoles(CourseManagementService cmService, Section section);
+
+	/**
+	 * Gets a single user's roles in all sections with which s/he is associated.
+	 * 
+	 * @param userEid The user's enterprise ID
+	 * @param cmService The CM service impl.  We pass this in rather than injecting
+	 * it into every RoleResolver
+	 * 
+	 * @return The user's role, or null if the user has no role in this CM object
+	 */
+	public Map getGroupRoles(CourseManagementService cmService, String userEid);
 }

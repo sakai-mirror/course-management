@@ -19,12 +19,12 @@
 		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
 
 		<set name="canonicalCourses" inverse="true">
-			<key column="ID" />
+			<key column="EQUIV_CANON_COURSE_ID" />
 			<one-to-many class="org.sakaiproject.coursemanagement.impl.CanonicalCourseCmImpl"/>
 		</set>
 
 		<set name="courseOfferings" inverse="true">
-			<key column="ID" />
+			<key column="EQUIV_COURSE_OFFERING_ID" />
 			<one-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl"/>
 		</set>
 

@@ -21,6 +21,7 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.AcademicSession;
@@ -50,10 +51,6 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 	}
 
 	public List findCourseSets(String category) {
-		return null;
-	}
-
-	public Set findCurrentSectionsWithMember(String userId) {
 		return null;
 	}
 
@@ -161,10 +158,6 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 		throw new IdNotFoundException(sectionEid, Section.class.getName());
 	}
 
-	public String getSectionRole(String sectionEid, String userId) {
-		return null;
-	}
-
 	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
 		throw new IdNotFoundException(courseOfferingEid, CourseOffering.class.getName());
 	}
@@ -182,6 +175,18 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 	}
 
 	public Set findEnrolledSections(String userId) {
+		return null;
+	}
+
+	public Map findCourseOfferingRoles(String userEid) {
+		return null;
+	}
+
+	public Map findCourseSetRoles(String userEid) {
+		return null;
+	}
+
+	public Map findSectionRoles(String userEid) {
 		return null;
 	}
 }

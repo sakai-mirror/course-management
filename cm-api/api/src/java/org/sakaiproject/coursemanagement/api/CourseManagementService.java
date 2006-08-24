@@ -21,6 +21,7 @@
 package org.sakaiproject.coursemanagement.api;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
@@ -218,16 +219,6 @@ public interface CourseManagementService {
 	public Set getSectionMemberships(String sectionEid) throws IdNotFoundException;
 	
 	/**
-	 * Gets the role for a user's Membership in a Section, or null if the user is not a
-	 * member of the Section.
-	 * 
-	 * @param sectionEid The Section's eid
-	 * @param userEid The user's id
-	 * @return The enterprise-defined role string
-	 */
-	public String getSectionRole(String sectionEid, String userEid);
-	
-	/**
 	 * Gets an EnrollmentSet by its eid.
 	 * 
 	 * @param enrollmentSetEid
@@ -349,13 +340,28 @@ public interface CourseManagementService {
 	public Set findInstructingSections(String userEid, String academicSessionEid) throws IdNotFoundException;
 
 	/**
-	 * Finds the set of Memberships for all Sections belonging to a current CourseOffering.
-	 * A CourseOffering is considered current if its start date
-	 * (is null or prior to the current date/time) and its end date (is null or
-	 * after the current date/time).
+	 * Finds the Sections (and roles) for which a user is a member.
 	 * 
 	 * @param userEid
-	 * @return
+	 * @return A Map of Section EIDs to roles for the user
 	 */
-	public Set findCurrentSectionsWithMember(String userEid);
+	public Map findSectionRoles(String userEid);
+
+	/**
+	 * Finds the CourseOfferings (and roles) for which a user is a member.
+	 * 
+	 * @param userEid
+	 * @return A Map of CourseOffering EIDs to roles for the user
+	 */
+	public Map findCourseOfferingRoles(String userEid);
+
+
+	/**
+	 * Finds the CourseSets (and roles) for which a user is a member.
+	 * 
+	 * @param userEid
+	 * @return A Map of CourseSet EIDs to roles for the user
+	 */
+	public Map findCourseSetRoles(String userEid);
+
 }

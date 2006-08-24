@@ -36,13 +36,11 @@
         ]]>
     </query>
 
-	<query name="findCurrentSectionsWithMember">
+	<query name="findSectionRoles">
         <![CDATA[
-        select section from SectionCmImpl as section, MembershipCmImpl as member
-        	where member.userId=:userId and
-        	member.memberContainer=section and
-        	(section.courseOffering.startDate is null or section.courseOffering.startDate <= sysdate) and
-        	(section.courseOffering.endDate is null or section.courseOffering.endDate >= sysdate)
+        select section.eid, member.role from SectionCmImpl as section, MembershipCmImpl as member
+        	where member.userId=:userEid and
+        	member.memberContainer=section
         ]]>
     </query>
 

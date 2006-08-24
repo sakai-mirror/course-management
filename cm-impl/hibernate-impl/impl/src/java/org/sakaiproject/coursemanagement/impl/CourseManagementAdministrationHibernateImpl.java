@@ -206,13 +206,13 @@ public class CourseManagementAdministrationHibernateImpl extends
 	public void addCourseOfferingToCourseSet(String courseSetEid, String courseOfferingEid) {
 		// CourseSet's set of courses are controlled on the CourseSet side of the bi-directional relationship
 		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
-		CourseOffering courseOffering = cmService.getCourseOffering(courseOfferingEid);
+		CourseOfferingCmImpl courseOffering = (CourseOfferingCmImpl)cmService.getCourseOffering(courseOfferingEid);
 		Set offerings = courseSet.getCourseOfferings();
 		if(offerings == null) {
 			offerings = new HashSet();
-			courseSet.setCourseOfferings(offerings);
 		}
 		offerings.add(courseOffering);
+		courseSet.setCourseOfferings(offerings);
 		getHibernateTemplate().update(courseSet);
 	}
 

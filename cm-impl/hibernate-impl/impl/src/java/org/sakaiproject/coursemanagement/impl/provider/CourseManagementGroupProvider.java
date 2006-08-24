@@ -24,16 +24,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
-import org.sakaiproject.coursemanagement.api.Enrollment;
-import org.sakaiproject.coursemanagement.api.EnrollmentSet;
-import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
-import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.authz.api.GroupProvider;
 
 /**
@@ -48,6 +43,7 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	CourseManagementService cmService;
 	Map roleMap;
 	String defaultSakaiRole;
+	String officialInstructorRole;
 	String enrollmentRole;
 	List roleResolvers;
 	
@@ -69,25 +65,9 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	 * role is returned.  TODO What should happen in this case?
 	 */
 	public String getRole(String id, String user) {
-		Section section;
-		try {
-			section = cmService.getSection(id);
-		} catch (IdNotFoundException ide) {
-			if(log.isInfoEnabled()) log.info(this.getClass().getName() + " called with an invalid section EID: " + id);
-			return null;
-		}
-		for(Iterator iter = roleResolvers.iterator(); iter.hasNext();) {
-			RoleResolver rr = (RoleResolver)iter.next();
-			String role = rr.getUserRole(cmService, user, section);
-			if(RoleResolver.ENROLLMENT_ROLE.equals(role)) {
-				return enrollmentRole;
-			}
-			if(role != null) {
-				return role;
-			}
-		}
-		// The user has no role in the section or any of its parent objects
-		if(log.isDebugEnabled()) log.debug("User " + user + " is not associated with sections " + id);
+		log.error("\n------------------------------------------------------------------\n");
+		log.error("THIS METHOD IS NEVER CALLED IN SAKAI.  WHAT HAPPENED???");
+		log.error("\n------------------------------------------------------------------\n");
 		return null;
 	}
 		
@@ -105,29 +85,20 @@ public class CourseManagementGroupProvider implements GroupProvider {
 		if(log.isDebugEnabled()) log.debug(id + " is mapped to " + sectionEids.length + " sections");
 		for(int i=0; i < sectionEids.length; i++) {
 			String sectionEid = sectionEids[i];
-			if(log.isDebugEnabled()) log.debug("Looking for roles in section " + sectionEid);
 			Section section = cmService.getSection(sectionEid);
-			
-			// Add all Enrollments and graders in any attached EnrollmentSets to the role map
-			EnrollmentSet enrSet = section.getEnrollmentSet();
-			if(enrSet != null) {
-				if(log.isDebugEnabled()) log.debug("EnrollmentSet " + enrSet.getEid() + "  is attached  to section " + sectionEid);
-				// Add the enrollments
-				Set enrollments = cmService.getEnrollments(enrSet.getEid());
-				if(enrollments != null && !enrollments.isEmpty()) {
-					for(Iterator enrollmentIter = enrollments.iterator(); enrollmentIter.hasNext();) {
-						Enrollment enr = (Enrollment)enrollmentIter.next();
-						if(log.isDebugEnabled()) log.debug("Adding " + enr.getUserId() + " to user/role map with role " + enrollmentRole);
-						userRoleMap.put(enr.getUserId(), enrollmentRole);
+			if(log.isDebugEnabled()) log.debug("Looking for roles in section " + sectionEid);
+			for(Iterator rrIter = roleResolvers.iterator(); rrIter.hasNext();) {
+				RoleResolver rr = (RoleResolver)rrIter.next();
+				Map rrUserRoleMap = rr.getUserRoles(cmService, section);
+				// Only add the roles if they aren't already in the map.  Earlier resolvers take precedence.
+				for(Iterator rrRoleIter = rrUserRoleMap.keySet().iterator(); rrRoleIter.hasNext();) {
+					String userEid = (String)rrRoleIter.next();
+					String existingRole = (String)userRoleMap.get(userEid);
+					String rrRole = (String)rrUserRoleMap.get(userEid);
+					if(existingRole == null && rrRole != null) {
+						userRoleMap.put(userEid, convertRole(rrRole));
 					}
 				}
-			}
-			// Add all memberships to the role map, overriding the enrollments and the graders in case of overlap
-			Set sectionMembers = cmService.getSectionMemberships(sectionEid);
-			for(Iterator memberIter = sectionMembers.iterator(); memberIter.hasNext();) {
-				Membership member = (Membership)memberIter.next();
-				if(log.isDebugEnabled()) log.debug("Adding " + member.getUserId() + " to user/role map with role " + member.getRole());
-				userRoleMap.put(member.getUserId(), convertRole(member.getRole()));
 			}
 		}
 		return userRoleMap;
@@ -137,26 +108,25 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	 * Provides a map of AuthzGroup ids to Sakai roles for a given user.  Enrollment
 	 * is overridden by a membership role.
 	 */
-	public Map getGroupRolesForUser(String userId) {
-		if(log.isDebugEnabled()) log.debug("------------------CMGP.getGroupRolesForUser(" + userId + ")");
+	public Map getGroupRolesForUser(String userEid) {
+		if(log.isDebugEnabled()) log.debug("------------------CMGP.getGroupRolesForUser(" + userEid + ")");
 		Map groupRoleMap = new HashMap();
 		
-		// Add all enrollments to the role map
-		Set enrolledSections = cmService.findEnrolledSections(userId);
-		if(log.isDebugEnabled()) log.debug("Found " + enrolledSections.size() + " currently enrolled sections for user " + userId);
-		for(Iterator secIter = enrolledSections.iterator(); secIter.hasNext();) {
-			Section sec = (Section)secIter.next();
-			if(log.isDebugEnabled()) log.debug(userId + " is enrolled in an enrollment set attached to section " + sec.getEid());
-			groupRoleMap.put(sec.getEid(),enrollmentRole);
-		}
-		
-		// Next add the section memberships to the role map, overriding enrollments if necessary
-		Set memberSections= cmService.findCurrentSectionsWithMember(userId);
-		if(log.isDebugEnabled()) log.debug(userId + " is a member of " + memberSections.size() + " sections");
-		for(Iterator secIter = memberSections.iterator(); secIter.hasNext();) {
-			Section section = (Section)secIter.next();
-			String cmRole = cmService.getSectionRole(section.getEid(), userId);
-			groupRoleMap.put(section.getEid(), convertRole(cmRole));
+		for(Iterator rrIter = roleResolvers.iterator(); rrIter.hasNext();) {
+			RoleResolver rr = (RoleResolver)rrIter.next();
+			Map rrGroupRoleMap = rr.getGroupRoles(cmService, userEid);
+
+			// Only add the section eids if they aren't already in the map.  Earlier resolvers take precedence.
+			for(Iterator rrRoleIter = rrGroupRoleMap.keySet().iterator(); rrRoleIter.hasNext();) {
+				String sectionEid = (String)rrRoleIter.next();
+				if(groupRoleMap.containsKey(sectionEid)) {
+					continue;
+				}
+				String rrRole = (String)rrGroupRoleMap.get(sectionEid);
+				if( rrRole != null) {
+					groupRoleMap.put(sectionEid, convertRole(rrRole));
+				}
+			}
 		}
 		return groupRoleMap;
 	}
@@ -180,14 +150,24 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	}
 	
 	private String convertRole(String cmRole) {
-		if (cmRole != null) {
+		if (cmRole == null) {
+			log.warn("Can not convert 'null' to a sakai role");
+			return defaultSakaiRole;
+		}
+
+		if(cmRole.equals(RoleResolver.OFFICIAL_INSTRUCTOR_ROLE)) {
+			return this.officialInstructorRole;
+		} else if(cmRole.equals(RoleResolver.ENROLLMENT_ROLE)) {
+			return this.enrollmentRole;
+		} else {
 			String sakaiRole = (String)roleMap.get(cmRole);
-			if(sakaiRole != null) {
+			if(sakaiRole== null) {
+				log.warn("Unable to find sakai role for CM role " + cmRole + ".  Using " + defaultSakaiRole);
+				return defaultSakaiRole;
+			} else {
 				return sakaiRole;
 			}
 		}
-		log.warn("Unable to find sakai role for CM role " + cmRole + ".  Using " + defaultSakaiRole);
-		return defaultSakaiRole;
 	}
 
 	// Dependency injection
@@ -204,6 +184,10 @@ public class CourseManagementGroupProvider implements GroupProvider {
 		this.defaultSakaiRole = defaultSakaiRole;
 	}
 	
+	public void setOfficialInstructorRole(String officialInstructorRole) {
+		this.officialInstructorRole = officialInstructorRole;
+	}
+
 	public void setEnrollmentRole(String enrollmentRole) {
 		this.enrollmentRole = enrollmentRole;
 	}

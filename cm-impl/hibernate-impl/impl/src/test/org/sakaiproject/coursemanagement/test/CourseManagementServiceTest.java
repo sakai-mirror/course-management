@@ -22,6 +22,7 @@ package org.sakaiproject.coursemanagement.test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -30,9 +31,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
+import org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl;
 
 public class CourseManagementServiceTest extends CourseManagementTestBase {
 	private static final Log log = LogFactory.getLog(CourseManagementServiceTest.class);
@@ -67,7 +70,21 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 	
 	public void testGetCourseSets() throws Exception {
-		Assert.assertEquals(2, cm.getCourseSets().size());		
+		Assert.assertEquals(2, cm.getCourseSets().size());
+	}
+
+	public void testGetCourseSetsFromCourseOffering() throws Exception {
+		CourseOffering co = cm.getCourseOffering("BIO101_F2006_01");
+		CourseSet bio = cm.getCourseSet("BIO_DEPT");
+		CourseSet bioChem = cm.getCourseSet("BIO_CHEM_GROUP");
+		
+		// Ensure that the CourseSet EIDs can be retrieved from the CourseOffering
+		Assert.assertEquals(2, co.getCourseSetEids().size());
+
+		// Ensure that the set of CourseSets contains the right objects
+		Set courseSetsFromCo = ((CourseOfferingCmImpl)co).getCourseSets();
+		Assert.assertTrue(courseSetsFromCo.contains(bio));
+		Assert.assertTrue(courseSetsFromCo.contains(bioChem));
 	}
 
 	public void testGetChildCourseSets() throws Exception {
@@ -256,20 +273,6 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Set sections = cm.findInstructingSections("grader1", "F2006");
 		Assert.assertEquals(1, sections.size());
 	}
-
-	public void testFindCurrentSectionMemberships() throws Exception {
-		// Even though this user is a member of two sections, one is in the future
-		Assert.assertEquals(1, cm.findCurrentSectionsWithMember("josh").size());
-	}
-	
-	public void testGetSectionRole() throws Exception {
-		Assert.assertEquals("student", cm.getSectionRole("BIO101_F2006_01_SEC01", "josh"));
-		Assert.assertNull(cm.getSectionRole("BIO101_F2006_01_SEC01", "somebody not in the section"));
-		try {
-			cm.getSectionRole("bad eid", "any userId");
-			fail();
-		} catch (IdNotFoundException ide) {}
-	}
 	
 	public void testGetCourseOfferingsByCourseSetAndAcademicSession() throws Exception {
 		Assert.assertEquals(1, cm.findCourseOfferings("BIO_DEPT", "F2006").size());
@@ -285,6 +288,26 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		List courseSets = cm.findCourseSets("DEPT");
 		Assert.assertEquals(1, courseSets.size());
 		Assert.assertEquals("BIO_DEPT", ((CourseSet)courseSets.get(0)).getEid());
+	}
+
+	public void testFindSectionRoles() throws Exception {
+		Map joshMap = cm.findSectionRoles("josh");
+		// This user is both enrolled and has a membership.  This method only returns membership roles.
+		Assert.assertEquals("student", joshMap.get("CHEM101_F2006_01_SEC01"));
+		
+		Map entMap = cm.findSectionRoles("AN_ENTERPRISE_USER");
+		Assert.assertEquals("AN_ENTERPRISE_ROLE", entMap.get("BIO101_F2006_01_SEC01"));
+	}
+	
+	public void testFindCourseOfferingRoles() throws Exception {
+		Map coUserMap = cm.findCourseOfferingRoles("coUser");
+		Assert.assertEquals("coRole1", coUserMap.get("BIO101_F2006_01"));
+		Assert.assertEquals("coRole2", coUserMap.get("CHEM101_F2006_01"));
+	}
+
+	public void testFindCourseSetRoles() throws Exception {
+		Map deptAdminMap = cm.findCourseSetRoles("user1");
+		Assert.assertEquals("departmentAdmin", deptAdminMap.get("BIO_DEPT"));
 	}
 
 }

@@ -71,8 +71,8 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		loadAcademicSessions();
 		loadCourseSetsAndMembers();
 		loadCanonicalCourses();
-		loadCourseOfferings();
-		loadSections();
+		loadCourseOfferingsAndMembers();
+		loadSectionsAndMembers();
 		loadEnrollmentSets();
 		loadEnrollments();
 		
@@ -148,7 +148,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		getHibernateTemplate().update(bioChemCset);		
 	}
 	
-	void loadCourseOfferings() {
+	void loadCourseOfferingsAndMembers() {
 		// Get the object dependencies
 		AcademicSession term = cm.getAcademicSession("F2006");
 		CanonicalCourseCmImpl cc1 = (CanonicalCourseCmImpl)cm.getCanonicalCourse("BIO101");
@@ -209,10 +209,17 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		bioChemCourses.add(co1);
 		bioChemCourses.add(co2);
 		bioChemCset.setCourseOfferings(bioChemCourses);
-		getHibernateTemplate().update(bioChemCset);		
-	}
+		getHibernateTemplate().update(bioChemCset);
+		
+		// Add a member to some CourseOfferings
+		MembershipCmImpl member1 = new MembershipCmImpl("coUser", "coRole1", co1);
+		getHibernateTemplate().save(member1);
+
+		MembershipCmImpl member2 = new MembershipCmImpl("coUser", "coRole2", co2);
+		getHibernateTemplate().save(member2);
+}
 	
-	void loadSections() {
+	void loadSectionsAndMembers() {
 		CourseOffering co = cm.getCourseOffering("BIO101_F2006_01");
 
 		// Add a section
@@ -226,8 +233,8 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 
 		// Add a membership to this section
 		MembershipCmImpl member = new MembershipCmImpl();
-		member.setRole("student");
-		member.setUserId("josh");
+		member.setRole("AN_ENTERPRISE_ROLE");
+		member.setUserId("AN_ENTERPRISE_USER");
 		member.setMemberContainer(section);
 		getHibernateTemplate().save(member);
 

@@ -35,5 +35,13 @@
         	cs in elements(co.courseSets)
         ]]>
     </query>
+    
+    <query name="findCourseOfferingRoles">
+        <![CDATA[
+        select co.eid, member.role from  CourseOfferingCmImpl as co, MembershipCmImpl as member
+        	where member.userId=:userEid and
+        	member.memberContainer=co
+        ]]>
+    </query>
 
 </hibernate-mapping>

@@ -57,4 +57,12 @@
         ]]>
     </query>
 
+    <query name="findCourseSetRoles">
+        <![CDATA[
+        select cs.eid, member.role from  CourseSetCmImpl as cs, MembershipCmImpl as member
+        	where member.userId=:userEid and
+        	member.memberContainer=cs
+        ]]>
+    </query>
+
 </hibernate-mapping>

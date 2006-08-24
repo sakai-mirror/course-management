@@ -20,8 +20,11 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -37,7 +40,6 @@ import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
-import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.springframework.orm.hibernate3.HibernateCallback;
@@ -368,44 +370,44 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set findCurrentSectionsWithMember(final String userId) {
-		HibernateCallback hc = new HibernateCallback() {
-			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.getNamedQuery("findCurrentSectionsWithMember");
-				q.setParameter("userId", userId);
-				return q.list();
-			}
-		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
-	}
+//	public Set findSectionsWithMember(final String userId) {
+//		HibernateCallback hc = new HibernateCallback() {
+//			public Object doInHibernate(Session session) throws HibernateException {
+//				Query q = session.getNamedQuery("findSectionsWithMember");
+//				q.setParameter("userId", userId);
+//				return q.list();
+//			}
+//		};
+//		return new HashSet(getHibernateTemplate().executeFind(hc));
+//	}
 
-	private MembershipCmImpl getMembership(final String userId, final AbstractMembershipContainerCmImpl container) {
-        final StringBuffer sb = new StringBuffer("select member from MembershipCmImpl as member, ");
-		sb.append(container.getClass().getName());
-        sb.append(" as container where member.memberContainer=container ");
-        sb.append("and container.eid=:eid ");
-    	sb.append("and member.userId=:userId");
-    	
-		HibernateCallback hc = new HibernateCallback() {
-			public Object doInHibernate(Session session) throws HibernateException {
-				Query q = session.createQuery(sb.toString());
-				q.setParameter("eid", container.getEid());
-				q.setParameter("userId", userId);
-				return q.uniqueResult();
-			}
-		};
-		return (MembershipCmImpl)getHibernateTemplate().execute(hc);
-	}
+//	private MembershipCmImpl getMembership(final String userId, final AbstractMembershipContainerCmImpl container) {
+//        final StringBuffer sb = new StringBuffer("select member from MembershipCmImpl as member, ");
+//		sb.append(container.getClass().getName());
+//        sb.append(" as container where member.memberContainer=container ");
+//        sb.append("and container.eid=:eid ");
+//    	sb.append("and member.userId=:userId");
+//    	
+//		HibernateCallback hc = new HibernateCallback() {
+//			public Object doInHibernate(Session session) throws HibernateException {
+//				Query q = session.createQuery(sb.toString());
+//				q.setParameter("eid", container.getEid());
+//				q.setParameter("userId", userId);
+//				return q.uniqueResult();
+//			}
+//		};
+//		return (MembershipCmImpl)getHibernateTemplate().execute(hc);
+//	}
 
-	public String getSectionRole(final String sectionEid, final String userId) {
-		SectionCmImpl section = (SectionCmImpl)getSection(sectionEid);
-		Membership member = getMembership(userId, section);
-		if(member == null) {
-			return null;
-		} else {
-			return member.getRole();
-		}
-	}
+//	public String getSectionRole(final String sectionEid, final String userId) {
+//		SectionCmImpl section = (SectionCmImpl)getSection(sectionEid);
+//		Membership member = getMembership(userId, section);
+//		if(member == null) {
+//			return null;
+//		} else {
+//			return member.getRole();
+//		}
+//	}
 
 
 	public Set findCourseOfferings(final String courseSetEid, final String academicSessionEid) throws IdNotFoundException {
@@ -442,5 +444,59 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 			}
 		};
 		return getHibernateTemplate().executeFind(hc);
+	}
+
+
+	public Map findCourseOfferingRoles(final String userEid) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findCourseOfferingRoles");
+				q.setParameter("userEid", userEid);
+				return q.list();
+			}
+		};
+		List results = getHibernateTemplate().executeFind(hc);
+		Map courseOfferingRoleMap = new HashMap();
+		for(Iterator iter = results.iterator(); iter.hasNext();) {
+			Object[] oa = (Object[])iter.next();
+			courseOfferingRoleMap.put(oa[0], oa[1]);
+		}
+		return courseOfferingRoleMap;
+	}
+
+
+	public Map findCourseSetRoles(final String userEid) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findCourseSetRoles");
+				q.setParameter("userEid", userEid);
+				return q.list();
+			}
+		};
+		List results = getHibernateTemplate().executeFind(hc);
+		Map courseSetRoleMap = new HashMap();
+		for(Iterator iter = results.iterator(); iter.hasNext();) {
+			Object[] oa = (Object[])iter.next();
+			courseSetRoleMap.put(oa[0], oa[1]);
+		}
+		return courseSetRoleMap;
+	}
+
+
+	public Map findSectionRoles(final String userEid) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query q = session.getNamedQuery("findSectionRoles");
+				q.setParameter("userEid", userEid);
+				return q.list();
+			}
+		};
+		List results = getHibernateTemplate().executeFind(hc);
+		Map sectionRoleMap = new HashMap();
+		for(Iterator iter = results.iterator(); iter.hasNext();) {
+			Object[] oa = (Object[])iter.next();
+			sectionRoleMap.put(oa[0], oa[1]);
+		}
+		return sectionRoleMap;
 	}
 }
