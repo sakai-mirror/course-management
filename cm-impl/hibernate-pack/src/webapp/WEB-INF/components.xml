@@ -29,7 +29,7 @@
 		</property>
         <property name="transactionAttributes">
             <props>
-                <prop key="*">PROPAGATION_REQUIRED</prop>
+                <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
             </props>
         </property>
         <property name="target">
@@ -51,7 +51,8 @@
         </property>
 	</bean>
 
-
+	<!-- Do not reference this bean ID.  It is for internal CM use only. -->
+	<!-- TODO: Hide this bean inside another, if possible, to make it private -->
 	<bean id="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl">
 		<property name="sessionFactory">
 			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
@@ -147,6 +148,6 @@
 				</list>
 			</property>
 	</bean>
-	 -->
-</beans>
+ 	-->
+ </beans>
 

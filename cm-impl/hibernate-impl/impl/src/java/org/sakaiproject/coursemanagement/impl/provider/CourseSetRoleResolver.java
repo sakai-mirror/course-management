@@ -45,10 +45,10 @@ public class CourseSetRoleResolver implements RoleResolver {
 			String eid = (String)iter.next();
 			Set csMembers = cmService.getCourseSetMemberships(eid);
 			if(csMembers == null) {
-				if(log.isDebugEnabled()) log.debug("CourseSet " + eid + "has a null set of members");
+				if(log.isDebugEnabled()) log.debug("CourseSet " + eid + " has a null set of members");
 				continue;
 			}
-			if(log.isDebugEnabled()) log.debug("CourseSet " + eid + "has " + csMembers.size() + " members");
+			if(log.isDebugEnabled()) log.debug("CourseSet " + eid + " has " + csMembers.size() + " members");
 			for(Iterator memberIter = csMembers.iterator(); memberIter.hasNext();) {
 				Membership membership = (Membership)memberIter.next();
 				if(log.isDebugEnabled()) log.debug("Adding user " + membership.getUserId() + " to userRoleMap with role " + membership.getRole());

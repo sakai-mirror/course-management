@@ -47,7 +47,7 @@ public class SectionRoleResolver implements RoleResolver {
 		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
 			Membership membership = (Membership)iter.next();
 			// Only add the membership role if the user isn't enrolled or an official instructor(these take precedence)
-			if(!userRoleMap.containsKey(membership.getUserId())) {
+			if( ! userRoleMap.containsKey(membership.getUserId())) {
 				userRoleMap.put(membership.getUserId(), membership.getRole());
 			}
 		}
@@ -67,6 +67,19 @@ public class SectionRoleResolver implements RoleResolver {
 			groupRoleMap.put(section.getEid(), ENROLLMENT_ROLE);
 		}
 
+		// Finally, add the official instructors, overriding any other roles if necessary
+		Set instructingSections = cmService.findInstructingSections(userEid);
+		for(Iterator iter = instructingSections.iterator(); iter.hasNext();) {
+			Section instructingSection = (Section)iter.next();
+			groupRoleMap.put(instructingSection.getEid(), OFFICIAL_INSTRUCTOR_ROLE);
+		}
+		
+		if(log.isDebugEnabled()) {
+			for(Iterator iter = groupRoleMap.keySet().iterator(); iter.hasNext();) {
+				String sectionEid = (String)iter.next();
+				log.debug("User " + userEid + " has role " + groupRoleMap.get(sectionEid) + " in " + sectionEid);
+			}
+		}
 		return groupRoleMap;
 	}
 }

@@ -101,6 +101,11 @@ public class CourseManagementGroupProvider implements GroupProvider {
 				}
 			}
 		}
+		if(log.isDebugEnabled()) {
+			log.debug("_____________getUserRolesForGroup___________________");
+			log.debug(userRoleMap);
+			log.debug("_____________________________________________");
+		}
 		return userRoleMap;
 	}
 
@@ -115,18 +120,28 @@ public class CourseManagementGroupProvider implements GroupProvider {
 		for(Iterator rrIter = roleResolvers.iterator(); rrIter.hasNext();) {
 			RoleResolver rr = (RoleResolver)rrIter.next();
 			Map rrGroupRoleMap = rr.getGroupRoles(cmService, userEid);
+			if(log.isDebugEnabled()) log.debug("Found " + rrGroupRoleMap.size() + " groups for " + userEid + " from resolver " + rr.getClass().getName());
 
 			// Only add the section eids if they aren't already in the map.  Earlier resolvers take precedence.
 			for(Iterator rrRoleIter = rrGroupRoleMap.keySet().iterator(); rrRoleIter.hasNext();) {
 				String sectionEid = (String)rrRoleIter.next();
 				if(groupRoleMap.containsKey(sectionEid)) {
+					if(log.isDebugEnabled()) log.debug("User " + userEid + " is already in the groupRoleMap under section " + sectionEid + " with role " + groupRoleMap.get(sectionEid));
 					continue;
 				}
 				String rrRole = (String)rrGroupRoleMap.get(sectionEid);
 				if( rrRole != null) {
-					groupRoleMap.put(sectionEid, convertRole(rrRole));
+					String convertedRole = convertRole(rrRole);
+					if(log.isDebugEnabled()) log.debug("Adding " + userEid + " to " + sectionEid + " with role " + convertedRole);
+					groupRoleMap.put(sectionEid, convertedRole);
 				}
 			}
+		}
+
+		if(log.isDebugEnabled()) {
+			log.debug("______________getGroupRolesForUser_________________");
+			log.debug(groupRoleMap);
+			log.debug("_____________________________________________");
 		}
 		return groupRoleMap;
 	}
@@ -151,7 +166,7 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	
 	private String convertRole(String cmRole) {
 		if (cmRole == null) {
-			log.warn("Can not convert 'null' to a sakai role");
+			log.warn("Can not convert CM role 'null' to a sakai role.  Using default: " + defaultSakaiRole);
 			return defaultSakaiRole;
 		}
 
