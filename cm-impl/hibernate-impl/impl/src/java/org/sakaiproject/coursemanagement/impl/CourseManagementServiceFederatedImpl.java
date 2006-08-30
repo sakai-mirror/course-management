@@ -87,17 +87,24 @@ public class CourseManagementServiceFederatedImpl implements
 	public Set findCourseOfferings(String courseSetEid,
 			String academicSessionEid) throws IdNotFoundException {
 		Set resultSet = new HashSet();
+		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
 			Set set = null;
 			try {
 				set = cm.findCourseOfferings(courseSetEid, academicSessionEid);
+				if(set != null) {
+					resultSet.addAll(set);
+				}
 			} catch (IdNotFoundException ide) {
 				if(log.isDebugEnabled()) log.debug(cm + " could not find course set " + courseSetEid);
+				exceptions++;
+				continue;
 			}
-			if(set != null) {
-				resultSet.addAll(set);
-			}
+		}
+		if(exceptions == implList.size()) {
+			throw new IdNotFoundException("Could not find a CM impl with knowledge of academic session " +
+					academicSessionEid + " and course set " + courseSetEid);
 		}
 		return resultSet;
 	}
@@ -348,14 +355,14 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException {
+	public Set getCourseOfferingsInCourseSet(String courseSetEid) throws IdNotFoundException {
 		Set resultSet = new HashSet();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
 			Set set = null;
 			try {
-				set = cm.getCourseOfferings(courseSetEid);
+				set = cm.getCourseOfferingsInCourseSet(courseSetEid);
 			} catch (IdNotFoundException ide) {
 				exceptions++;
 				if(log.isDebugEnabled()) log.debug(cm + " could not locate course set " + courseSetEid);
@@ -363,6 +370,10 @@ public class CourseManagementServiceFederatedImpl implements
 			if(set != null) {
 				resultSet.addAll(set);
 			}
+		}
+		if(exceptions == implList.size()) {
+			// all of the impls threw an IdNotFoundException, so the course set doesn't exist anywhere
+			throw new IdNotFoundException(courseSetEid, CourseSet.class.getName());
 		}
 		return resultSet;
 	}
@@ -755,5 +766,28 @@ public class CourseManagementServiceFederatedImpl implements
 			}
 		}
 		return sectionRoleMap;
+	}
+
+	public Set getCourseOfferingsInCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException {
+		Set resultSet = new HashSet();
+		int exceptions = 0;
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			Set set = null;
+			try {
+				set = cm.getCourseOfferingsInCanonicalCourse(canonicalCourseEid);
+			} catch (IdNotFoundException ide) {
+				if(log.isDebugEnabled()) log.debug(cm + " could not find canonical course " + canonicalCourseEid);
+				exceptions++;
+			}
+			if(set != null) {
+				resultSet.addAll(set);
+			}
+		}
+		if(exceptions == implList.size()) {
+			// all of the impls threw an IdNotFoundException, so the canonical course doesn't exist anywhere
+			throw new IdNotFoundException(canonicalCourseEid, CanonicalCourse.class.getName());
+		}
+		return resultSet;
 	}
 }

@@ -32,10 +32,12 @@ import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
+import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
+import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 
 public class CourseManagementAdministrationTest extends CourseManagementTestBase {
 	private static final Log log = LogFactory.getLog(CourseManagementAdministrationTest.class);
@@ -117,7 +119,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		cmAdmin.addCourseOfferingToCourseSet("cs1", "co1");
 		CourseOffering co = cm.getCourseOffering("co1");
-		Assert.assertTrue(cm.getCourseOfferings("cs1").contains(co));
+		Assert.assertTrue(cm.getCourseOfferingsInCourseSet("cs1").contains(co));
 	}
 	
 	public void testRemoveCourseOfferingFromCourseSet() throws Exception {
@@ -128,7 +130,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.addCourseOfferingToCourseSet("cs1", "co1");
 		cmAdmin.removeCourseOfferingFromCourseSet("cs1", "co1");
 		CourseOffering co = cm.getCourseOffering("co1");
-		Assert.assertFalse(cm.getCourseOfferings("cs1").contains(co));
+		Assert.assertFalse(cm.getCourseOfferingsInCourseSet("cs1").contains(co));
 	}
 
 	public void testSetEquivalentCanonicalCourses() throws Exception {
@@ -386,6 +388,101 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		Section section2 = cm.getSection("sec1");
 		Assert.assertEquals(1, section2.getMeetings().size());
 		Assert.assertEquals("a lecture hall", ((Meeting)section2.getMeetings().iterator().next()).getLocation());
+	}
+
+	public void testRemoveAcademicSession() throws Exception {
+		cmAdmin.createAcademicSession("foo", "foo", "foo", null, null);
+		
+		// Ensure that the service can find the new AS
+		Assert.assertEquals("foo", cm.getAcademicSession("foo").getTitle());
+		
+		// Remove the AS, and ensure that the service can no longer access it
+		cmAdmin.removeAcademicSession("foo");
+		try {
+			cm.getAcademicSession("foo");
+			fail();
+		} catch (IdNotFoundException ide) {}
+	}
+	
+	public void testRemoveEnrollmentSet() throws Exception {
+		cmAdmin.createAcademicSession("as", "as", "as", null, null);
+		cmAdmin.createCanonicalCourse("cc", "cc", "cc");
+		cmAdmin.createCourseOffering("co", "co", "co", "co", "as", "cc", null, null);
+		cmAdmin.createEnrollmentSet("es", "es", "es", "es", "es", "co", null);
+		cmAdmin.addOrUpdateEnrollment("student1","es","enrolled", "4", "letter grade");
+		
+		// Remove the ES
+		cmAdmin.removeEnrollmentSet("es");
+		
+		// Ensure that the enrollment was deleted as well
+		Assert.assertNull(cm.findEnrollment("student1", "es"));
+
+		// Ensure that the CM service can no longer find the ES
+		try {
+			cm.getEnrollmentSet("es");
+			fail();
+		} catch (IdNotFoundException ide) {}
+		
+	}
+	
+	public void testRemoveSection() throws Exception {
+		cmAdmin.createAcademicSession("as", "as", "as", null, null);
+		cmAdmin.createCanonicalCourse("cc", "cc", "cc");
+		cmAdmin.createCourseOffering("co", "co", "co", "co", "as", "cc", null, null);
+		cmAdmin.createSection("sec", "sec", "sec", "sec", null, "co", null);
+		cmAdmin.addOrUpdateSectionMembership("member1", "TA", "sec");
+		
+		// Remove the section
+		cmAdmin.removeSection("sec");
+		
+		// Ensure that the CM service can no longer find the section
+		try {
+			cm.getSection("sec");
+			fail();
+		} catch (IdNotFoundException ide) {}
+		
+		// Ensure that the membership was deleted as well
+		try {
+			cm.getSectionMemberships("sec");
+			fail();
+		} catch (IdNotFoundException ide) {}
+	}
+
+	public void testRemoveCourseOffering() throws Exception {
+		cmAdmin.createAcademicSession("as", "as", "as", null, null);
+		cmAdmin.createCanonicalCourse("cc", "cc", "cc");
+		cmAdmin.createCourseOffering("co", "co", "co", "co", "as", "cc", null, null);
+		cmAdmin.createEnrollmentSet("es", "es", "es", "es", "3", "co", null);
+		cmAdmin.createSection("sec", "sec", "sec", "sec", null, "co", "es");
+		
+		// Remove the CO
+		cmAdmin.removeCourseOffering("co");
+		
+		// Ensure that the CM service can no longer find the CO
+		try {
+			cm.getCourseOffering("co");
+			fail();
+		} catch (IdNotFoundException ide) {}
+
+		// Ensure that the ES was deleted as well
+		try {
+			cm.getEnrollmentSet("es");
+			fail();
+		} catch (IdNotFoundException ide) {}
+
+		// Ensure that the section was deleted as well
+		try {
+			cm.getSection("sec");
+			fail();
+		} catch (IdNotFoundException ide) {}
+	}
+
+	public void testRemoveCanonicalCourse() throws Exception {
+		
+	}
+
+	public void testRemoveCourseSet() throws Exception {
+		
 	}
 
 }

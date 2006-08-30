@@ -70,7 +70,7 @@ public class CourseSetRoleResolver implements RoleResolver {
 			String csEid = (String)csIter.next();
 			String csRole = (String)courseSetRoles.get(csEid);
 			// Look at each of the course offerings in the course set
-			Set courseOfferings = cmService.getCourseOfferings(csEid);
+			Set courseOfferings = cmService.getCourseOfferingsInCourseSet(csEid);
 			for(Iterator coIter = courseOfferings.iterator(); coIter.hasNext();) {
 				CourseOffering co = (CourseOffering)coIter.next();
 				// Get the sections in each course offering

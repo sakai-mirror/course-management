@@ -13,7 +13,7 @@
         </id>
 
 		<discriminator>
-			<column name="CLASS_DISCR" not-null="true" unique-key="CM_EID_I" length="100" />
+			<column name="CLASS_DISCR" not-null="true" unique-key="CM_EID_IDX" length="100" />
 		</discriminator>
 		
         <version name="version" type="integer" column="VERSION"/>
@@ -24,7 +24,7 @@
 		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
 
         <property name="eid">
-        	<column name="ENTERPRISE_ID" not-null="true" unique-key="CM_EID_I" length="100"/>
+        	<column name="ENTERPRISE_ID" not-null="true" unique-key="CM_EID_IDX" length="100"/>
         </property>
         
         <property name="title" column="TITLE" type="string" not-null="true" />

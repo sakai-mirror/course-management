@@ -56,6 +56,13 @@ public interface CourseManagementAdministration {
 	public void updateAcademicSession(AcademicSession academicSession);
 
 	/**
+	 * Removes an academic session.
+	 * 
+	 * @param eid The enterprise id of the academic session
+	 */
+	public void removeAcademicSession(String eid);
+	
+	/**
 	 * Creates a new CourseSet.
 	 * 
 	 * @param eid
@@ -75,6 +82,13 @@ public interface CourseManagementAdministration {
 	 */
 	public void updateCourseSet(CourseSet courseSet);
 
+	/**
+	 * Removes a course set and any memberships in the course set.
+	 * 
+	 * @param eid The enterprise id of the course set
+	 */
+	public void removeCourseSet(String eid);
+	
 	/**
 	 * Creates a new CanonicalCourse.
 	 * 
@@ -128,6 +142,14 @@ public interface CourseManagementAdministration {
 	 * @return Whether the equivalency existed and was removed.
 	 */
 	public boolean removeEquivalency(CanonicalCourse canonicalCourse);
+	
+	/**
+	 * Removes a canonical course and any course offerings associated with this
+	 * canonical course.
+	 * 
+	 * @param eid The enterprise id of the canonical course
+	 */
+	public void removeCanonicalCourse(String eid);
 
 	/**
 	 * Creates a new CourseOffering.
@@ -186,6 +208,14 @@ public interface CourseManagementAdministration {
 	public boolean removeCourseOfferingFromCourseSet(String courseSetEid, String courseOfferingEid);
 
 	/**
+	 * Removes a course offering, any memberships in the course offering, as well
+	 * as sections and enrollment sets that belong to this course offering.
+	 * 
+	 * @param eid The enterprise id of the course offering
+	 */
+	public void removeCourseOffering(String eid);
+	
+	/**
 	 * Creates a new EnrollmentSet.
 	 * 
 	 * @param eid
@@ -207,6 +237,13 @@ public interface CourseManagementAdministration {
 	 * @param enrollmentSet
 	 */
 	public void updateEnrollmentSet(EnrollmentSet enrollmentSet);
+	
+	/**
+	 * Removes an enrollment set and all associated enrollments.
+	 * 
+	 * @param eid The enterprise id of the enrollment set
+	 */
+	public void removeEnrollmentSet(String eid);
 	
 	/**
 	 * Adds an Enrollment to an EnrollmentSet.  If the user is already enrolled in the
@@ -263,6 +300,15 @@ public interface CourseManagementAdministration {
 	 * @param section
 	 */
 	public void updateSection(Section section);
+	
+	/**
+	 * Removes a section and any memberships in the section.  If an enrollment set
+	 * is attached to this section, it must be removed via removeEnrollmentSet
+	 * before removing the section.
+	 * 
+	 * @param eid The enterprise id of the section
+	 */
+	public void removeSection(String eid);
 	
 	/**
 	 * Adds a user to a CourseSet.  If the user is already a member of the CourseSet,

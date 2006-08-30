@@ -20,6 +20,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,11 +61,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	 * 
 	 * @param eid The eid of the object we're trying to load
 	 * @param className The name of the class / interface we're looking for
-	 * @param namedQuery The name of the query
 	 * @return The object, if found
 	 * @throws IdNotFoundException
 	 */
-	private Object getObjectByEid(final String eid, final String className, final String namedQuery) throws IdNotFoundException {
+	private Object getObjectByEid(final String eid, final String className) throws IdNotFoundException {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				StringBuffer hql = new StringBuffer();
@@ -80,19 +80,37 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		};
 		return getHibernateTemplate().execute(hc);
 	}
+
+	private boolean objectExists(final String eid, final String className) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException, SQLException {
+				return new Boolean(objectExists(eid, className, session));
+			}
+		};
+		return ((Boolean)getHibernateTemplate().execute(hc)).booleanValue();
+	}
 	
+	private boolean objectExists(String eid, String className, Session session) {
+		StringBuffer hql = new StringBuffer();
+		hql.append("select count(obj) from ").append(className).append(" as obj where obj.eid=:eid");
+		Query q = session.createQuery(hql.toString());
+		q.setParameter("eid", eid);
+		Integer count = (Integer)q.iterate().next();
+		if(log.isDebugEnabled()) log.debug("Found " + count + " " + className + " instances with eid = " + eid);
+		return count.intValue() == 1;
+	}
 	
 	public CourseSet getCourseSet(String eid) throws IdNotFoundException {
-		return (CourseSet)getObjectByEid(eid, CourseSetCmImpl.class.getName(), "findCourseSetByEid");
+		return (CourseSet)getObjectByEid(eid, CourseSetCmImpl.class.getName());
 	}
 
 	public Set getChildCourseSets(final String parentCourseSetEid) throws IdNotFoundException {
-		// Ensure that the parent exists
-		// TODO Add exists() methods rather than loading the entire object
-		getCourseSet(parentCourseSetEid);
-
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
+				// Ensure that the parent exists
+				if( ! objectExists(parentCourseSetEid, CourseSetCmImpl.class.getName(), session)) {
+					throw new IdNotFoundException(parentCourseSetEid, CourseSetCmImpl.class.getName());
+				}
 				Query q = session.getNamedQuery("findChildCourseSets");
 				q.setParameter("parentEid", parentCourseSetEid);
 				return q.list();
@@ -116,7 +134,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public CanonicalCourse getCanonicalCourse(String eid) throws IdNotFoundException {
-		return (CanonicalCourse)getObjectByEid(eid, CanonicalCourseCmImpl.class.getName(), "findCanonicalCourseByEid");
+		return (CanonicalCourse)getObjectByEid(eid, CanonicalCourseCmImpl.class.getName());
 	}
 
 	public Set getEquivalentCanonicalCourses(String canonicalCourseEid) {
@@ -157,14 +175,17 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public AcademicSession getAcademicSession(final String eid) throws IdNotFoundException {
-		return (AcademicSession)getObjectByEid(eid, AcademicSessionCmImpl.class.getName(), "findAcademicSessionByEid");
+		return (AcademicSession)getObjectByEid(eid, AcademicSessionCmImpl.class.getName());
 	}
 	
 	public CourseOffering getCourseOffering(String eid) throws IdNotFoundException {
-		return (CourseOffering)getObjectByEid(eid, CourseOfferingCmImpl.class.getName(), "findCourseOfferingByEid");
+		return (CourseOffering)getObjectByEid(eid, CourseOfferingCmImpl.class.getName());
 	}
 
-	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException {
+	public Set getCourseOfferingsInCourseSet(String courseSetEid) throws IdNotFoundException {
+		if( ! objectExists(courseSetEid, CourseSetCmImpl.class.getName())) {
+			throw new IdNotFoundException(courseSetEid, CourseSetCmImpl.class.getName());
+		}
 		return ((CourseSetCmImpl)getCourseSet(courseSetEid)).getCourseOfferings();
 	}
 
@@ -210,7 +231,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 
 
 	public Section getSection(String eid) throws IdNotFoundException {
-		return (Section)getObjectByEid(eid, SectionCmImpl.class.getName(), "findSectionByEid");
+		return (Section)getObjectByEid(eid, SectionCmImpl.class.getName());
 	}
 
 	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
@@ -226,11 +247,11 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set getChildSections(final String parentSectionEid) throws IdNotFoundException {
-		// Ensure that the parent exists
-		// TODO Add exists() methods rather than loading the entire object
-		getSection(parentSectionEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
+				if( ! objectExists(parentSectionEid, SectionCmImpl.class.getName(), session)) {
+					throw new IdNotFoundException(parentSectionEid, SectionCmImpl.class.getName());
+				}
 				Query q = session.getNamedQuery("findChildSections");
 				q.setParameter("parentEid", parentSectionEid);
 				return q.list();
@@ -244,7 +265,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public EnrollmentSet getEnrollmentSet(String eid) throws IdNotFoundException {
-		return (EnrollmentSet)getObjectByEid(eid, EnrollmentSetCmImpl.class.getName(), "findEnrollmentSetByEid");
+		return (EnrollmentSet)getObjectByEid(eid, EnrollmentSetCmImpl.class.getName());
 	}
 
 	public Set getEnrollmentSets(final String courseOfferingEid) throws IdNotFoundException {
@@ -298,6 +319,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	public Enrollment findEnrollment(final String userId, final String enrollmentSetEid) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
+				if( ! objectExists(enrollmentSetEid, EnrollmentSetCmImpl.class.getName(), session)) {
+					log.warn("Could not find an enrollment set with eid=" + enrollmentSetEid);
+					return null;
+				}
 				Query q = session.getNamedQuery("findEnrollment");
 				q.setParameter("userId", userId);
 				q.setParameter("enrollmentSetEid", enrollmentSetEid);
@@ -498,5 +523,20 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 			sectionRoleMap.put(oa[0], oa[1]);
 		}
 		return sectionRoleMap;
+	}
+
+
+	public Set getCourseOfferingsInCanonicalCourse(final String canonicalCourseEid) throws IdNotFoundException {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException, SQLException {
+				if( ! objectExists(canonicalCourseEid, CanonicalCourseCmImpl.class.getName(), session)) {
+					throw new IdNotFoundException(canonicalCourseEid, CanonicalCourseCmImpl.class.getName());
+				}
+				Query q = session.getNamedQuery("findCourseOfferingsByCanonicalCourse");
+				q.setParameter("canonicalCourseEid", canonicalCourseEid);
+				return q.list();
+			}
+		};
+		return new HashSet(getHibernateTemplate().executeFind(hc));
 	}
 }

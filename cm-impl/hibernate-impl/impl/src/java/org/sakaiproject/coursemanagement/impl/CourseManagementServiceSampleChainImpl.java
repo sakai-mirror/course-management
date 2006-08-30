@@ -106,7 +106,7 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 		throw new IdNotFoundException(courseOfferingEid, CourseOffering.class.getName());
 	}
 
-	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException {
+	public Set getCourseOfferingsInCourseSet(String courseSetEid) throws IdNotFoundException {
 		throw new IdNotFoundException(courseSetEid, CourseSet.class.getName());
 	}
 
@@ -188,5 +188,9 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 
 	public Map findSectionRoles(String userEid) {
 		return null;
+	}
+
+	public Set getCourseOfferingsInCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException {
+		throw new IdNotFoundException(canonicalCourseEid, CanonicalCourse.class.getName());
 	}
 }

@@ -134,10 +134,18 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 
 	public void testGetCourseOfferingsFromCourseSet() throws Exception {
-		Assert.assertEquals(1, cm.getCourseOfferings("BIO_DEPT").size());
-		Assert.assertEquals(2, cm.getCourseOfferings("BIO_CHEM_GROUP").size());
+		Assert.assertEquals(1, cm.getCourseOfferingsInCourseSet("BIO_DEPT").size());
+		Assert.assertEquals(2, cm.getCourseOfferingsInCourseSet("BIO_CHEM_GROUP").size());
 		try {
-			cm.getCanonicalCourses("bad eid");
+			cm.getCourseOfferingsInCourseSet("bad eid");
+			fail();
+		} catch (IdNotFoundException ide) {}
+	}
+
+	public void testGetCourseOfferingsFromCanonicalCourse() throws Exception {
+		Assert.assertEquals(1, cm.getCourseOfferingsInCanonicalCourse("BIO101").size());
+		try {
+			cm.getCourseOfferingsInCanonicalCourse("bad eid");
 			fail();
 		} catch (IdNotFoundException ide) {}
 	}
@@ -171,10 +179,6 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		} catch(IdNotFoundException ide) {}
 	}
 
-//	public void testGetSectionRole() throws Exception {
-//		Assert.assertNotNull(cm.getSectionRole("BIO101_F2006_01_SEC01", "josh"));
-//	}
-	
 	public void testGetSectionsFromCourseOffering() throws Exception {
 		Assert.assertEquals(1, cm.getSections("BIO101_F2006_01").size());
 		try {

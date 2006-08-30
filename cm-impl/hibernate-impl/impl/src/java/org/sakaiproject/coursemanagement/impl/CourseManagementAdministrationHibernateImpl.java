@@ -37,6 +37,7 @@ import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Section;
@@ -410,6 +411,91 @@ public class CourseManagementAdministrationHibernateImpl extends
 			section.setMeetings(meetings);
 		}
 		return meeting;
+	}
+
+	public void removeAcademicSession(String eid) {
+		AcademicSession as = cmService.getAcademicSession(eid);
+		getHibernateTemplate().delete(as);
+	}
+
+	public void removeCanonicalCourse(String eid) {
+		CanonicalCourseCmImpl cc = (CanonicalCourseCmImpl)cmService.getCanonicalCourse(eid);
+		
+		// Remove any equivalents
+		removeEquiv(cc);
+		
+		// Remove the associated course offerings (see removeCourseOffering for further cascades)
+		Set coSet = cmService.getCourseOfferingsInCanonicalCourse(eid);
+		for(Iterator iter = coSet.iterator(); iter.hasNext();) {
+			CourseOffering co = (CourseOffering)iter.next();
+			removeCourseOffering(co.getEid());
+		}
+		
+		getHibernateTemplate().delete(cc);
+	}
+
+	public void removeCourseOffering(String eid) {
+		CourseOffering co = cmService.getCourseOffering(eid);
+		Set memberships = cmService.getCourseOfferingMemberships(eid);
+		
+		// Remove the memberships
+		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
+			getHibernateTemplate().delete(iter.next());
+		}
+
+		// Remove the sections
+		for(Iterator iter = cmService.getSections(eid).iterator(); iter.hasNext();) {
+			Section sec = (Section)iter.next();
+			removeSection(sec.getEid());
+		}
+		
+		// Remove the enrollment sets
+		for(Iterator iter = cmService.getEnrollmentSets(eid).iterator(); iter.hasNext();) {
+			EnrollmentSet enr = (EnrollmentSet)iter.next();
+			removeEnrollmentSet(enr.getEid());
+		}
+		
+		// Remove the course offering itself
+		getHibernateTemplate().delete(co);
+	}
+
+	public void removeCourseSet(String eid) {
+		CourseSet cs = cmService.getCourseSet(eid);
+		Set memberships = cmService.getCourseSetMemberships(eid);
+
+		// Remove the memberships
+		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
+			getHibernateTemplate().delete(iter.next());
+		}
+		
+		// Remove the course set itself
+		getHibernateTemplate().delete(cs);
+	}
+
+	public void removeEnrollmentSet(String eid) {
+		EnrollmentSet es = cmService.getEnrollmentSet(eid);
+
+		// Remove the enrollments
+		Set enrollments = cmService.getEnrollments(eid);
+		for(Iterator iter = enrollments.iterator(); iter.hasNext();) {
+			getHibernateTemplate().delete(iter.next());
+		}
+		
+		// Remove the enrollment set itself
+		getHibernateTemplate().delete(es);
+	}
+
+	public void removeSection(String eid) {
+		Section sec = cmService.getSection(eid);
+		Set memberships = cmService.getSectionMemberships(eid);
+		
+		// Remove the memberships
+		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
+			getHibernateTemplate().delete(iter.next());
+		}
+
+		// Remove the section itself
+		getHibernateTemplate().delete(sec);
 	}
 
 }

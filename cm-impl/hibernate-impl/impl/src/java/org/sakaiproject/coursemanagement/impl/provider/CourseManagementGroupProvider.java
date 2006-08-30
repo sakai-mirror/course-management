@@ -50,19 +50,8 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	// GroupProvider methods
 	
 	/**
-	 * Supplies the Sakai role for user in an AuthzGroup by querying the user's membership
-	 * in any Sections mapped to the AuthzGroup.  Although Sections may have
-	 * child/parent relationships to other Sections, and there may be memberships
-	 * "above" the section (e.g. members of the CourseOffering), this implementation
-	 * ignores any membership not directly attached to the mapped Section(s).
-	 * 
-	 * Section membership roles take precedence over enrollments, so if a student
-	 * is enrolled in an EnrollmentSet attached to a mapped Section, but is also a
-	 * member of a Section, the membership role is returned rather than the enrollment
-	 * role.
-	 * 
-	 * If multiple Sections are mapped to this AuthzGroup, the first Section membership
-	 * role is returned.  TODO What should happen in this case?
+	 * This method is not longer in use in Sakai.  It should be removed from the
+	 * GroupProvider interface.
 	 */
 	public String getRole(String id, String user) {
 		log.error("\n------------------------------------------------------------------\n");
@@ -73,9 +62,9 @@ public class CourseManagementGroupProvider implements GroupProvider {
 		
 	/**
 	 * Provides a Map of a user ids to (Sakai) roles for a given AuthzGroup.  Since a
-	 * user may be enrolled in a mapped EnrollmentSet and have a Membership role
-	 * in a mapped Section, the following order of precedence is applied: Enrollment
-	 * is overridden by membership.
+	 * user may be both enrolled in a mapped EnrollmentSet and have a Membership
+	 * role in a mapped Section, the following order of precedence is applied:
+	 * Official Instructor, Enrollment, membership
 	 */
 	public Map getUserRolesForGroup(String id) {
 		if(log.isDebugEnabled()) log.debug("------------------CMGP.getUserRolesForGroup(" + id + ")");
@@ -101,11 +90,7 @@ public class CourseManagementGroupProvider implements GroupProvider {
 				}
 			}
 		}
-		if(log.isDebugEnabled()) {
-			log.debug("_____________getUserRolesForGroup___________________");
-			log.debug(userRoleMap);
-			log.debug("_____________________________________________");
-		}
+		if(log.isDebugEnabled()) log.debug("_____________getUserRolesForGroup=" + userRoleMap);
 		return userRoleMap;
 	}
 
@@ -137,12 +122,7 @@ public class CourseManagementGroupProvider implements GroupProvider {
 				}
 			}
 		}
-
-		if(log.isDebugEnabled()) {
-			log.debug("______________getGroupRolesForUser_________________");
-			log.debug(groupRoleMap);
-			log.debug("_____________________________________________");
-		}
+		if(log.isDebugEnabled()) log.debug("______________getGroupRolesForUser=" + groupRoleMap);
 		return groupRoleMap;
 	}
 

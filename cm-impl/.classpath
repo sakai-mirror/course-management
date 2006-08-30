@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="hibernate-impl/impl/src/java"/>
+	<classpathentry kind="src" path="integration-test/src/test"/>
 	<classpathentry kind="src" path="hibernate-impl/hibernate/src/java"/>
 	<classpathentry kind="src" path="hibernate-impl/hibernate/src/hibernate"/>
 	<classpathentry kind="src" path="hibernate-impl/impl/src/test"/>
@@ -23,5 +24,11 @@
 	<classpathentry kind="var" path="MAVEN_REPO/cglib/jars/cglib-full-2.0.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.7.3.3.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/authz-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/site-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/test-harness"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tool-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/util-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/entity-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/user-api"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -153,7 +153,7 @@ public interface CourseManagementService {
 	 * @return The set of CourseOfferings in the CourseSet
 	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
 	 */
-	public Set getCourseOfferings(String courseSetEid) throws IdNotFoundException;
+	public Set getCourseOfferingsInCourseSet(String courseSetEid) throws IdNotFoundException;
 
 	/**
 	 * Finds all of the course offerings in a course set that are current for any given
@@ -165,6 +165,15 @@ public interface CourseManagementService {
 	 * @throws IdNotFoundException
 	 */
 	public Set findCourseOfferings(String courseSetEid, String academicSessionEid) throws IdNotFoundException;
+	
+	/**
+	 * Finds all course offerings belonging to a canonical course.
+	 * 
+	 * @param canonicalCourseEid The enterprise id of the canonical course
+	 * @return The set of course offerings
+	 * @throws IdNotFoundException
+	 */
+	public Set getCourseOfferingsInCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException;
 	
 	/**
 	 * Finds all course sets in a given category.  Useful for listing the departments

@@ -29,6 +29,24 @@ public class IdNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = -8588237050380289434L;
 
+	/**
+	 * Constructs an IdNotFoundException with a generic message (useful when the
+	 * more specific constructor isn't suitable, because we don't know what kind of ID
+	 * wasn't found).
+	 * 
+	 * @param message
+	 */
+	public IdNotFoundException(String message) {
+		super(message);
+	}
+
+	/**
+	 * Constructs an IdNotFoundException indicating the class for which the id could
+	 * not be located.
+	 * 
+	 * @param id The ID that can't be found
+	 * @param className The class of object for which we were looking.
+	 */
 	public IdNotFoundException(String id, String className) {
 		super("No " + className + " found with id " + id);
 	}

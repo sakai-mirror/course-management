@@ -27,6 +27,12 @@
         ]]>
     </query>
 
+    <query name="findCourseOfferingsByCanonicalCourse">
+        <![CDATA[
+        from CourseOfferingCmImpl as co where co.canonicalCourse.eid=:canonicalCourseEid
+        ]]>
+    </query>
+
     <query name="findCourseOfferingsByCourseSetAndAcademicSession">
         <![CDATA[
         select co from CourseOfferingCmImpl as co, CourseSetCmImpl as cs where
