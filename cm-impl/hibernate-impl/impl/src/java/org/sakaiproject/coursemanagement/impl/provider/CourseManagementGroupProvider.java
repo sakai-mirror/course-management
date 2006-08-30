@@ -40,11 +40,22 @@ import org.sakaiproject.authz.api.GroupProvider;
 public class CourseManagementGroupProvider implements GroupProvider {
 	private static final Log log = LogFactory.getLog(CourseManagementGroupProvider.class);
 	
+	/** The course management service */
 	CourseManagementService cmService;
+	
+	/** Map of CM roles to Sakai roles */
 	Map roleMap;
+	
+	/** The role to use in sakai when a user has a CM role that is not mapped in the roleMap */
 	String defaultSakaiRole;
+	
+	/** The Sakai role to use for official instructors of EnrollmentSets */
 	String officialInstructorRole;
+
+	/** The Sakai role to use for official enrollments in EnrollmentSets */
 	String enrollmentRole;
+	
+	/** The role resolvers to use when looking for CM roles in the hierarchy*/
 	List roleResolvers;
 	
 	// GroupProvider methods
@@ -68,7 +79,7 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	 */
 	public Map getUserRolesForGroup(String id) {
 		if(log.isDebugEnabled()) log.debug("------------------CMGP.getUserRolesForGroup(" + id + ")");
-		Map userRoleMap = new HashMap();
+		Map userRoleMap = new KeySplittingMap();
 		
 		String[] sectionEids = unpackId(id);
 		if(log.isDebugEnabled()) log.debug(id + " is mapped to " + sectionEids.length + " sections");
@@ -85,7 +96,9 @@ public class CourseManagementGroupProvider implements GroupProvider {
 					String existingRole = (String)userRoleMap.get(userEid);
 					String rrRole = (String)rrUserRoleMap.get(userEid);
 					if(existingRole == null && rrRole != null) {
-						userRoleMap.put(userEid, convertRole(rrRole));
+						String sakaiRole = convertRole(rrRole);
+						if(log.isDebugEnabled()) log.debug("Adding "+ userEid + " to userRoleMap with role=" + sakaiRole);
+						userRoleMap.put(userEid, sakaiRole);
 					}
 				}
 			}
@@ -100,7 +113,7 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	 */
 	public Map getGroupRolesForUser(String userEid) {
 		if(log.isDebugEnabled()) log.debug("------------------CMGP.getGroupRolesForUser(" + userEid + ")");
-		Map groupRoleMap = new HashMap();
+		Map groupRoleMap = new KeySplittingMap();
 		
 		for(Iterator rrIter = roleResolvers.iterator(); rrIter.hasNext();) {
 			RoleResolver rr = (RoleResolver)rrIter.next();
@@ -116,9 +129,9 @@ public class CourseManagementGroupProvider implements GroupProvider {
 				}
 				String rrRole = (String)rrGroupRoleMap.get(sectionEid);
 				if( rrRole != null) {
-					String convertedRole = convertRole(rrRole);
-					if(log.isDebugEnabled()) log.debug("Adding " + userEid + " to " + sectionEid + " with role " + convertedRole);
-					groupRoleMap.put(sectionEid, convertedRole);
+					String sakaiRole = convertRole(rrRole);
+					if(log.isDebugEnabled()) log.debug("Adding " + sectionEid + " to groupRoleMap with sakai role" + sakaiRole + " for user " + userEid);
+					groupRoleMap.put(sectionEid, sakaiRole);
 				}
 			}
 		}
@@ -189,5 +202,33 @@ public class CourseManagementGroupProvider implements GroupProvider {
 
 	public void setRoleResolvers(List roleResolvers) {
 		this.roleResolvers = roleResolvers;
+	}
+	
+	/**
+	 * A custom map implementation, required by the authz / group provider architecture,
+	 * that checks inside compound IDs when looking up keys.
+	 *
+	 */
+	public class KeySplittingMap extends HashMap {
+		private static final long serialVersionUID = -6810251970110503758L;
+
+		public Object get(Object key) {
+			// if we have this key exactly, use it
+			Object value = super.get(key);
+			if (value != null) return (String)value;
+
+			// If the key wasn't found, break it up as a compound id
+			// The role resolvers ensure that we have only one role per key, so just return the first one we find
+			String[] ids = unpackId((String) key);
+			for (int i = 0; i < ids.length; i++) {
+				value = super.get(ids[i]);
+				if ((value != null)) {
+					return value;
+				}
+			}
+			
+			// If even the exploded keys can't be located, return null
+			return null;
+		}
 	}
 }

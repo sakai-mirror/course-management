@@ -24,7 +24,7 @@
 		<property name="category" column="CATEGORY" type="string" not-null="true" />
 		<property name="defaultEnrollmentCredits" column="DEFAULT_CREDITS" type="string" not-null="true" />
 
-		<set name="officialInstructors" table="CM_OFFICIAL_INSTRUCTORS_T" cascade="save-update">
+		<set name="officialInstructors" table="CM_OFFICIAL_INSTRUCTORS_T" cascade="all">
 			<key column="ENROLLMENT_SET_ID" />
 			<element type="string" column="INSTRUCTOR_ID" />
 		</set>

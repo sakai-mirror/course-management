@@ -134,7 +134,7 @@
 					<entry key="DA" value="Instructor" />
 					<entry key="I" value="Instructor" />
 					<entry key="S" value="Student" />
-					<entry key="CE" value="Student" />					
+					<entry key="CE" value="Student" />
 				</map>
 			</property>
 			<property name="officialInstructorRole" value="Instructor" />
@@ -148,6 +148,6 @@
 				</list>
 			</property>
 	</bean>
- 	-->
+	-->
  </beans>
 
