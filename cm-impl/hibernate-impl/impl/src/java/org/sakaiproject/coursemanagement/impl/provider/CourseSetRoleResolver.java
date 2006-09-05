@@ -24,6 +24,9 @@ import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 public class CourseSetRoleResolver implements RoleResolver {
 	private static final Log log = LogFactory.getLog(CourseSetRoleResolver.class);
 		
+	/** Map of CM course set roles to Sakai roles */
+	Map roleMap;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -51,8 +54,11 @@ public class CourseSetRoleResolver implements RoleResolver {
 			if(log.isDebugEnabled()) log.debug("CourseSet " + eid + " has " + csMembers.size() + " members");
 			for(Iterator memberIter = csMembers.iterator(); memberIter.hasNext();) {
 				Membership membership = (Membership)memberIter.next();
-				if(log.isDebugEnabled()) log.debug("Adding user " + membership.getUserId() + " to userRoleMap with role " + membership.getRole());
-				userRoleMap.put(membership.getUserId(), membership.getRole());
+				String sakaiRole = convertRole(membership.getRole());
+				if(sakaiRole != null) {
+					if(log.isDebugEnabled()) log.debug("Adding user " + membership.getUserId() + " to userRoleMap with role " + sakaiRole);
+					userRoleMap.put(membership.getUserId(), sakaiRole);
+				}
 			}
 		}
 		return userRoleMap;
@@ -69,6 +75,13 @@ public class CourseSetRoleResolver implements RoleResolver {
 		for(Iterator csIter = courseSetRoles.keySet().iterator(); csIter.hasNext();) {
 			String csEid = (String)csIter.next();
 			String csRole = (String)courseSetRoles.get(csEid);
+			
+			// If this course set role shouldn't be added to the site, ignore this course set
+			String sakaiRole = convertRole(csRole);
+			if(sakaiRole == null) {
+				continue;
+			}
+			
 			// Look at each of the course offerings in the course set
 			Set courseOfferings = cmService.getCourseOfferingsInCourseSet(csEid);
 			for(Iterator coIter = courseOfferings.iterator(); coIter.hasNext();) {
@@ -78,7 +91,7 @@ public class CourseSetRoleResolver implements RoleResolver {
 				for(Iterator secIter = sections.iterator(); secIter.hasNext();) {
 					// Add the section EIDs and *CourseSet* role to the sectionRoles map
 					Section section = (Section)secIter.next();
-					sectionRoles.put(section.getEid(), csRole);
+					sectionRoles.put(section.getEid(), sakaiRole);
 				}
 			}
 		}
@@ -121,5 +134,25 @@ public class CourseSetRoleResolver implements RoleResolver {
 		}
 		if(log.isDebugEnabled()) log.debug("Found " + csEids.size() + " course sets for section " + section.getEid() );
 		return csEids;
+	}
+
+	public String convertRole(String cmRole) {
+		if (cmRole == null) {
+			log.warn("Can not convert CM role 'null' to a sakai role.");
+			return null;
+		}
+		String sakaiRole = (String)roleMap.get(cmRole);
+		if(sakaiRole== null) {
+			log.warn("Unable to find sakai role for CM role " + cmRole);
+			return null;
+		} else {
+			return sakaiRole;
+		}
+	}
+
+	// Dependency injection
+	
+	public void setRoleMap(Map roleMap) {
+		this.roleMap = roleMap;
 	}
 }

@@ -42,19 +42,7 @@ public class CourseManagementGroupProvider implements GroupProvider {
 	
 	/** The course management service */
 	CourseManagementService cmService;
-	
-	/** Map of CM roles to Sakai roles */
-	Map roleMap;
-	
-	/** The role to use in sakai when a user has a CM role that is not mapped in the roleMap */
-	String defaultSakaiRole;
-	
-	/** The Sakai role to use for official instructors of EnrollmentSets */
-	String officialInstructorRole;
-
-	/** The Sakai role to use for official enrollments in EnrollmentSets */
-	String enrollmentRole;
-	
+			
 	/** The role resolvers to use when looking for CM roles in the hierarchy*/
 	List roleResolvers;
 	
@@ -90,15 +78,14 @@ public class CourseManagementGroupProvider implements GroupProvider {
 			for(Iterator rrIter = roleResolvers.iterator(); rrIter.hasNext();) {
 				RoleResolver rr = (RoleResolver)rrIter.next();
 				Map rrUserRoleMap = rr.getUserRoles(cmService, section);
-				// Only add the roles if they aren't already in the map.  Earlier resolvers take precedence.
+				// Only add the roles if the user isn't already in the map.  Earlier resolvers take precedence.
 				for(Iterator rrRoleIter = rrUserRoleMap.keySet().iterator(); rrRoleIter.hasNext();) {
 					String userEid = (String)rrRoleIter.next();
 					String existingRole = (String)userRoleMap.get(userEid);
 					String rrRole = (String)rrUserRoleMap.get(userEid);
 					if(existingRole == null && rrRole != null) {
-						String sakaiRole = convertRole(rrRole);
-						if(log.isDebugEnabled()) log.debug("Adding "+ userEid + " to userRoleMap with role=" + sakaiRole);
-						userRoleMap.put(userEid, sakaiRole);
+						if(log.isDebugEnabled()) log.debug("Adding "+ userEid + " to userRoleMap with role=" + rrRole);
+						userRoleMap.put(userEid, rrRole);
 					}
 				}
 			}
@@ -129,9 +116,8 @@ public class CourseManagementGroupProvider implements GroupProvider {
 				}
 				String rrRole = (String)rrGroupRoleMap.get(sectionEid);
 				if( rrRole != null) {
-					String sakaiRole = convertRole(rrRole);
-					if(log.isDebugEnabled()) log.debug("Adding " + sectionEid + " to groupRoleMap with sakai role" + sakaiRole + " for user " + userEid);
-					groupRoleMap.put(sectionEid, sakaiRole);
+					if(log.isDebugEnabled()) log.debug("Adding " + sectionEid + " to groupRoleMap with sakai role" + rrRole + " for user " + userEid);
+					groupRoleMap.put(sectionEid, rrRole);
 				}
 			}
 		}
@@ -157,47 +143,10 @@ public class CourseManagementGroupProvider implements GroupProvider {
 		if(log.isInfoEnabled()) log.info("destroying " + this.getClass().getName());
 	}
 	
-	private String convertRole(String cmRole) {
-		if (cmRole == null) {
-			log.warn("Can not convert CM role 'null' to a sakai role.  Using default: " + defaultSakaiRole);
-			return defaultSakaiRole;
-		}
-
-		if(cmRole.equals(RoleResolver.OFFICIAL_INSTRUCTOR_ROLE)) {
-			return this.officialInstructorRole;
-		} else if(cmRole.equals(RoleResolver.ENROLLMENT_ROLE)) {
-			return this.enrollmentRole;
-		} else {
-			String sakaiRole = (String)roleMap.get(cmRole);
-			if(sakaiRole== null) {
-				log.warn("Unable to find sakai role for CM role " + cmRole + ".  Using " + defaultSakaiRole);
-				return defaultSakaiRole;
-			} else {
-				return sakaiRole;
-			}
-		}
-	}
-
 	// Dependency injection
 	
 	public void setCmService(CourseManagementService cmService) {
 		this.cmService = cmService;
-	}
-
-	public void setRoleMap(Map roleMap) {
-		this.roleMap = roleMap;
-	}
-	
-	public void setDefaultSakaiRole(String defaultSakaiRole) {
-		this.defaultSakaiRole = defaultSakaiRole;
-	}
-	
-	public void setOfficialInstructorRole(String officialInstructorRole) {
-		this.officialInstructorRole = officialInstructorRole;
-	}
-
-	public void setEnrollmentRole(String enrollmentRole) {
-		this.enrollmentRole = enrollmentRole;
 	}
 
 	public void setRoleResolvers(List roleResolvers) {

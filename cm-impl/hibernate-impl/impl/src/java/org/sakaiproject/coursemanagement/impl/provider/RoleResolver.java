@@ -34,19 +34,6 @@ import org.sakaiproject.coursemanagement.api.Section;
 public interface RoleResolver {
 
 	/**
-	 * A key ued to communicate between the CM Group Provider and any role
-	 * resolver that uses enrollments to determine the group role.
-	 */
-	public static final String ENROLLMENT_ROLE="cm.enrollment";
-
-	/**
-	 * A key ued to communicate between the CM Group Provider and any role
-	 * resolver that uses the official instructors for enrollment sets to determine
-	 * the group role.
-	 */
-	public static final String OFFICIAL_INSTRUCTOR_ROLE="cm.instructor";
-
-	/**
 	 * Gets users roles in a CM object.  A RoleResolver implementation
 	 * will typically use the cmService to look "up" from the section in the CM
 	 * hierarchy to find the object it's interested in, then find any membership roles
@@ -71,4 +58,13 @@ public interface RoleResolver {
 	 * @return The user's role, or null if the user has no role in this CM object
 	 */
 	public Map getGroupRoles(CourseManagementService cmService, String userEid);
+	
+	/**
+	 * Converts a CM role to a Sakai role.
+	 * 
+	 * @param cmRole The role according to CM
+	 * @return The role to use in a Sakai site or group, or null if the CM role should
+	 * not be expressed as a role in a Sakai site or group.
+	 */
+	String convertRole(String cmRole);
 }

@@ -22,6 +22,9 @@ import org.sakaiproject.coursemanagement.api.Section;
 public class CourseOfferingRoleResolver implements RoleResolver {
 	private static final Log log = LogFactory.getLog(CourseOfferingRoleResolver.class);
 	
+	/** Map of CM course offering roles to Sakai roles */
+	Map roleMap;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -49,7 +52,10 @@ public class CourseOfferingRoleResolver implements RoleResolver {
 				if(userRoleMap.containsKey(membership.getUserId())) {
 					log.warn("User " + membership.getUserId() + " is a member of multiple course offings (probably equivalents).  Their role in section " + section.getEid() + " is ambiguous");
 				} else {
-					userRoleMap.put(membership.getUserId(), membership.getRole());
+					String sakaiRole = convertRole(membership.getRole());
+					if(sakaiRole != null) {
+						userRoleMap.put(membership.getUserId(), sakaiRole);
+					}
 				}
 			}
 		}
@@ -76,16 +82,44 @@ public class CourseOfferingRoleResolver implements RoleResolver {
 		for(Iterator coIter = courseOfferingRoles.keySet().iterator(); coIter.hasNext();) {
 			String coEid = (String)coIter.next();
 			String coRole = (String)courseOfferingRoles.get(coEid);
+			
+			// If this role shouldn't be part of the site, ignore the membership in this course offering
+			String sakaiRole = convertRole(coRole);
+			if(sakaiRole == null) {
+				if(log.isDebugEnabled()) log.debug("Course offering role " + coRole + " is not mapped to a sakai role.  Skipping this membership.");
+				continue;
+			}
+			
 			if(log.isDebugEnabled()) log.debug(userEid + " has role=" + coRole + " in course offering " + coEid);
 			// Get the sections in each course offering
 			Set sections = cmService.getSections(coEid);
 			for(Iterator secIter = sections.iterator(); secIter.hasNext();) {
-				// Add the section EIDs and *CourseOffering* role to the sectionRoles map
+				// Add the section EIDs and the converted *CourseOffering* role to the sectionRoles map
 				Section section = (Section)secIter.next();
-				sectionRoles.put(section.getEid(), coRole);
+				sectionRoles.put(section.getEid(), sakaiRole);
 			}
 		}
 		return sectionRoles;
+	}
+
+
+	public String convertRole(String cmRole) {
+		if (cmRole == null) {
+			log.warn("Can not convert CM role 'null' to a sakai role.");
+			return null;
+		}
+		String sakaiRole = (String)roleMap.get(cmRole);
+		if(sakaiRole== null) {
+			log.warn("Unable to find sakai role for CM role " + cmRole);
+			return null;
+		} else {
+			return sakaiRole;
+		}
+	}
+	// Dependency injection
+	
+	public void setRoleMap(Map roleMap) {
+		this.roleMap = roleMap;
 	}
 
 }
