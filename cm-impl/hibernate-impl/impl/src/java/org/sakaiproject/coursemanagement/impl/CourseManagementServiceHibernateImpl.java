@@ -217,9 +217,9 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	private Set getMemberships(final AbstractMembershipContainerCmImpl container) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				StringBuffer sb = new StringBuffer("select member from MembershipCmImpl as member, ");
+				StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
 					sb.append(container.getClass().getName());
-					sb.append(" as container where member.memberContainer=container ");
+					sb.append(" as container where mbr.memberContainer=container ");
 					sb.append("and container.eid=:eid");
 				Query q = session.createQuery(sb.toString());
 				q.setParameter("eid", container.getEid());

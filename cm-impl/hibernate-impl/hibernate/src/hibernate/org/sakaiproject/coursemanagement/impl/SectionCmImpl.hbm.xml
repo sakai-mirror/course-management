@@ -38,9 +38,9 @@
 
 	<query name="findSectionRoles">
         <![CDATA[
-        select section.eid, member.role from SectionCmImpl as section, MembershipCmImpl as member
-        	where member.userId=:userEid and
-        	member.memberContainer=section
+        select section.eid, mbr.role from SectionCmImpl as section, MembershipCmImpl as mbr
+        	where mbr.userId=:userEid and
+        	mbr.memberContainer=section
         ]]>
     </query>
 

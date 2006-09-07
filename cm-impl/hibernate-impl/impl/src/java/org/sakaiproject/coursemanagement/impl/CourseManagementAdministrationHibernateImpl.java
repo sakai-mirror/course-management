@@ -384,11 +384,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 	
 	private MembershipCmImpl getMembership(final String userId, final AbstractMembershipContainerCmImpl container) {
-        final StringBuffer sb = new StringBuffer("select member from MembershipCmImpl as member, ");
+        final StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
 		sb.append(container.getClass().getName());
-        sb.append(" as container where member.memberContainer=container ");
+        sb.append(" as container where mbr.memberContainer=container ");
         sb.append("and container.eid=:eid ");
-    	sb.append("and member.userId=:userId");
+    	sb.append("and mbr.userId=:userId");
     	
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {

@@ -19,15 +19,4 @@
         ]]>
     </query>
 
-<!-- 
-    <query name="findCanonicalCourseMembership">
-        <![CDATA[
-        select member from MembershipImpl as member, CanonicalCourseImpl as cc
-        	where member.memberContainer=cc
-        	and cc.eid=:canonicalCourseEid
-        	and member.userId=:userId
-        ]]>
-    </query>
--->
-
 </hibernate-mapping>

@@ -44,9 +44,9 @@
     
     <query name="findCourseOfferingRoles">
         <![CDATA[
-        select co.eid, member.role from  CourseOfferingCmImpl as co, MembershipCmImpl as member
-        	where member.userId=:userEid and
-        	member.memberContainer=co
+        select co.eid, mbr.role from  CourseOfferingCmImpl as co, MembershipCmImpl as mbr
+        	where mbr.userId=:userEid and
+        	mbr.memberContainer=co
         ]]>
     </query>
 
