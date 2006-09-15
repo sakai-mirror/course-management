@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cm-data>
+	<academic-sessions>
+
+		<academic-session>
+			<eid>fall_2006</eid>
+			<title>Fall 2006</title>
+			<description>The fall semester for the year 2006</description>
+			<start-date>9/1/2006</start-date>
+			<end-date>12/31/2006</end-date>			
+		</academic-session>
+
+		<academic-session>
+			<eid>winter_2007</eid>
+			<title>Winter 2007</title>
+			<description>The winter semester for the year 2007</description>
+			<start-date>1/1/2007</start-date>
+			<end-date>4/30/2007</end-date>			
+		</academic-session>
+
+	</academic-sessions>
+</cm-data>

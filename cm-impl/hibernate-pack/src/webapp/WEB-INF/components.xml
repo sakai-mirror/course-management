@@ -117,6 +117,36 @@
 	    	</bean>
 	    </property>
 	</bean>
-   
+
+	<!--  Reconciliation Job for CM data -->   
+   <bean id="sampleCMSyncJob"
+   		class="org.sakaiproject.coursemanagement.impl.job.SampleCMSyncJob"
+   		init-method="init" destroy-method="destroy">
+   		<property name="cmService">
+   			<ref bean="org.sakaiproject.coursemanagement.api.CourseManagementService"/>
+   		</property>
+   		<property name="cmAdmin">
+   			<ref bean="org.sakaiproject.coursemanagement.api.CourseManagementAdministration"/>
+   		</property>
+   		<property name="classPathToXml">
+   			<value>org/sakaiproject/coursemanagement/impl/job/sampleCMData.xml</value>
+   		</property>
+   	</bean>
+
+   <!-- this is the helper that will register the above bean with the schedule manager -->
+   <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.SampleCMSyncJob"
+      class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+      singleton="true" init-method="init">
+      <property name="beanId">
+         <value>sampleCMSyncJob</value>
+      </property>
+      <property name="jobName">
+         <value>Sample CM Sync Job</value>
+      </property>
+      <property name="schedulerManager">
+         <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+      </property>
+   </bean>
+
  </beans>
 
