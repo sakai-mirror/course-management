@@ -34,7 +34,6 @@ import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
-import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.test.SakaiTestBase;

@@ -1,18 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-$URL: $
-$Id: $
--->
-
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <cm-data>
 	<academic-sessions>
-
 		<academic-session>
 			<eid>fall_2006</eid>
 			<title>Fall 2006</title>
 			<description>The fall semester for the year 2006</description>
 			<start-date>9/1/2006</start-date>
-			<end-date>12/31/2006</end-date>			
+			<end-date>12/31/2006</end-date>
 		</academic-session>
 
 		<academic-session>
@@ -22,6 +16,119 @@ $Id: $
 			<start-date>1/1/2007</start-date>
 			<end-date>4/30/2007</end-date>			
 		</academic-session>
-
 	</academic-sessions>
+	
+	<canonical-courses>
+		<canonical-course>
+			<eid>bio_101</eid>
+			<title>Biology 101</title>
+			<description>Introduction to Cellular Biology</description>
+		</canonical-course>
+
+		<canonical-course>
+			<eid>chem_101</eid>
+			<title>Chemistry 101</title>
+			<description>Introduction to Inorganic Chemistry</description>
+		</canonical-course>
+	</canonical-courses>
+	
+	<course-offerings>
+		<course-offering>
+			<eid>bio_101_01</eid>
+			<title>Intro to Biology, Fall 2006</title>
+			<description>Introduction to Biology for the Fall 2006 Semester</description>
+			<status>open-enrollment</status>
+			<academic-session-eid>fall_2006</academic-session-eid>
+			<canonical-course-eid>bio_101</canonical-course-eid>
+			<start-date>9/1/2006</start-date>
+			<end-date>12/31/2006</end-date>
+		</course-offering>
+
+		<course-offering>
+			<eid>chem_101_01</eid>
+			<title>Intro to Inorganic Chemistry, Fall 2006</title>
+			<description>Introduction to Inorganic Chemistry for the Fall 2006 Semester</description>
+			<status>full</status>
+			<academic-session-eid>fall_2006</academic-session-eid>
+			<canonical-course-eid>chem_101</canonical-course-eid>
+			<start-date>9/1/2006</start-date>
+			<end-date>12/31/2006</end-date>
+		</course-offering>
+	</course-offerings>
+
+	<sections>
+		<section>
+			<eid>bio_101_01_lec01</eid>
+			<title>Intro to Biology Lecture</title>
+			<description>Main lecture section for bio_101</description>
+			<category>Lecture</category>
+			<parent-section-eid/>
+			<enrollment-set-eid>bio_101_01_lec01_es</enrollment-set-eid>
+			
+			<meetings>
+				<meeting>
+					<location>Lecture Hall A</location>
+					<time>Tuesday, 12:00pm</time>
+					<notes>Don't be late.</notes>
+				</meeting>
+				<meeting>
+					<location>Lecture Hall B</location>
+					<time>Thursday, 12:00pm</time>
+					<notes></notes>
+				</meeting>
+			</meetings>
+		</section>
+	</sections>
+	
+	<enrollment-sets>
+		<enrollment-set>
+			<eid>bio_101_01_lec01_es</eid>
+			<title>Intro to Biology Lecture Enrollment Set</title>
+			<description>Main lecture section for bio_101 - Enrollment set</description>
+			<category>Lecture</category>
+			<default-enrollment-credits>3</default-enrollment-credits>
+			<official-instructors>
+				<official-instructor>instructor1</official-instructor>
+				<official-instructor>instructor2</official-instructor>
+			</official-instructors>
+			<enrollments>
+				<enrollment>student1</enrollment>
+				<enrollment>student2</enrollment>
+			</enrollments>
+		</enrollment-set>
+	</enrollment-sets>
+	
+	<course-sets>
+		<course-set>
+			<eid>ucb</eid>
+			<title>UC Berkeley</title>
+			<description>Berkeley campus of the University of California</description>
+			<category>University</category>
+			<parent-course-set />
+			<members>
+				<member userEid="birgeneau" role="president"/>
+			</members>
+		</course-set>
+
+		<course-set>
+			<eid>bio</eid>
+			<title>Biology Department</title>
+			<description>Biology Department</description>
+			<category>dept</category>
+			<parent-course-set>ucb</parent-course-set>
+			<members>
+				<member userEid="bio_dude_1" role="dept-admin"/>
+				<member userEid="bio_dude_2" role="dept-admin"/>
+			</members>
+		</course-set>
+
+		<course-set>
+			<eid>chem</eid>
+			<title>Chemistry Department</title>
+			<description>Chemistry Department</description>
+			<category>dept</category>
+			<parent-course-set>ucb</parent-course-set>
+		</course-set>
+	</course-sets>
+
 </cm-data>

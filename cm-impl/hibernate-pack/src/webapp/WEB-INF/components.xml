@@ -120,7 +120,7 @@
 
 	<!--  Reconciliation Job for CM data -->   
    <bean id="sampleCMSyncJob"
-   		class="org.sakaiproject.coursemanagement.impl.job.SampleCMSyncJob"
+   		class="org.sakaiproject.coursemanagement.impl.job.ClassPathCMSyncJob"
    		init-method="init" destroy-method="destroy">
    		<property name="cmService">
    			<ref bean="org.sakaiproject.coursemanagement.api.CourseManagementService"/>
