@@ -5,6 +5,40 @@
 	xmlns:maven="jelly:maven"
 	xmlns:u="jelly:util">
 
+	<goal name="schema">
+		<!-- Skip the tests -->
+		<j:set var="maven.test.skip" value="true" />
+
+		<ant:echo message="Using hibernate.properties from ${hibernate.properties.dir}"/>
+		<j:set var="schemaexport.noDatabaseOverwrite" value="no"/>
+		<j:set var="maven.hibernate.properties" value="${hibernate.properties.dir}/hibernate.properties"/>
+
+		<!-- Run the non-db tests first, so all of the test classes and mappings are available in ${maven.build.dest} -->
+		<attainGoal name="test:test" />
+		<j:set var="hibernate.hbm2ddl.auto" value="create" />
+		<j:set var="maven.hibernate.delimiter" value=";" />
+		<j:set var="maven.hibernate.quiet" value="false" />
+
+		<j:set var="maven.hibernate.input.dir" value="${basedir}/../hibernate/src/hibernate/org/sakaiproject/coursemanagement/impl" />
+
+		<j:set var="maven.hibernate.input.includes" value="**/*.hbm.xml" />
+
+		<!-- The Maven plug-in for Hibernate 3 is not yet available to support this goal. -->
+		<!--
+		<attainGoal name="hibernate:schema-export" />
+		-->
+		<ant:path id="schemaexport.classpath">
+			<ant:path refid="maven.dependency.classpath" />
+			<ant:pathelement location="${basedir}/target/classes" />
+		</ant:path>
+		<ant:taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask" classpathref="schemaexport.classpath" />
+		<ant:schemaexport properties="${maven.hibernate.properties}" delimiter=";" text="${schemaexport.noDatabaseOverwrite}" output="${basedir}/target/cm.sql">
+			<ant:fileset dir="${maven.hibernate.input.dir}">
+				<ant:include name="${maven.hibernate.input.includes}"/>
+			</ant:fileset>
+		</ant:schemaexport>
+	</goal>
+
 	<goal name="load-data">
 		<!-- Skip the tests -->
 		<j:set var="maven.test.skip" value="true" />

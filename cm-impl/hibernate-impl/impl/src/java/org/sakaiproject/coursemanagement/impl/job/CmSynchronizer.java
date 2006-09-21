@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,8 +39,10 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 import org.sakaiproject.authz.cover.AuthzGroupService;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
+import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.event.cover.EventTrackingService;
 import org.sakaiproject.event.cover.UsageSessionService;
 import org.sakaiproject.tool.api.Session;
@@ -61,7 +62,7 @@ public abstract class CmSynchronizer {
 	protected CourseManagementAdministration cmAdmin;
 	protected abstract InputStream getXmlInputStream();
 
-	public synchronized void synchAllCmObjects() {
+	public synchronized void syncAllCmObjects() {
 		long start = System.currentTimeMillis();
 		if(log.isInfoEnabled()) log.info("Starting CM synchronization");
 		// Load the xml document from the xml stream
@@ -70,16 +71,9 @@ public abstract class CmSynchronizer {
 		try {
 			in = getXmlInputStream();
 			doc = new SAXBuilder().build(in);
-			reconcileAcademicSessions(doc);
-			reconcileCanonicalCourses(doc);
-			reconcileCourseOfferings(doc);
-			reconcileSections(doc);
-			reconcileEnrollmentSets(doc);
-			reconcileCourseSets(doc);
 		} catch (Exception e) {
 			log.error("Could not build a jdom document from the xml input stream... " + e);
-			throw new RuntimeException(e);
-		} finally {
+			// Close the input stream
 			if(in != null) {
 				try {
 					in.close();
@@ -87,8 +81,28 @@ public abstract class CmSynchronizer {
 					log.error("Unable to close input stream " + in);
 				}
 			}
-			if(log.isInfoEnabled()) log.info("Finished CM synchronization in " + (System.currentTimeMillis()-start) + " ms");
+			throw new RuntimeException(e);
 		}
+
+		try {
+			reconcileAcademicSessions(doc);
+			reconcileCanonicalCourses(doc);
+			reconcileCourseOfferings(doc);
+			reconcileSections(doc);
+			reconcileEnrollmentSets(doc);
+			reconcileCourseSets(doc);
+		} finally {
+			// Close the input stream
+			if(in != null) {
+				try {
+					in.close();
+				} catch (IOException ioe) {
+					log.error("Unable to close input stream " + in);
+				}
+			}
+		}
+
+		if(log.isInfoEnabled()) log.info("Finished CM synchronization in " + (System.currentTimeMillis()-start) + " ms");
 	}
 
 	protected void loginToSakai() {
@@ -124,9 +138,6 @@ public abstract class CmSynchronizer {
 			AcademicSession as = (AcademicSession)iter.next();
 			academicSessionMap.put(as.getEid(), as);
 		}
-		
-		// Keep a list of external EIDs so we can remove any Academic Sessions if necessary
-		List externalEids = new ArrayList();
 
 		// Find the academic sessions specified in the xml doc and reconcile them
 		try {
@@ -136,7 +147,6 @@ public abstract class CmSynchronizer {
 			for(Iterator iter = items.iterator(); iter.hasNext();) {
 				Element element = (Element)iter.next();
 				String eid = element.getChildText("eid");
-				externalEids.add(eid);
 				if(log.isDebugEnabled()) log.debug("Found academic section to reconcile: " + eid);
 				if(academicSessionMap.containsKey(eid)) {
 					updateAcademicSession((AcademicSession)academicSessionMap.get(eid), element);
@@ -148,13 +158,6 @@ public abstract class CmSynchronizer {
 			log.error(jde);
 		}
 		
-		// Remove any academic sessions that are no longer known to the external data source
-		for(Iterator iter = existing.iterator(); iter.hasNext();) {
-			AcademicSession as = (AcademicSession)iter.next();
-			if( ! externalEids.contains(as.getEid())) {
-				cmAdmin.removeAcademicSession(as.getEid());
-			}
-		}
 		if(log.isInfoEnabled()) log.info("Finished reconciling AcademicSessions in " + (System.currentTimeMillis()-start) + " ms");
 	}
 	
@@ -178,9 +181,47 @@ public abstract class CmSynchronizer {
 	}
 	
 	protected void reconcileCanonicalCourses(Document doc) {
-		// TODO Reconcile canonical courses
+		long start = System.currentTimeMillis();
+		if(log.isInfoEnabled()) log.info("Reconciling AcademicSessions");
+		
+		try {
+			XPath docsPath = XPath.newInstance("/cm-data/canonical-courses/canonical-course");
+			List items = docsPath.selectNodes(doc);
+			// Add or update each of the canonical courses specified in the xml
+			for(Iterator iter = items.iterator(); iter.hasNext();) {
+				Element element = (Element)iter.next();
+				String eid = element.getChildText("eid");
+				if(log.isDebugEnabled()) log.debug("Found canonical course to reconcile: " + eid);
+				CanonicalCourse existing;
+				try {
+					existing = cmService.getCanonicalCourse(eid);
+					updateCanonicalCourse(existing, element);
+				} catch (IdNotFoundException idex) {
+					addCanonicalCourse(element);
+				}
+			}
+		} catch (JDOMException jde) {
+			log.error(jde);
+		}
+		
+		if(log.isInfoEnabled()) log.info("Finished reconciling AcademicSessions in " + (System.currentTimeMillis()-start) + " ms");
 	}
 	
+	protected void addCanonicalCourse(Element element) {
+		String eid = element.getChildText("eid");
+		if(log.isDebugEnabled()) log.debug("Adding CanonicalCourse + " + eid);
+		String title = element.getChildText("title");
+		String description = element.getChildText("description");
+		cmAdmin.createCanonicalCourse(eid, title, description);
+	}
+
+	protected void updateCanonicalCourse(CanonicalCourse canonicalCourse, Element element) {
+		if(log.isDebugEnabled()) log.debug("Updating CanonicalCourse + " + canonicalCourse.getEid());
+		canonicalCourse.setTitle(element.getChildText("title"));
+		canonicalCourse.setDescription(element.getChildText("description"));
+		cmAdmin.updateCanonicalCourse(canonicalCourse);
+	}
+
 	protected void reconcileCourseOfferings(Document doc) {
 		// TODO Reconcile course offerings
 	}

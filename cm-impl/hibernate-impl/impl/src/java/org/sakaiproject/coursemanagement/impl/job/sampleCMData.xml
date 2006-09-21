@@ -20,13 +20,13 @@
 	
 	<canonical-courses>
 		<canonical-course>
-			<eid>bio_101</eid>
+			<eid>biology_101</eid>
 			<title>Biology 101</title>
 			<description>Introduction to Cellular Biology</description>
 		</canonical-course>
 
 		<canonical-course>
-			<eid>chem_101</eid>
+			<eid>chemistry_101</eid>
 			<title>Chemistry 101</title>
 			<description>Introduction to Inorganic Chemistry</description>
 		</canonical-course>
@@ -34,23 +34,23 @@
 	
 	<course-offerings>
 		<course-offering>
-			<eid>bio_101_01</eid>
+			<eid>biology_101_01</eid>
 			<title>Intro to Biology, Fall 2006</title>
 			<description>Introduction to Biology for the Fall 2006 Semester</description>
 			<status>open-enrollment</status>
 			<academic-session-eid>fall_2006</academic-session-eid>
-			<canonical-course-eid>bio_101</canonical-course-eid>
+			<canonical-course-eid>biology_101</canonical-course-eid>
 			<start-date>9/1/2006</start-date>
 			<end-date>12/31/2006</end-date>
 		</course-offering>
 
 		<course-offering>
-			<eid>chem_101_01</eid>
+			<eid>chemistry_101_01</eid>
 			<title>Intro to Inorganic Chemistry, Fall 2006</title>
 			<description>Introduction to Inorganic Chemistry for the Fall 2006 Semester</description>
 			<status>full</status>
 			<academic-session-eid>fall_2006</academic-session-eid>
-			<canonical-course-eid>chem_101</canonical-course-eid>
+			<canonical-course-eid>chemistry_101</canonical-course-eid>
 			<start-date>9/1/2006</start-date>
 			<end-date>12/31/2006</end-date>
 		</course-offering>
@@ -58,12 +58,12 @@
 
 	<sections>
 		<section>
-			<eid>bio_101_01_lec01</eid>
+			<eid>biology_101_01_lec01</eid>
 			<title>Intro to Biology Lecture</title>
-			<description>Main lecture section for bio_101</description>
+			<description>Main lecture section for biology_101</description>
 			<category>Lecture</category>
 			<parent-section-eid/>
-			<enrollment-set-eid>bio_101_01_lec01_es</enrollment-set-eid>
+			<enrollment-set-eid>biology_101_01_lec01_es</enrollment-set-eid>
 			
 			<meetings>
 				<meeting>
@@ -82,9 +82,9 @@
 	
 	<enrollment-sets>
 		<enrollment-set>
-			<eid>bio_101_01_lec01_es</eid>
+			<eid>biology_101_01_lec01_es</eid>
 			<title>Intro to Biology Lecture Enrollment Set</title>
-			<description>Main lecture section for bio_101 - Enrollment set</description>
+			<description>Main lecture section for biology_101 - Enrollment set</description>
 			<category>Lecture</category>
 			<default-enrollment-credits>3</default-enrollment-credits>
 			<official-instructors>
@@ -117,8 +117,8 @@
 			<category>dept</category>
 			<parent-course-set>ucb</parent-course-set>
 			<members>
-				<member userEid="bio_dude_1" role="dept-admin"/>
-				<member userEid="bio_dude_2" role="dept-admin"/>
+				<member userEid="bio_dude_1" role="dept_admin"/>
+				<member userEid="bio_dude_2" role="dept_admin"/>
 			</members>
 		</course-set>
 

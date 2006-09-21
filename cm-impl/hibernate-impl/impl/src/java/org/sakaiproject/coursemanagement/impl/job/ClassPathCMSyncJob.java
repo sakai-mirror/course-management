@@ -45,7 +45,7 @@ public class ClassPathCMSyncJob extends CmSynchronizer implements Job {
 	 */
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		loginToSakai();
-		synchAllCmObjects();
+		syncAllCmObjects();
 		logoutFromSakai();
 	}
 	
