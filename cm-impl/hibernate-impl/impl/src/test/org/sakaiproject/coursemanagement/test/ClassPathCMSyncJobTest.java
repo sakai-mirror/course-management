@@ -203,4 +203,43 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		// Ensure that the reconciliation updated the data
 		Assert.assertEquals(oldTitle, cmService.getCourseSet("ucb").getTitle());
 	}
+	
+	public void testEnrollmentsLoaded() throws Exception {
+		Assert.assertNotNull(cmService.findEnrollment("student1", "biology_101_01_lec01_es"));
+		Assert.assertNotNull(cmService.findEnrollment("student2", "biology_101_01_lec01_es"));
+	}
+
+	public void testEnrollmentsReconciled() throws Exception {
+		// Remove an enrollment
+		cmAdmin.removeEnrollment("student1", "biology_101_01_lec01_es");
+		
+		// Ensure that it's gone
+		Assert.assertNull(cmService.findEnrollment("student1",  "biology_101_01_lec01_es"));
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the reconciliation added the enrollment
+		Assert.assertNotNull(cmService.findEnrollment("student1",  "biology_101_01_lec01_es"));
+	}
+
+	public void testInstructorsLoaded() throws Exception {
+		Assert.assertTrue(cmService.getInstructorsOfRecordIds("biology_101_01_lec01_es").contains("instructor1"));
+		Assert.assertTrue(cmService.getInstructorsOfRecordIds("biology_101_01_lec01_es").contains("instructor2"));
+	}
+
+	public void testInstructorsReconciled() throws Exception {
+		// Remove an instructor
+		EnrollmentSet es = cmService.getEnrollmentSet("biology_101_01_lec01_es");
+		es.getOfficialInstructors().remove("instructor1");
+		
+		// Ensure that the instructor is gone
+		Assert.assertFalse(cmService.getInstructorsOfRecordIds("biology_101_01_lec01_es").contains("instructor1"));
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the reconciliation added the instructor
+		Assert.assertTrue(cmService.getInstructorsOfRecordIds("biology_101_01_lec01_es").contains("instructor1"));
+	}
 }

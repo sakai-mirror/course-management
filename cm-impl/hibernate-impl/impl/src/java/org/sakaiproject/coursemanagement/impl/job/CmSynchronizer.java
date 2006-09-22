@@ -45,6 +45,7 @@ import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Section;
@@ -282,17 +283,8 @@ public abstract class CmSynchronizer {
 				} else {
 					enr = addEnrollmentSet(element);
 				}
-
-//				reconcileEnrollments(element, enr);
-
-				//				// Update the official instructors and enrollments
-//				Set newEnrollments = getChildValues(element.getChild("enrollments"));
-//				Set existingEnrollments = cmService.getEnrollments(eid);
-//
-//				cmAdmin.addOrUpdateEnrollment(userId, enrollmentSetEid, enrollmentStatus, credits, gradingScheme)
-//				
-//				Set newInstructors = getChildValues(element.getChild("official-instructors"));
-//				Set existingInstructors = cmService.getInstructorsOfRecordIds(eid);
+				reconcileEnrollments(element.getChild("enrollments"), enr);
+				reconcileOfficialInstructors(element, enr);
 			}
 		} catch (JDOMException jde) {
 			log.error(jde);
@@ -301,20 +293,56 @@ public abstract class CmSynchronizer {
 		if(log.isInfoEnabled()) log.info("Finished reconciling EnrollmentSets in " + (System.currentTimeMillis()-start) + " ms");
 	}
 
-//	protected void reconcileEnrollments(Element enrollmentsElement, EnrollmentSet enr) {
-//		Set newEnrollmentElements = getChildValues(enrollmentsElement.getChild("enrollments"));
-//		Set existingEnrollments = cmService.getEnrollments(enr.getEid());
-//		
-//	}
-	
-//	protected Set getChildValues(Element element) {
-//		Set childValues = new HashSet();
-//		for(Iterator elementIter = element.getChildren().iterator(); elementIter.hasNext();) {
-//			Element childElement = (Element)elementIter.next();
-//			childValues.add(childElement.getText());
-//		}
-//		return childValues;
-//	}
+	protected void reconcileEnrollments(Element enrollmentsElement, EnrollmentSet enrollmentSet) {
+		List newEnrollmentElements = enrollmentsElement.getChildren("enrollment");
+		Set newUserEids = new HashSet();
+		Set existingEnrollments = cmService.getEnrollments(enrollmentSet.getEid());
+
+		for(Iterator iter = newEnrollmentElements.iterator(); iter.hasNext();) {
+			Element enrollmentElement = (Element)iter.next();
+			String userEid = enrollmentElement.getChildText("userEid");
+			newUserEids.add(userEid);
+			String status = enrollmentElement.getChildText("status");
+			String credits = enrollmentElement.getChildText("credits");
+			String gradingScheme = enrollmentElement.getChildText("grading-scheme");
+			cmAdmin.addOrUpdateEnrollment(userEid,enrollmentSet.getEid(), status, credits, gradingScheme);
+		}
+		
+		for(Iterator iter = existingEnrollments.iterator(); iter.hasNext();) {
+			Enrollment existingEnr = (Enrollment) iter.next();
+			if( ! newUserEids.contains(existingEnr.getUserId())) {
+				// Drop this enrollment
+				cmAdmin.removeEnrollment(existingEnr.getUserId(), enrollmentSet.getEid());
+			}
+		}
+	}
+
+	protected void reconcileOfficialInstructors(Element esElement, EnrollmentSet enrollmentSet) {
+		List newInstructorElements = esElement.getChild("official-instructors").getChildren("official-instructor");
+		Set newUserEids = new HashSet();
+
+		for(Iterator iter = newInstructorElements.iterator(); iter.hasNext();) {
+			String userEid = ((Element)iter.next()).getText();
+			newUserEids.add(userEid);
+		}
+		Set officialInstructors = enrollmentSet.getOfficialInstructors();
+		if(officialInstructors == null) {
+			officialInstructors = new HashSet();
+			enrollmentSet.setOfficialInstructors(officialInstructors);
+		}
+		officialInstructors.clear();
+		officialInstructors.addAll(newUserEids);
+		cmAdmin.updateEnrollmentSet(enrollmentSet);
+	}
+
+	protected Set getChildValues(Element element) {
+		Set childValues = new HashSet();
+		for(Iterator elementIter = element.getChildren().iterator(); elementIter.hasNext();) {
+			Element childElement = (Element)elementIter.next();
+			childValues.add(childElement.getText());
+		}
+		return childValues;
+	}
 
 	protected void updateOfficialInstructors(EnrollmentSet enr, Element element) {
 		
