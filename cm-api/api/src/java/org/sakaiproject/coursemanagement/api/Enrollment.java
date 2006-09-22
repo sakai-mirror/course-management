@@ -42,4 +42,8 @@ public interface Enrollment {
 	
 	public String getGradingScheme();
 	public void setGradingScheme(String gradingScheme);
+	
+	public boolean isDropped();
+	public void setDropped(boolean dropped);
+
 }

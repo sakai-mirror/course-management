@@ -276,13 +276,16 @@ public abstract class CmSynchronizer {
 				String eid = element.getChildText("eid");
 				if(log.isDebugEnabled()) log.debug("Reconciling enrollment set " + eid);
 				
+				EnrollmentSet enr = null;
 				if(cmService.isEnrollmentSetDefined(eid)) {
-					updateEnrollmentSet(cmService.getEnrollmentSet(eid), element);
+					enr = updateEnrollmentSet(cmService.getEnrollmentSet(eid), element);
 				} else {
-					addEnrollmentSet(element);
+					enr = addEnrollmentSet(element);
 				}
-				
-//				// Update the official instructors and enrollments
+
+//				reconcileEnrollments(element, enr);
+
+				//				// Update the official instructors and enrollments
 //				Set newEnrollments = getChildValues(element.getChild("enrollments"));
 //				Set existingEnrollments = cmService.getEnrollments(eid);
 //
@@ -297,11 +300,17 @@ public abstract class CmSynchronizer {
 		
 		if(log.isInfoEnabled()) log.info("Finished reconciling EnrollmentSets in " + (System.currentTimeMillis()-start) + " ms");
 	}
+
+//	protected void reconcileEnrollments(Element enrollmentsElement, EnrollmentSet enr) {
+//		Set newEnrollmentElements = getChildValues(enrollmentsElement.getChild("enrollments"));
+//		Set existingEnrollments = cmService.getEnrollments(enr.getEid());
+//		
+//	}
 	
 //	protected Set getChildValues(Element element) {
 //		Set childValues = new HashSet();
-//		for(Iterator enrollmentElementIter = element.getChildren().iterator(); enrollmentElementIter.hasNext();) {
-//			Element childElement = (Element)enrollmentElementIter.next();
+//		for(Iterator elementIter = element.getChildren().iterator(); elementIter.hasNext();) {
+//			Element childElement = (Element)elementIter.next();
 //			childValues.add(childElement.getText());
 //		}
 //		return childValues;
@@ -311,7 +320,7 @@ public abstract class CmSynchronizer {
 		
 	}
 
-	protected void addEnrollmentSet(Element element) {
+	protected EnrollmentSet addEnrollmentSet(Element element) {
 		String eid = element.getChildText("eid");
 		if(log.isDebugEnabled()) log.debug("Adding EnrollmentSet + " + eid);
 		String title = element.getChildText("title");
@@ -319,10 +328,10 @@ public abstract class CmSynchronizer {
 		String category = element.getChildText("category");
 		String courseOfferingEid = element.getChildText("course-offering-eid");
 		String defaultEnrollmentCredits = element.getChildText("default-enrollment-credits");
-		cmAdmin.createEnrollmentSet(eid, title, description, category, defaultEnrollmentCredits, courseOfferingEid, null);
+		return cmAdmin.createEnrollmentSet(eid, title, description, category, defaultEnrollmentCredits, courseOfferingEid, null);
 	}
 
-	protected void updateEnrollmentSet(EnrollmentSet enrollmentSet, Element element) {
+	protected EnrollmentSet updateEnrollmentSet(EnrollmentSet enrollmentSet, Element element) {
 		if(log.isDebugEnabled()) log.debug("Updating EnrollmentSet + " + enrollmentSet.getEid());
 		enrollmentSet.setTitle(element.getChildText("title"));
 		enrollmentSet.setDescription(element.getChildText("description"));
@@ -331,6 +340,7 @@ public abstract class CmSynchronizer {
 		// Note: It is not possible to change the course offering, but this seems OK.
 		
 		cmAdmin.updateEnrollmentSet(enrollmentSet);
+		return enrollmentSet;
 	}
 
 	protected void reconcileSections(Document doc) {
