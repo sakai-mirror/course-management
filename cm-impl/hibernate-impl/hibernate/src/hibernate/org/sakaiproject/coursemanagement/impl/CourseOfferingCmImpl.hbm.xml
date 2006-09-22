@@ -21,6 +21,12 @@
 
 	</subclass>
 
+    <query name="isCourseOfferingDefined">
+        <![CDATA[
+        select count(co) from CourseOfferingCmImpl as co where co.eid=:eid
+        ]]>
+    </query>
+
     <query name="findCourseOfferingByEid">
         <![CDATA[
         from CourseOfferingCmImpl as co where co.eid=:eid

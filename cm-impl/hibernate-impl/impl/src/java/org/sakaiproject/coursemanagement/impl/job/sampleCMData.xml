@@ -85,6 +85,7 @@
 			<eid>biology_101_01_lec01_es</eid>
 			<title>Intro to Biology Lecture Enrollment Set</title>
 			<description>Main lecture section for biology_101 - Enrollment set</description>
+			<course-offering-eid>biology_101_01</course-offering-eid>
 			<category>Lecture</category>
 			<default-enrollment-credits>3</default-enrollment-credits>
 			<official-instructors>
@@ -92,8 +93,18 @@
 				<official-instructor>instructor2</official-instructor>
 			</official-instructors>
 			<enrollments>
-				<enrollment>student1</enrollment>
-				<enrollment>student2</enrollment>
+				<enrollment>
+					<userEid>student1</userEid>
+					<status>enrolled</status>
+					<credits>3</credits>
+					<grading-scheme>letter_grade</grading-scheme>					
+				</enrollment>
+				<enrollment>
+					<userEid>student2</userEid>
+					<status>waitlisted</status>
+					<credits>2</credits>
+					<grading-scheme>pass_fail</grading-scheme>					
+				</enrollment>
 			</enrollments>
 		</enrollment-set>
 	</enrollment-sets>

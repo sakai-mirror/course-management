@@ -26,6 +26,12 @@
 		
 	</subclass>
 
+    <query name="isCourseSetDefined">
+        <![CDATA[
+        select count(cs) from CourseSetCmImpl as cs where cs.eid=:eid
+        ]]>
+    </query>
+
     <query name="findCourseSetByEid">
         <![CDATA[
         from CourseSetCmImpl as courseSet where courseSet.eid=:eid

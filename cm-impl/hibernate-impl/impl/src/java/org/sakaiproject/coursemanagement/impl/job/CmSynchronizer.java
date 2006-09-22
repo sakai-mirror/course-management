@@ -26,9 +26,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,16 +39,15 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
-import org.sakaiproject.authz.cover.AuthzGroupService;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
-import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
-import org.sakaiproject.event.cover.EventTrackingService;
-import org.sakaiproject.event.cover.UsageSessionService;
-import org.sakaiproject.tool.api.Session;
-import org.sakaiproject.tool.cover.SessionManager;
+import org.sakaiproject.coursemanagement.api.CourseOffering;
+import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.Meeting;
+import org.sakaiproject.coursemanagement.api.Section;
 
 /**
  * Synchronizes the state of the local CourseManagementService with an external
@@ -60,6 +61,7 @@ public abstract class CmSynchronizer {
 
 	protected CourseManagementService cmService;
 	protected CourseManagementAdministration cmAdmin;
+	
 	protected abstract InputStream getXmlInputStream();
 
 	public synchronized void syncAllCmObjects() {
@@ -71,6 +73,7 @@ public abstract class CmSynchronizer {
 		try {
 			in = getXmlInputStream();
 			doc = new SAXBuilder().build(in);
+			if(log.isDebugEnabled()) log.debug("XML Document built successful from input stream");
 		} catch (Exception e) {
 			log.error("Could not build a jdom document from the xml input stream... " + e);
 			// Close the input stream
@@ -103,26 +106,6 @@ public abstract class CmSynchronizer {
 		}
 
 		if(log.isInfoEnabled()) log.info("Finished CM synchronization in " + (System.currentTimeMillis()-start) + " ms");
-	}
-
-	protected void loginToSakai() {
-	    Session sakaiSession = SessionManager.getCurrentSession();
-		sakaiSession.setUserId("admin");
-		sakaiSession.setUserEid("admin");
-
-		// establish the user's session
-		UsageSessionService.startSession("admin", "127.0.0.1", "CMSync");
-		
-		// update the user's externally provided realm definitions
-		AuthzGroupService.refreshUser("admin");
-
-		// post the login event
-		EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGIN, null, true));
-	}
-
-	protected void logoutFromSakai() {
-		// post the logout event
-		EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGOUT, null, true));
 	}
 
 	protected void reconcileAcademicSessions(Document doc) {
@@ -182,21 +165,22 @@ public abstract class CmSynchronizer {
 	
 	protected void reconcileCanonicalCourses(Document doc) {
 		long start = System.currentTimeMillis();
-		if(log.isInfoEnabled()) log.info("Reconciling AcademicSessions");
+		if(log.isInfoEnabled()) log.info("Reconciling CanonicalCourses");
 		
 		try {
 			XPath docsPath = XPath.newInstance("/cm-data/canonical-courses/canonical-course");
 			List items = docsPath.selectNodes(doc);
+			if(log.isDebugEnabled()) log.debug("Found " + items.size() + " canonical courses to reconcile");
+
 			// Add or update each of the canonical courses specified in the xml
 			for(Iterator iter = items.iterator(); iter.hasNext();) {
 				Element element = (Element)iter.next();
 				String eid = element.getChildText("eid");
-				if(log.isDebugEnabled()) log.debug("Found canonical course to reconcile: " + eid);
-				CanonicalCourse existing;
-				try {
-					existing = cmService.getCanonicalCourse(eid);
-					updateCanonicalCourse(existing, element);
-				} catch (IdNotFoundException idex) {
+				if(log.isDebugEnabled()) log.debug("Reconciling canonical course " + eid);
+				
+				if(cmService.isCanonicalCourseDefined(eid)) {
+					updateCanonicalCourse(cmService.getCanonicalCourse(eid), element);
+				} else {
 					addCanonicalCourse(element);
 				}
 			}
@@ -204,7 +188,7 @@ public abstract class CmSynchronizer {
 			log.error(jde);
 		}
 		
-		if(log.isInfoEnabled()) log.info("Finished reconciling AcademicSessions in " + (System.currentTimeMillis()-start) + " ms");
+		if(log.isInfoEnabled()) log.info("Finished reconciling CanonicalCourses in " + (System.currentTimeMillis()-start) + " ms");
 	}
 	
 	protected void addCanonicalCourse(Element element) {
@@ -223,22 +207,272 @@ public abstract class CmSynchronizer {
 	}
 
 	protected void reconcileCourseOfferings(Document doc) {
-		// TODO Reconcile course offerings
-	}
+		long start = System.currentTimeMillis();
+		if(log.isInfoEnabled()) log.info("Reconciling CourseOfferings");
+		
+		try {
+			XPath docsPath = XPath.newInstance("/cm-data/course-offerings/course-offering");
+			List items = docsPath.selectNodes(doc);
+			if(log.isDebugEnabled()) log.debug("Found " + items.size() + " course offerings to reconcile");
 
-	protected void reconcileSections(Document doc) {
-		// TODO Reconcile sections
+			// Add or update each of the course offerings specified in the xml
+			for(Iterator iter = items.iterator(); iter.hasNext();) {
+				Element element = (Element)iter.next();
+				String eid = element.getChildText("eid");
+				if(log.isDebugEnabled()) log.debug("Reconciling course offering " + eid);
+				
+				if(cmService.isCourseOfferingDefined(eid)) {
+					updateCourseOffering(cmService.getCourseOffering(eid), element);
+				} else {
+					addCourseOffering(element);
+				}
+			}
+		} catch (JDOMException jde) {
+			log.error(jde);
+		}
+		if(log.isInfoEnabled()) log.info("Finished reconciling CourseOfferings in " + (System.currentTimeMillis()-start) + " ms");
+	}
+	
+	protected void updateCourseOffering(CourseOffering courseOffering, Element element) {
+		if(log.isDebugEnabled()) log.debug("Updating CourseOffering + " + courseOffering.getEid());
+		AcademicSession newAcademicSession = cmService.getAcademicSession(element.getChildText("academic-session-eid"));
+		courseOffering.setTitle(element.getChildText("title"));
+		courseOffering.setDescription(element.getChildText("description"));
+		courseOffering.setStatus(element.getChildText("status"));
+		courseOffering.setAcademicSession(newAcademicSession);
+		courseOffering.setStartDate(getDate(element.getChildText("start-date")));
+		courseOffering.setEndDate(getDate(element.getChildText("end-date")));
+		
+		// Note: we can't update a course offering's canonical course.  This seems reasonable.
+		
+		cmAdmin.updateCourseOffering(courseOffering);
+	}
+	
+	protected void addCourseOffering(Element element) {
+		String eid = element.getChildText("eid");
+		if(log.isDebugEnabled()) log.debug("Adding CourseOffering + " + eid);
+		String title = element.getChildText("title");
+		String description = element.getChildText("description");
+		String status = element.getChildText("status");
+		String academicSessionEid = element.getChildText("academic-session-eid");
+		String canonicalCourseEid = element.getChildText("canonical-course-eid");
+		Date startDate = getDate(element.getChildText("start-date"));
+		Date endDate = getDate(element.getChildText("end-date"));
+		cmAdmin.createCourseOffering(eid, title, description, status, academicSessionEid, canonicalCourseEid, startDate, endDate);
 	}
 
 	protected void reconcileEnrollmentSets(Document doc) {
-		// TODO Reconcile enrollment sets
+		long start = System.currentTimeMillis();
+		if(log.isInfoEnabled()) log.info("Reconciling EnrollmentSets");
+		
+		try {
+			XPath docsPath = XPath.newInstance("/cm-data/enrollment-sets/enrollment-set");
+			List items = docsPath.selectNodes(doc);
+			if(log.isDebugEnabled()) log.debug("Found " + items.size() + " enrollment sets to reconcile");
+
+			// Add or update each of the enrollment sets specified in the xml
+			for(Iterator iter = items.iterator(); iter.hasNext();) {
+				Element element = (Element)iter.next();
+				String eid = element.getChildText("eid");
+				if(log.isDebugEnabled()) log.debug("Reconciling enrollment set " + eid);
+				
+				if(cmService.isEnrollmentSetDefined(eid)) {
+					updateEnrollmentSet(cmService.getEnrollmentSet(eid), element);
+				} else {
+					addEnrollmentSet(element);
+				}
+				
+//				// Update the official instructors and enrollments
+//				Set newEnrollments = getChildValues(element.getChild("enrollments"));
+//				Set existingEnrollments = cmService.getEnrollments(eid);
+//
+//				cmAdmin.addOrUpdateEnrollment(userId, enrollmentSetEid, enrollmentStatus, credits, gradingScheme)
+//				
+//				Set newInstructors = getChildValues(element.getChild("official-instructors"));
+//				Set existingInstructors = cmService.getInstructorsOfRecordIds(eid);
+			}
+		} catch (JDOMException jde) {
+			log.error(jde);
+		}
+		
+		if(log.isInfoEnabled()) log.info("Finished reconciling EnrollmentSets in " + (System.currentTimeMillis()-start) + " ms");
+	}
+	
+//	protected Set getChildValues(Element element) {
+//		Set childValues = new HashSet();
+//		for(Iterator enrollmentElementIter = element.getChildren().iterator(); enrollmentElementIter.hasNext();) {
+//			Element childElement = (Element)enrollmentElementIter.next();
+//			childValues.add(childElement.getText());
+//		}
+//		return childValues;
+//	}
+
+	protected void updateOfficialInstructors(EnrollmentSet enr, Element element) {
+		
+	}
+
+	protected void addEnrollmentSet(Element element) {
+		String eid = element.getChildText("eid");
+		if(log.isDebugEnabled()) log.debug("Adding EnrollmentSet + " + eid);
+		String title = element.getChildText("title");
+		String description = element.getChildText("description");
+		String category = element.getChildText("category");
+		String courseOfferingEid = element.getChildText("course-offering-eid");
+		String defaultEnrollmentCredits = element.getChildText("default-enrollment-credits");
+		cmAdmin.createEnrollmentSet(eid, title, description, category, defaultEnrollmentCredits, courseOfferingEid, null);
+	}
+
+	protected void updateEnrollmentSet(EnrollmentSet enrollmentSet, Element element) {
+		if(log.isDebugEnabled()) log.debug("Updating EnrollmentSet + " + enrollmentSet.getEid());
+		enrollmentSet.setTitle(element.getChildText("title"));
+		enrollmentSet.setDescription(element.getChildText("description"));
+		enrollmentSet.setCategory(element.getChildText("category"));
+		enrollmentSet.setDefaultEnrollmentCredits(element.getChildText("default-enrollment-credits"));
+		// Note: It is not possible to change the course offering, but this seems OK.
+		
+		cmAdmin.updateEnrollmentSet(enrollmentSet);
+	}
+
+	protected void reconcileSections(Document doc) {
+		long start = System.currentTimeMillis();
+		if(log.isInfoEnabled()) log.info("Reconciling Sections");
+		
+		try {
+			XPath docsPath = XPath.newInstance("/cm-data/sections/section");
+			List items = docsPath.selectNodes(doc);
+			if(log.isDebugEnabled()) log.debug("Found " + items.size() + " sections to reconcile");
+
+			// Add or update each of the sections specified in the xml
+			for(Iterator iter = items.iterator(); iter.hasNext();) {
+				Element element = (Element)iter.next();
+				String eid = element.getChildText("eid");
+				if(log.isDebugEnabled()) log.debug("Reconciling section " + eid);
+				
+				if(cmService.isSectionDefined(eid)) {
+					updateSection(cmService.getSection(eid), element);
+				} else {
+					addSection(element);
+				}
+				
+				// Now update the meetings on this section
+				Section section = cmService.getSection(eid);
+				Set meetingTimes = section.getMeetings();
+				if(meetingTimes == null) {
+					meetingTimes = new HashSet();
+					section.setMeetings(meetingTimes);
+				}
+				
+				Element meetingsElement = element.getChild("meetings");
+				for(Iterator meetingIter = meetingsElement.getChildren().iterator(); meetingIter.hasNext();) {
+					Element meetingElement = (Element)meetingIter.next();
+					String location = meetingElement.getChildText("location");
+					String time = meetingElement.getChildText("time");
+					String notes = meetingElement.getChildText("notes");
+					Meeting meeting = cmAdmin.newSectionMeeting(eid, location, time, notes);
+					meetingTimes.add(meeting);
+				}
+				cmAdmin.updateSection(section);
+			}
+		} catch (JDOMException jde) {
+			log.error(jde);
+		}
+		if(log.isInfoEnabled()) log.info("Finished reconciling Sections in " + (System.currentTimeMillis()-start) + " ms");
+	}
+	
+	protected void updateSection(Section section, Element element) {
+		if(log.isDebugEnabled()) log.debug("Updating Section + " + section.getEid());
+		section.setTitle(element.getChildText("title"));
+		section.setDescription(element.getChildText("description"));
+		section.setCategory(element.getChildText("category"));
+		if(cmService.isSectionDefined(element.getChildText("parent-section-eid"))) {
+			section.setParent(cmService.getSection(element.getChildText("parent-section-eid")));
+		}
+		// Note: There's no way to change the course offering.  This makes sense, though.
+
+		if(cmService.isEnrollmentSetDefined(element.getChildText("enrollment-set-eid"))) {
+			section.setEnrollmentSet(cmService.getEnrollmentSet(element.getChildText("enrollment-set-eid")));
+		}
+		cmAdmin.updateSection(section);
+	}
+	
+	protected void addSection(Element element) {
+		String eid = element.getChildText("eid");
+		if(log.isDebugEnabled()) log.debug("Adding Section + " + eid);
+		String title = element.getChildText("title");
+		String description = element.getChildText("description");
+		String category = element.getChildText("category");
+		String parentSectionEid = null;
+		String parentIdFromXml =  element.getChildText("parent-section-eid");
+		if(parentIdFromXml != null && ! "".equals(parentIdFromXml)) {
+			parentSectionEid =parentIdFromXml;
+		}
+		String courseOfferingEid = element.getChildText("course-offering-eid");
+		String enrollmentSetEid = null;
+		String enrollmentSetEidFromXml =  element.getChildText("enrollment-set-eid");
+		if(cmService.isEnrollmentSetDefined(enrollmentSetEidFromXml)) {
+			enrollmentSetEid = enrollmentSetEidFromXml;
+		}
+		cmAdmin.createSection(eid, title, description, category, parentSectionEid, courseOfferingEid, enrollmentSetEid);
 	}
 
 	protected void reconcileCourseSets(Document doc) {
-		// TODO Reconcile course sets
+		long start = System.currentTimeMillis();
+		if(log.isInfoEnabled()) log.info("Reconciling CourseSets");
+		
+		try {
+			XPath docsPath = XPath.newInstance("/cm-data/course-sets/course-set");
+			List items = docsPath.selectNodes(doc);
+			if(log.isDebugEnabled()) log.debug("Found " + items.size() + " course sets to reconcile");
+
+			// Add or update each of the course offerings specified in the xml
+			for(Iterator iter = items.iterator(); iter.hasNext();) {
+				Element element = (Element)iter.next();
+				String eid = element.getChildText("eid");
+				if(log.isDebugEnabled()) log.debug("Reconciling course set " + eid);
+				
+				if(cmService.isCourseSetDefined(eid)) {
+					updateCourseSet(cmService.getCourseSet(eid), element);
+				} else {
+					addCourseSet(element);
+				}
+			}
+		} catch (JDOMException jde) {
+			log.error(jde);
+		}
+		if(log.isInfoEnabled()) log.info("Finished reconciling CourseSets in " + (System.currentTimeMillis()-start) + " ms");
+	}
+	
+	protected void updateCourseSet(CourseSet courseSet, Element element) {
+		if(log.isDebugEnabled()) log.debug("Updating CourseSet + " + courseSet.getEid());
+		courseSet.setTitle(element.getChildText("title"));
+		courseSet.setDescription(element.getChildText("description"));
+		courseSet.setCategory(element.getChildText("category"));
+		String parentEid = element.getChildText("parent-course-set");
+		if(cmService.isCourseSetDefined(parentEid)) {
+			CourseSet parent = cmService.getCourseSet(parentEid);
+			courseSet.setParent(parent);
+		}
+		cmAdmin.updateCourseSet(courseSet);
+	}
+	
+	protected void addCourseSet(Element element) {
+		String eid = element.getChildText("eid");
+		if(log.isDebugEnabled()) log.debug("Adding CourseSet + " + eid);
+		String title = element.getChildText("title");
+		String description = element.getChildText("description");
+		String category = element.getChildText("category");
+		String parentEid = null;
+		String parentFromXml = element.getChildText("parent-course-set");
+		if(parentFromXml != null && ! "".equals(parentFromXml)) {
+			parentEid = parentFromXml;
+		}
+		cmAdmin.createCourseSet(eid, title, description, category, parentEid);
 	}
 
 	protected Date getDate(String str) {
+		if(str == null || "".equals(str)) {
+			return null;
+		}
 		SimpleDateFormat df = new SimpleDateFormat("M/d/yyyy");
 		try {
 			return df.parse(str);

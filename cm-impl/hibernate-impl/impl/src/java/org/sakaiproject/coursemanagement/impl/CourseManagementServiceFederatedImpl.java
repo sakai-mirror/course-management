@@ -790,4 +790,94 @@ public class CourseManagementServiceFederatedImpl implements
 		}
 		return resultSet;
 	}
+
+	public boolean isAcademicSessionDefined(String eid) {
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			try {
+				// If any implementation says that the object exists, it exists!
+				if(cm.isAcademicSessionDefined(eid)) {
+					return true;
+				}
+			} catch (UnsupportedOperationException uso) {
+				if(log.isDebugEnabled()) log.debug(cm + " doesn't know whether academic session "+ eid + " exists");
+			}
+		}
+		return false;
+	}
+
+	public boolean isCanonicalCourseDefined(String eid) {
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			try {
+				// If any implementation says that the object exists, it exists!
+				if(cm.isCanonicalCourseDefined(eid)) {
+					return true;
+				}
+			} catch (UnsupportedOperationException uso) {
+				if(log.isDebugEnabled()) log.debug(cm + " doesn't know whether canonical course "+ eid + " exists");
+			}
+		}
+		return false;
+	}
+
+	public boolean isCourseOfferingDefined(String eid) {
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			try {
+				// If any implementation says that the object exists, it exists!
+				if(cm.isCourseOfferingDefined(eid)) {
+					return true;
+				}
+			} catch (UnsupportedOperationException uso) {
+				if(log.isDebugEnabled()) log.debug(cm + " doesn't know whether course offering "+ eid + " exists");
+			}
+		}
+		return false;
+	}
+
+	public boolean isCourseSetDefined(String eid) {
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			try {
+				// If any implementation says that the object exists, it exists!
+				if(cm.isCourseSetDefined(eid)) {
+					return true;
+				}
+			} catch (UnsupportedOperationException uso) {
+				if(log.isDebugEnabled()) log.debug(cm + " doesn't know whether course set "+ eid + " exists");
+			}
+		}
+		return false;
+	}
+
+	public boolean isEnrollmentSetDefined(String eid) {
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			try {
+				// If any implementation says that the object exists, it exists!
+				if(cm.isEnrollmentSetDefined(eid)) {
+					return true;
+				}
+			} catch (UnsupportedOperationException uso) {
+				if(log.isDebugEnabled()) log.debug(cm + " doesn't know whether enrollment set "+ eid + " exists");
+			}
+		}
+		return false;
+	}
+
+	public boolean isSectionDefined(String eid) {
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			try {
+				// If any implementation says that the object exists, it exists!
+				if(cm.isSectionDefined(eid)) {
+					return true;
+				}
+			} catch (UnsupportedOperationException uso) {
+				if(log.isDebugEnabled()) log.debug(cm + " doesn't know whether section "+ eid + " exists");
+			}
+		}
+		return false;
+	}
 }

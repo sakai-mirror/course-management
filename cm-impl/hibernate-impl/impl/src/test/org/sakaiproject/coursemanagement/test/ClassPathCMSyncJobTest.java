@@ -23,27 +23,24 @@ package org.sakaiproject.coursemanagement.test;
 import java.util.List;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.CourseOffering;
+import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.coursemanagement.impl.job.ClassPathCMSyncJob;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ClassPathCMSyncJobTest extends TestCase {
-	private ApplicationContext applicationContext;
+public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 	private ClassPathCMSyncJob job;
 	private CourseManagementService cmService;
 	private CourseManagementAdministration cmAdmin;
 	
-	protected void setUp() throws Exception {
-		if(applicationContext == null) {
-			applicationContext = new ClassPathXmlApplicationContext( new String[] {"/spring-test.xml", "spring-config-test.xml"});
-		}
+	protected void onSetUpInTransaction() throws Exception {
 		job = (ClassPathCMSyncJob)applicationContext.getBean(ClassPathCMSyncJob.class.getName());
 		cmService = (CourseManagementService)applicationContext.getBean(CourseManagementService.class.getName());
 		cmAdmin = (CourseManagementAdministration)applicationContext.getBean(CourseManagementAdministration.class.getName());
@@ -100,5 +97,110 @@ public class ClassPathCMSyncJobTest extends TestCase {
 		
 		// Ensure that the reconciliation updated the data
 		Assert.assertEquals(oldTitle, cmService.getCanonicalCourse("biology_101").getTitle());
+	}
+
+	public void testCourseOfferingsLoaded() throws Exception {
+		// Ensure that the course offerings were loaded
+		try {
+			cmService.getCourseOffering("biology_101_01");
+			cmService.getCourseOffering("chemistry_101_01");
+		} catch (IdNotFoundException ide) {
+			fail();
+		}
+	}
+	
+	public void testCourseOfferingsReconciled() throws Exception {
+		// Update a co manually
+		CourseOffering co = cmService.getCourseOffering("biology_101_01");
+		String oldTitle = co.getTitle();
+		co.setTitle("new title");
+		cmAdmin.updateCourseOffering(co);
+		
+		// Ensure that it was indeed updated
+		Assert.assertEquals("new title", cmService.getCourseOffering("biology_101_01").getTitle());
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the reconciliation updated the data
+		Assert.assertEquals(oldTitle, cmService.getCourseOffering("biology_101_01").getTitle());
+	}
+
+	public void testSectionsLoaded() throws Exception {
+		// Ensure that the sections were loaded
+		try {
+			cmService.getSection("biology_101_01_lec01");
+		} catch (IdNotFoundException ide) {
+			fail();
+		}
+	}
+	
+	public void testSectionsReconciled() throws Exception {
+		// Update a sec manually
+		Section sec = cmService.getSection("biology_101_01_lec01");
+		String oldTitle = sec.getTitle();
+		sec.setTitle("new title");
+		cmAdmin.updateSection(sec);
+		
+		// Ensure that it was indeed updated
+		Assert.assertEquals("new title", cmService.getSection("biology_101_01_lec01").getTitle());
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the reconciliation updated the data
+		Assert.assertEquals(oldTitle, cmService.getSection("biology_101_01_lec01").getTitle());
+	}
+
+	public void testEnrollmentSetsLoaded() throws Exception {
+		// Ensure that the enrollmentSets were loaded
+		try {
+			cmService.getEnrollmentSet("biology_101_01_lec01_es");
+		} catch (IdNotFoundException ide) {
+			fail();
+		}
+	}
+	
+	public void testEnrollmentSetsReconciled() throws Exception {
+		// Update a enrollment set manually
+		EnrollmentSet es = cmService.getEnrollmentSet("biology_101_01_lec01_es");
+		String oldTitle = es.getTitle();
+		es.setTitle("new title");
+		cmAdmin.updateEnrollmentSet(es);
+		
+		// Ensure that it was indeed updated
+		Assert.assertEquals("new title", cmService.getEnrollmentSet("biology_101_01_lec01_es").getTitle());
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the reconciliation updated the data
+		Assert.assertEquals(oldTitle, cmService.getEnrollmentSet("biology_101_01_lec01_es").getTitle());
+	}
+
+	public void testCourseSetsLoaded() throws Exception {
+		// Ensure that the courseSets were loaded
+		try {
+			cmService.getCourseSet("ucb");
+		} catch (IdNotFoundException ide) {
+			fail();
+		}
+	}
+	
+	public void testCourseSetsReconciled() throws Exception {
+		// Update a course set manually
+		CourseSet es = cmService.getCourseSet("ucb");
+		String oldTitle = es.getTitle();
+		es.setTitle("new title");
+		cmAdmin.updateCourseSet(es);
+		
+		// Ensure that it was indeed updated
+		Assert.assertEquals("new title", cmService.getCourseSet("ucb").getTitle());
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the reconciliation updated the data
+		Assert.assertEquals(oldTitle, cmService.getCourseSet("ucb").getTitle());
 	}
 }

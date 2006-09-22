@@ -193,4 +193,28 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 	public Set getCourseOfferingsInCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException {
 		throw new IdNotFoundException(canonicalCourseEid, CanonicalCourse.class.getName());
 	}
+
+	public boolean isAcademicSessionDefined(String eid) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean isCanonicalCourseDefined(String eid) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean isCourseOfferingDefined(String eid) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean isCourseSetDefined(String eid) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean isEnrollmentSetDefined(String eid) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean isSectionDefined(String eid) {
+		throw new UnsupportedOperationException();
+	}
 }

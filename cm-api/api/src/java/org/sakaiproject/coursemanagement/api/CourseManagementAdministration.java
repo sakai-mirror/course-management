@@ -224,11 +224,11 @@ public interface CourseManagementAdministration {
 	 * @param category
 	 * @param defaultEnrollmentCredits
 	 * @param courseOfferingEid
-	 * @param officialGraders
+	 * @param officialInstructors
 	 * @throws IdExistsException
 	 */
 	public EnrollmentSet createEnrollmentSet(String eid, String title, String description,
-			String category, String defaultEnrollmentCredits, String courseOfferingEid, Set officialGraders)
+			String category, String defaultEnrollmentCredits, String courseOfferingEid, Set officialInstructors)
 			throws IdExistsException;
 	
 	/**

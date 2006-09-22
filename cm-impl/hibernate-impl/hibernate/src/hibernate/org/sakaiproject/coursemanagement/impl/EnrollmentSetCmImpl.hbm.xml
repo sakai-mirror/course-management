@@ -33,6 +33,12 @@
 
 	</class>
 	
+	<query name="isEnrollmentSetDefined">
+        <![CDATA[
+        select count(es) from EnrollmentSetCmImpl as es where es.eid=:eid
+        ]]>
+    </query>
+	
 	<query name="findEnrollmentSetByEid">
         <![CDATA[
         from EnrollmentSetCmImpl as es where es.eid=:eid

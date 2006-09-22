@@ -18,6 +18,12 @@
 
 	</subclass>
 
+    <query name="isSectionDefined">
+        <![CDATA[
+        select count(sec) from SectionCmImpl as sec where sec.eid=:eid
+        ]]>
+    </query>
+
     <query name="findSectionByEid">
         <![CDATA[
         from SectionCmImpl as sec where sec.eid=:eid

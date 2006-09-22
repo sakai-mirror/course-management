@@ -27,6 +27,12 @@
 
     </class>
     
+    <query name="isAcademicSessionDefined">
+        <![CDATA[
+        select count(term) from AcademicSessionCmImpl as term where term.eid=:eid
+        ]]>
+    </query>
+
     <query name="findAcademicSessions">
         <![CDATA[
         from AcademicSessionCmImpl as term order by term.startDate

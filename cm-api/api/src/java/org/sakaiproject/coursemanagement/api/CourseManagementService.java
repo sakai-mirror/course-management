@@ -33,7 +33,7 @@ import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  */
 public interface CourseManagementService {
-
+	
 	/**
 	 * Gets a CourseSet by its eid.
 	 * 
@@ -43,6 +43,14 @@ public interface CourseManagementService {
 	 */
 	public CourseSet getCourseSet(String courseSetEid) throws IdNotFoundException;
 	
+	/**
+	 * Checks whether a CourseSet exists.
+	 * 
+	 * @param eid The enterprise id
+	 * @return Whether the object exists
+	 */
+	public boolean isCourseSetDefined(String eid);
+
 	/**
 	 * Gets the child CourseSet from a parent CourseSet.
 	 * 
@@ -77,6 +85,14 @@ public interface CourseManagementService {
 	 */
 	public CanonicalCourse getCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException;
 	
+	/**
+	 * Checks whether a CanonicalCourse exists.
+	 * 
+	 * @param eid The enterprise id
+	 * @return Whether the object exists
+	 */
+	public boolean isCanonicalCourseDefined(String eid);
+
 	/**
 	 * Gets the equivalent CanonicalCourses.
 	 * 
@@ -118,6 +134,14 @@ public interface CourseManagementService {
 	public AcademicSession getAcademicSession(String eid) throws IdNotFoundException;
 	
 	/**
+	 * Checks whether an AcademicSession exists.
+	 * 
+	 * @param eid The enterprise id
+	 * @return Whether the object exists
+	 */
+	public boolean isAcademicSessionDefined(String eid);
+
+	/**
 	 * Gets a CourseOffering by its eid.
 	 * 
 	 * @param courseOfferingEid
@@ -125,6 +149,14 @@ public interface CourseManagementService {
 	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
 	public CourseOffering getCourseOffering(String courseOfferingEid) throws IdNotFoundException;
+
+	/**
+	 * Checks whether a CourseOffering exists.
+	 * 
+	 * @param eid The enterprise id
+	 * @return Whether the object exists
+	 */
+	public boolean isCourseOfferingDefined(String eid);
 
 	/**
 	 * Gets any equivalent CourseOfferings.
@@ -200,6 +232,14 @@ public interface CourseManagementService {
 	public Section getSection(String sectionEid) throws IdNotFoundException;
 
 	/**
+	 * Checks whether a Section exists.
+	 * 
+	 * @param eid The enterprise id
+	 * @return Whether the object exists
+	 */
+	public boolean isSectionDefined(String eid);
+
+	/**
 	 * Gets the top-level Sections associated with a CourseOffering
 	 * 
 	 * @param courseOfferingEid
@@ -235,6 +275,14 @@ public interface CourseManagementService {
 	 * @throws IdNotFoundException If the eid is not associated with any EnrollmentSet
 	 */
 	public EnrollmentSet getEnrollmentSet(String enrollmentSetEid) throws IdNotFoundException;
+
+	/**
+	 * Checks whether an EnrollmentSet exists.
+	 * 
+	 * @param eid The enterprise id
+	 * @return Whether the object exists
+	 */
+	public boolean isEnrollmentSetDefined(String eid);
 
 	/**
 	 * Gets the EnrollmentSets associated with a CourseOffering

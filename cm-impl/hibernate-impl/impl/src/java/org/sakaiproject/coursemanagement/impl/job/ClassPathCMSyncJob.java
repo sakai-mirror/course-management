@@ -27,6 +27,11 @@ import org.apache.commons.logging.LogFactory;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.sakaiproject.authz.cover.AuthzGroupService;
+import org.sakaiproject.event.cover.EventTrackingService;
+import org.sakaiproject.event.cover.UsageSessionService;
+import org.sakaiproject.tool.api.Session;
+import org.sakaiproject.tool.cover.SessionManager;
 
 /**
  * A sample quartz job to synchronize the CM data in Sakai's hibernate impl with an
@@ -40,6 +45,21 @@ public class ClassPathCMSyncJob extends CmSynchronizer implements Job {
 
 	protected String classPathToXml;
 
+	public void init() {
+		if(log.isInfoEnabled()) log.info("init()");
+	}
+	
+	public void destroy() {
+		if(log.isInfoEnabled()) log.info("destroy()");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public InputStream getXmlInputStream() {
+		return getClass().getClassLoader().getResourceAsStream(classPathToXml);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -48,19 +68,27 @@ public class ClassPathCMSyncJob extends CmSynchronizer implements Job {
 		syncAllCmObjects();
 		logoutFromSakai();
 	}
-	
-	public InputStream getXmlInputStream() {
-		return getClass().getClassLoader().getResourceAsStream(classPathToXml);
+		
+	protected void loginToSakai() {
+	    Session sakaiSession = SessionManager.getCurrentSession();
+		sakaiSession.setUserId("admin");
+		sakaiSession.setUserEid("admin");
+
+		// establish the user's session
+		UsageSessionService.startSession("admin", "127.0.0.1", "CMSync");
+		
+		// update the user's externally provided realm definitions
+		AuthzGroupService.refreshUser("admin");
+
+		// post the login event
+		EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGIN, null, true));
 	}
 
-	public void init() {
-		if(log.isInfoEnabled()) log.info("init()");
+	protected void logoutFromSakai() {
+		// post the logout event
+		EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGOUT, null, true));
 	}
-	
-	public void destroy() {
-		if(log.isInfoEnabled()) log.info("destroy()");
-	}
-		
+
 	// Dependency Injection
 	public void setClassPathToXml(String classPathToXml) {
 		this.classPathToXml = classPathToXml;

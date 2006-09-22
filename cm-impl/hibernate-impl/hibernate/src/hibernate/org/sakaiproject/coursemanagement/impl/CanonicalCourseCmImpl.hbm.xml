@@ -13,6 +13,12 @@
 		</set>
 	</subclass>
 
+    <query name="isCanonicalCourseDefined">
+        <![CDATA[
+        select count(cc) from CanonicalCourseCmImpl as cc where cc.eid=:eid
+        ]]>
+    </query>
+
     <query name="findCanonicalCourseByEid">
         <![CDATA[
         from CanonicalCourseCmImpl as cc where cc.eid=:eid
