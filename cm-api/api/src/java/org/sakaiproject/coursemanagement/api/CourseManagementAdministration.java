@@ -255,7 +255,7 @@ public interface CourseManagementAdministration {
 	 * @param credits
 	 * @param gradingScheme
 	 */
-	public void addOrUpdateEnrollment(String userId, String enrollmentSetEid,
+	public Enrollment addOrUpdateEnrollment(String userId, String enrollmentSetEid,
 			String enrollmentStatus, String credits, String gradingScheme);
 
 	/**
@@ -319,7 +319,7 @@ public interface CourseManagementAdministration {
 	 * @param courseSetEid
 	 * @throws IdNotFoundException If the CourseSet can not be found
 	 */
-	public void addOrUpdateCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException;
+	public Membership addOrUpdateCourseSetMembership(String userId, String role, String courseSetEid) throws IdNotFoundException;
 	
 	/**
 	 * Removes a user from a CourseSet.
@@ -338,7 +338,7 @@ public interface CourseManagementAdministration {
 	 * @param role
 	 * @param courseOfferingEid
 	 */
-	public void addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid);
+	public Membership addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid);
 	
 	/**
 	 * Removes a user from a CourseOffering.
@@ -358,7 +358,7 @@ public interface CourseManagementAdministration {
 	 * @param role
 	 * @param sectionEid
 	 */
-	public void addOrUpdateSectionMembership(String userId, String role, String sectionEid);
+	public Membership addOrUpdateSectionMembership(String userId, String role, String sectionEid);
 	
 	/**
 	 * Removes a user from a Section.

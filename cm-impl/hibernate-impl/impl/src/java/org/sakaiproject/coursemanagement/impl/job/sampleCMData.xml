@@ -42,6 +42,10 @@
 			<canonical-course-eid>biology_101</canonical-course-eid>
 			<start-date>9/1/2006</start-date>
 			<end-date>12/31/2006</end-date>
+			<members>
+				<member userEid="co_member_1" role="assistant"/>
+				<member userEid="co_member_2" role="assistant"/>
+			</members>
 		</course-offering>
 
 		<course-offering>
@@ -77,6 +81,11 @@
 					<notes></notes>
 				</meeting>
 			</meetings>
+			
+			<members>
+				<member userEid="sec_member_1" role="assistant"/>
+				<member userEid="sec_member_2" role="assistant"/>
+			</members>
 		</section>
 	</sections>
 	

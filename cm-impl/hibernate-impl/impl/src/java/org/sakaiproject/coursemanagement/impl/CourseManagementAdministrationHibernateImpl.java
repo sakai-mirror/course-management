@@ -37,8 +37,10 @@ import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
+import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Meeting;
+import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
@@ -248,18 +250,20 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(enrollmentSet);
 	}
 
-	public void addOrUpdateEnrollment(String userId, String enrollmentSetEid, String enrollmentStatus, String credits, String gradingScheme) {
+	public Enrollment addOrUpdateEnrollment(String userId, String enrollmentSetEid, String enrollmentStatus, String credits, String gradingScheme) {
+		EnrollmentCmImpl enrollment = null;
 		if(cmService.isEnrolled(userId,enrollmentSetEid)) {
-			EnrollmentCmImpl enrollment = (EnrollmentCmImpl)cmService.findEnrollment(userId, enrollmentSetEid);
+			enrollment = (EnrollmentCmImpl)cmService.findEnrollment(userId, enrollmentSetEid);
 			enrollment.setEnrollmentStatus(enrollmentStatus);
 			enrollment.setCredits(credits);
 			enrollment.setGradingScheme(gradingScheme);
 			getHibernateTemplate().update(enrollment);
 		} else {
 			EnrollmentSet enrollmentSet = cmService.getEnrollmentSet(enrollmentSetEid);
-			EnrollmentCmImpl enrollment = new EnrollmentCmImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
+			enrollment = new EnrollmentCmImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
 			getHibernateTemplate().save(enrollment);
 		}
+		return enrollment;
 	}
 
 	public boolean removeEnrollment(String userId, String enrollmentSetEid) {
@@ -309,7 +313,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(section);
 	}
 	
-	public void addOrUpdateCourseSetMembership(final String userId, String role, final String courseSetEid) throws IdNotFoundException {
+	public Membership addOrUpdateCourseSetMembership(final String userId, String role, final String courseSetEid) throws IdNotFoundException {
 		CourseSetCmImpl cs = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
 		MembershipCmImpl member =getMembership(userId, cs);
 		if(member == null) {
@@ -321,6 +325,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			member.setRole(role);
 			getHibernateTemplate().update(member);
 		}
+		return member;
 	}
 
 	public boolean removeCourseSetMembership(String userId, String courseSetEid) {
@@ -333,7 +338,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 	}
 
-	public void addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid) {
+	public Membership addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid) {
 		CourseOfferingCmImpl co = (CourseOfferingCmImpl)cmService.getCourseOffering(courseOfferingEid);
 		MembershipCmImpl member =getMembership(userId, co);
 		if(member == null) {
@@ -345,6 +350,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			member.setRole(role);
 			getHibernateTemplate().update(member);
 		}
+		return member;
 	}
 
 	public boolean removeCourseOfferingMembership(String userId, String courseOfferingEid) {
@@ -358,7 +364,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 	}
 	
-	public void addOrUpdateSectionMembership(String userId, String role, String sectionEid) {
+	public Membership addOrUpdateSectionMembership(String userId, String role, String sectionEid) {
 		SectionCmImpl sec = (SectionCmImpl)cmService.getSection(sectionEid);
 		MembershipCmImpl member =getMembership(userId, sec);
 		if(member == null) {
@@ -370,6 +376,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			member.setRole(role);
 			getHibernateTemplate().update(member);
 		}
+		return member;
 	}
 
 	public boolean removeSectionMembership(String userId, String sectionEid) {

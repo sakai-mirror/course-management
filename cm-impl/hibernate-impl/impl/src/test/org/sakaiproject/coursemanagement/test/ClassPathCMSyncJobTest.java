@@ -31,6 +31,7 @@ import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.coursemanagement.impl.job.ClassPathCMSyncJob;
@@ -126,6 +127,25 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		Assert.assertEquals(oldTitle, cmService.getCourseOffering("biology_101_01").getTitle());
 	}
 
+	public void testCourseOfferingMembersReconciled() throws Exception {
+		// Ensure that the memberships were loaded
+		Membership member = (Membership)cmService.getCourseOfferingMemberships("biology_101_01").iterator().next();
+		Assert.assertEquals("co_member_1", member.getUserId());
+		Assert.assertEquals("assistant", member.getRole());
+		
+		// Add a new membership
+		Membership newMember = cmAdmin.addOrUpdateCourseOfferingMembership("foo", "bar", "biology_101_01");
+		
+		// Ensure it was added
+		Assert.assertTrue(cmService.getCourseOfferingMemberships("biology_101_01").contains(newMember));
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the new member was removed
+		Assert.assertFalse(cmService.getCourseOfferingMemberships("biology_101_01").contains(newMember));
+	}
+
 	public void testSectionsLoaded() throws Exception {
 		// Ensure that the sections were loaded
 		try {
@@ -150,6 +170,25 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		
 		// Ensure that the reconciliation updated the data
 		Assert.assertEquals(oldTitle, cmService.getSection("biology_101_01_lec01").getTitle());
+	}
+
+	public void testSectionMembersReconciled() throws Exception {
+		// Ensure that the memberships were loaded
+		Membership member = (Membership)cmService.getSectionMemberships("biology_101_01_lec01").iterator().next();
+		Assert.assertEquals("sec_member_1", member.getUserId());
+		Assert.assertEquals("assistant", member.getRole());
+		
+		// Add a new membership
+		Membership newMember = cmAdmin.addOrUpdateSectionMembership("foo", "bar", "biology_101_01_lec01");
+		
+		// Ensure it was added
+		Assert.assertTrue(cmService.getSectionMemberships("biology_101_01_lec01").contains(newMember));
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the new member was removed
+		Assert.assertFalse(cmService.getSectionMemberships("biology_101_01_lec01").contains(newMember));
 	}
 
 	public void testEnrollmentSetsLoaded() throws Exception {
@@ -202,6 +241,25 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		
 		// Ensure that the reconciliation updated the data
 		Assert.assertEquals(oldTitle, cmService.getCourseSet("ucb").getTitle());
+	}
+	
+	public void testCourseSetMembersReconciled() throws Exception {
+		// Ensure that the memberships were loaded
+		Membership member = (Membership)cmService.getCourseSetMemberships("ucb").iterator().next();
+		Assert.assertEquals("birgeneau", member.getUserId());
+		Assert.assertEquals("president", member.getRole());
+		
+		// Add a new membership
+		Membership newMember = cmAdmin.addOrUpdateCourseSetMembership("foo", "bar", "ucb");
+		
+		// Ensure it was added
+		Assert.assertTrue(cmService.getCourseSetMemberships("ucb").contains(newMember));
+		
+		// Reconcile again
+		job.syncAllCmObjects();
+		
+		// Ensure that the new member was removed
+		Assert.assertFalse(cmService.getCourseSetMemberships("ucb").contains(newMember));
 	}
 	
 	public void testEnrollmentsLoaded() throws Exception {

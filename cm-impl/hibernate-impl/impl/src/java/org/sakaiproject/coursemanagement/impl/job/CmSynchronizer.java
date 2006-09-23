@@ -48,6 +48,7 @@ import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Meeting;
+import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 
 /**
@@ -222,11 +223,19 @@ public abstract class CmSynchronizer {
 				String eid = element.getChildText("eid");
 				if(log.isDebugEnabled()) log.debug("Reconciling course offering " + eid);
 				
+				CourseOffering courseOffering = null;
 				if(cmService.isCourseOfferingDefined(eid)) {
-					updateCourseOffering(cmService.getCourseOffering(eid), element);
+					courseOffering = updateCourseOffering(cmService.getCourseOffering(eid), element);
 				} else {
-					addCourseOffering(element);
+					courseOffering = addCourseOffering(element);
 				}
+				
+				// Update the members
+				Element members = element.getChild("members");
+				if(members != null) {
+					updateCourseOfferingMembers(members, courseOffering);
+				}
+
 			}
 		} catch (JDOMException jde) {
 			log.error(jde);
@@ -234,7 +243,7 @@ public abstract class CmSynchronizer {
 		if(log.isInfoEnabled()) log.info("Finished reconciling CourseOfferings in " + (System.currentTimeMillis()-start) + " ms");
 	}
 	
-	protected void updateCourseOffering(CourseOffering courseOffering, Element element) {
+	protected CourseOffering updateCourseOffering(CourseOffering courseOffering, Element element) {
 		if(log.isDebugEnabled()) log.debug("Updating CourseOffering + " + courseOffering.getEid());
 		AcademicSession newAcademicSession = cmService.getAcademicSession(element.getChildText("academic-session-eid"));
 		courseOffering.setTitle(element.getChildText("title"));
@@ -247,9 +256,10 @@ public abstract class CmSynchronizer {
 		// Note: we can't update a course offering's canonical course.  This seems reasonable.
 		
 		cmAdmin.updateCourseOffering(courseOffering);
+		return courseOffering;
 	}
 	
-	protected void addCourseOffering(Element element) {
+	protected CourseOffering addCourseOffering(Element element) {
 		String eid = element.getChildText("eid");
 		if(log.isDebugEnabled()) log.debug("Adding CourseOffering + " + eid);
 		String title = element.getChildText("title");
@@ -259,7 +269,35 @@ public abstract class CmSynchronizer {
 		String canonicalCourseEid = element.getChildText("canonical-course-eid");
 		Date startDate = getDate(element.getChildText("start-date"));
 		Date endDate = getDate(element.getChildText("end-date"));
-		cmAdmin.createCourseOffering(eid, title, description, status, academicSessionEid, canonicalCourseEid, startDate, endDate);
+		return cmAdmin.createCourseOffering(eid, title, description, status, academicSessionEid, canonicalCourseEid, startDate, endDate);
+	}
+
+	protected void updateCourseOfferingMembers(Element membersElement, CourseOffering courseOffering) {
+		Set existingMembers = cmService.getCourseOfferingMemberships(courseOffering.getEid());
+		
+		// Build a map of existing member userEids to Memberships
+		Map existingMemberMap = new HashMap(existingMembers.size());
+		for(Iterator iter = existingMembers.iterator(); iter.hasNext();) {
+			Membership member = (Membership)iter.next();
+			existingMemberMap.put(member.getUserId(), member);
+		}
+
+		// Keep track of the new members userEids, and add/update them
+		Set newMembers = new HashSet();
+		List memberElements = membersElement.getChildren("member");
+		for(Iterator iter = memberElements.iterator(); iter.hasNext();) {
+			Element memberElement = (Element)iter.next();
+			String userEid = memberElement.getAttributeValue("userEid");
+			String role = memberElement.getAttributeValue("role");
+			newMembers.add(cmAdmin.addOrUpdateCourseOfferingMembership(userEid, role, courseOffering.getEid()));
+		}
+		
+		// For everybody not in the newMembers set, remove their memberships
+		existingMembers.removeAll(newMembers);
+		for(Iterator iter = existingMembers.iterator(); iter.hasNext();) {
+			Membership member = (Membership)iter.next();
+			cmAdmin.removeCourseOfferingMembership(member.getUserId(), courseOffering.getEid());
+		}
 	}
 
 	protected void reconcileEnrollmentSets(Document doc) {
@@ -386,14 +424,14 @@ public abstract class CmSynchronizer {
 				String eid = element.getChildText("eid");
 				if(log.isDebugEnabled()) log.debug("Reconciling section " + eid);
 				
+				Section section = null;
 				if(cmService.isSectionDefined(eid)) {
-					updateSection(cmService.getSection(eid), element);
+					section = updateSection(cmService.getSection(eid), element);
 				} else {
-					addSection(element);
+					section = addSection(element);
 				}
 				
 				// Now update the meetings on this section
-				Section section = cmService.getSection(eid);
 				Set meetingTimes = section.getMeetings();
 				if(meetingTimes == null) {
 					meetingTimes = new HashSet();
@@ -410,6 +448,12 @@ public abstract class CmSynchronizer {
 					meetingTimes.add(meeting);
 				}
 				cmAdmin.updateSection(section);
+
+				// Update the members
+				Element members = element.getChild("members");
+				if(members != null) {
+					updateSectionMembers(members, section);
+				}
 			}
 		} catch (JDOMException jde) {
 			log.error(jde);
@@ -417,7 +461,7 @@ public abstract class CmSynchronizer {
 		if(log.isInfoEnabled()) log.info("Finished reconciling Sections in " + (System.currentTimeMillis()-start) + " ms");
 	}
 	
-	protected void updateSection(Section section, Element element) {
+	protected Section updateSection(Section section, Element element) {
 		if(log.isDebugEnabled()) log.debug("Updating Section + " + section.getEid());
 		section.setTitle(element.getChildText("title"));
 		section.setDescription(element.getChildText("description"));
@@ -431,9 +475,10 @@ public abstract class CmSynchronizer {
 			section.setEnrollmentSet(cmService.getEnrollmentSet(element.getChildText("enrollment-set-eid")));
 		}
 		cmAdmin.updateSection(section);
+		return section;
 	}
 	
-	protected void addSection(Element element) {
+	protected Section addSection(Element element) {
 		String eid = element.getChildText("eid");
 		if(log.isDebugEnabled()) log.debug("Adding Section + " + eid);
 		String title = element.getChildText("title");
@@ -450,9 +495,38 @@ public abstract class CmSynchronizer {
 		if(cmService.isEnrollmentSetDefined(enrollmentSetEidFromXml)) {
 			enrollmentSetEid = enrollmentSetEidFromXml;
 		}
-		cmAdmin.createSection(eid, title, description, category, parentSectionEid, courseOfferingEid, enrollmentSetEid);
+		return cmAdmin.createSection(eid, title, description, category, parentSectionEid, courseOfferingEid, enrollmentSetEid);
 	}
 
+	protected void updateSectionMembers(Element membersElement, Section section) {
+		Set existingMembers = cmService.getSectionMemberships(section.getEid());
+		
+		// Build a map of existing member userEids to Memberships
+		Map existingMemberMap = new HashMap(existingMembers.size());
+		for(Iterator iter = existingMembers.iterator(); iter.hasNext();) {
+			Membership member = (Membership)iter.next();
+			existingMemberMap.put(member.getUserId(), member);
+		}
+
+		// Keep track of the new members userEids, and add/update them
+		Set newMembers = new HashSet();
+		List memberElements = membersElement.getChildren("member");
+		for(Iterator iter = memberElements.iterator(); iter.hasNext();) {
+			Element memberElement = (Element)iter.next();
+			String userEid = memberElement.getAttributeValue("userEid");
+			String role = memberElement.getAttributeValue("role");
+			newMembers.add(cmAdmin.addOrUpdateSectionMembership(userEid, role, section.getEid()));
+		}
+		
+		// For everybody not in the newMembers set, remove their memberships
+		existingMembers.removeAll(newMembers);
+		for(Iterator iter = existingMembers.iterator(); iter.hasNext();) {
+			Membership member = (Membership)iter.next();
+			cmAdmin.removeSectionMembership(member.getUserId(), section.getEid());
+		}
+	}
+
+	
 	protected void reconcileCourseSets(Document doc) {
 		long start = System.currentTimeMillis();
 		if(log.isInfoEnabled()) log.info("Reconciling CourseSets");
@@ -467,11 +541,18 @@ public abstract class CmSynchronizer {
 				Element element = (Element)iter.next();
 				String eid = element.getChildText("eid");
 				if(log.isDebugEnabled()) log.debug("Reconciling course set " + eid);
-				
+
+				CourseSet courseSet = null;
 				if(cmService.isCourseSetDefined(eid)) {
-					updateCourseSet(cmService.getCourseSet(eid), element);
+					courseSet = updateCourseSet(cmService.getCourseSet(eid), element);
 				} else {
-					addCourseSet(element);
+					courseSet = addCourseSet(element);
+				}
+				
+				// Update the members
+				Element members = element.getChild("members");
+				if(members != null) {
+					updateCourseSetMembers(members, courseSet);
 				}
 			}
 		} catch (JDOMException jde) {
@@ -480,7 +561,35 @@ public abstract class CmSynchronizer {
 		if(log.isInfoEnabled()) log.info("Finished reconciling CourseSets in " + (System.currentTimeMillis()-start) + " ms");
 	}
 	
-	protected void updateCourseSet(CourseSet courseSet, Element element) {
+	protected void updateCourseSetMembers(Element membersElement, CourseSet courseSet) {
+		Set existingMembers = cmService.getCourseSetMemberships(courseSet.getEid());
+		
+		// Build a map of existing member userEids to Memberships
+		Map existingMemberMap = new HashMap(existingMembers.size());
+		for(Iterator iter = existingMembers.iterator(); iter.hasNext();) {
+			Membership member = (Membership)iter.next();
+			existingMemberMap.put(member.getUserId(), member);
+		}
+
+		// Keep track of the new members userEids, and add/update them
+		Set newMembers = new HashSet();
+		List memberElements = membersElement.getChildren("member");
+		for(Iterator iter = memberElements.iterator(); iter.hasNext();) {
+			Element memberElement = (Element)iter.next();
+			String userEid = memberElement.getAttributeValue("userEid");
+			String role = memberElement.getAttributeValue("role");
+			newMembers.add(cmAdmin.addOrUpdateCourseSetMembership(userEid, role, courseSet.getEid()));
+		}
+		
+		// For everybody not in the newMembers set, remove their memberships
+		existingMembers.removeAll(newMembers);
+		for(Iterator iter = existingMembers.iterator(); iter.hasNext();) {
+			Membership member = (Membership)iter.next();
+			cmAdmin.removeCourseSetMembership(member.getUserId(), courseSet.getEid());
+		}
+	}
+
+	protected CourseSet updateCourseSet(CourseSet courseSet, Element element) {
 		if(log.isDebugEnabled()) log.debug("Updating CourseSet + " + courseSet.getEid());
 		courseSet.setTitle(element.getChildText("title"));
 		courseSet.setDescription(element.getChildText("description"));
@@ -491,9 +600,10 @@ public abstract class CmSynchronizer {
 			courseSet.setParent(parent);
 		}
 		cmAdmin.updateCourseSet(courseSet);
+		return courseSet;
 	}
 	
-	protected void addCourseSet(Element element) {
+	protected CourseSet addCourseSet(Element element) {
 		String eid = element.getChildText("eid");
 		if(log.isDebugEnabled()) log.debug("Adding CourseSet + " + eid);
 		String title = element.getChildText("title");
@@ -504,7 +614,7 @@ public abstract class CmSynchronizer {
 		if(parentFromXml != null && ! "".equals(parentFromXml)) {
 			parentEid = parentFromXml;
 		}
-		cmAdmin.createCourseSet(eid, title, description, category, parentEid);
+		return cmAdmin.createCourseSet(eid, title, description, category, parentEid);
 	}
 
 	protected Date getDate(String str) {
