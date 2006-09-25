@@ -130,7 +130,6 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 	public void testCourseOfferingMembersReconciled() throws Exception {
 		// Ensure that the memberships were loaded
 		Membership member = (Membership)cmService.getCourseOfferingMemberships("biology_101_01").iterator().next();
-		Assert.assertEquals("co_member_1", member.getUserId());
 		Assert.assertEquals("assistant", member.getRole());
 		
 		// Add a new membership
@@ -175,7 +174,6 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 	public void testSectionMembersReconciled() throws Exception {
 		// Ensure that the memberships were loaded
 		Membership member = (Membership)cmService.getSectionMemberships("biology_101_01_lec01").iterator().next();
-		Assert.assertEquals("sec_member_1", member.getUserId());
 		Assert.assertEquals("assistant", member.getRole());
 		
 		// Add a new membership
