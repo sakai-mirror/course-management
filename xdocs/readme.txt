@@ -97,7 +97,12 @@ III. Configuring Sakai to use CM
 						</map>
 					</property>
 					<property name="officialInstructorRole" value="Instructor" />
-					<property name="enrollmentRole" value="Student" />
+					<property name="enrollmentStatusRoleMap">
+						<map>
+							<entry key="enrolled" value="Student" />
+							<entry key="waitlisted" value="Student" />
+						</map>
+					</property>
 				</bean>
 			</list>
 		</property>
@@ -110,3 +115,12 @@ III. Configuring Sakai to use CM
 		Section member in CM has a role of 'I', this will be translated to the 'Instructor'
 		Sakai role for this site.  The ordering of the RoleResolvers is important.  Earlier
 		entries override later ones.
+
+		4) The SectionRoleResolver has two extra configurations: officialInstructorRole and
+		enrollmentStatusRoleMap.  OfficialInstructors in EnrollmentSets attached to a section
+		will be resolved to have a Sakai role as defined by the officialInstructorRole property.
+		Enrollments in EnrollmentSets will be resolved using the enrollmentStatusRoleMap.
+		If an Enrollment is found to be enrolled in a relevant EnrollmentSet, the Enrollment's
+		getStatus() will be compared to keys in this map, and the map's entries define the Sakai
+		role to grant to this user.  If the Enrollment status is not found in the map, the user will
+		not be 'provided' to Sakai.
