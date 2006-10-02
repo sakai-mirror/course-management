@@ -87,5 +87,9 @@ public class EnrollmentCmImpl extends AbstractPersistentCourseManagementObjectCm
 	}
 	public void setDropped(boolean dropped) {
 		this.dropped = dropped;
+	}
+
+	public String getEnrollmentSetEid() {
+		return enrollmentSet.getEid();
 	}	
 }

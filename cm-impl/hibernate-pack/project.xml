@@ -34,6 +34,15 @@
 	        <artifactId>sakai-coursemanagement-hibernate-model</artifactId>
 			<version>${sakai.version}</version>
 	    </dependency>
+	    
+        <dependency>
+        	<groupId>sakaiproject</groupId>
+	        <artifactId>sakai-coursemanagement-mapping-impl</artifactId>
+			<version>${sakai.version}</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+	    </dependency>
   		
     </dependencies>
 

@@ -18,33 +18,39 @@
  * limitations under the License.
  *
  **********************************************************************************/
+package org.sakaiproject.coursemanagement.api.mapping;
 
-package org.sakaiproject.coursemanagement.api;
+import org.sakaiproject.coursemanagement.api.Enrollment;
 
 /**
- * The official relationship of a student to something that gets a final grade
- * (or equivalent).
+ * A SakaiEnrollment is a bridge between a sakai membership (either in a site or a group)
+ * and an Enrollment (if one exists) in an enterprise-defined EnrollmentSet that is
+ * associated with the sakai site or group.
  * 
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
+ *
  */
-public interface Enrollment {
-	public String getUserId();
-	public void setUserId(String userId);
+public interface SakaiEnrollment {
 
-	public String getAuthority();
-	public void setAuthority(String authority);
+	/**
+	 * Gets the user's enterprise ID.
+	 * 
+	 * @return
+	 */
+	public String getUserEid();
 	
-	public String getEnrollmentStatus();
-	public void setEnrollmentStatus(String enrollmentStatus);
+	/**
+	 * Gets the authzGroup ID with which this SakaiEnrollment is associated.
+	 * 
+	 * @return
+	 */
+	public String getAuthzGroupId();
 	
-	public String getCredits();
-	public void setCredits(String credits);
+	/**
+	 * Gets the Enrollment for this user in the specified EnrollmentSet.
+	 * 
+	 * @return
+	 */
+	public Enrollment getEnrollment(String enrollmentSetEid);
 	
-	public String getGradingScheme();
-	public void setGradingScheme(String gradingScheme);
-	
-	public boolean isDropped();
-	public void setDropped(boolean dropped);
-
-	public String getEnrollmentSetEid();
 }

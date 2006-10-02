@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="hibernate-impl/impl/src/java"/>
+	<classpathentry kind="src" path="cm-mapping-impl/src/java"/>
 	<classpathentry kind="src" path="integration-test/src/test"/>
 	<classpathentry kind="src" path="hibernate-impl/hibernate/src/java"/>
 	<classpathentry kind="src" path="hibernate-impl/hibernate/src/hibernate"/>

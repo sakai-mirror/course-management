@@ -44,19 +44,15 @@
 			            <bean class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceSampleChainImpl"/>
 
             			<!-- The internal, hibernate-backed implementation -->
-            			<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl"/>
+						<bean class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl">
+							<property name="sessionFactory">
+								<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+							</property>
+						</bean>
 					</list>
             	</property>
             </bean>
         </property>
-	</bean>
-
-	<!-- Do not reference this bean ID.  It is for internal CM use only. -->
-	<!-- TODO: Hide this bean inside another, if possible, to make it private -->
-	<bean id="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl">
-		<property name="sessionFactory">
-			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
-		</property>
 	</bean>
 
 
@@ -98,7 +94,11 @@
 						</property>
 						<!-- Use the internal hibernate service only, not the federated service -->
 						<property name="cmService">
-							<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" />
+							<bean class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl">
+								<property name="sessionFactory">
+									<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+								</property>
+							</bean>
 						</property>
 					</bean>
 				</property>
