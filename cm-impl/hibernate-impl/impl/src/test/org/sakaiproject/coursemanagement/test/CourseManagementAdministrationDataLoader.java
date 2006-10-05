@@ -108,9 +108,9 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		cmAdmin.addOrUpdateEnrollment("student3", "bio101_f2006_lab2", "waitlisted", "1", "standard");
 
 		// Sections
-		Section lec1 = cmAdmin.createSection("bio101_f2006_lec1", "Bio 101, Lecture", "Intro to Biology, Fall 06, Lecture", "lecture", null, "bio101_f2006", "bio101_f2006_lec1");
-		cmAdmin.createSection("bio101_f2006_lab1", "Lab 1", "Intro to Biology, Fall 06, Lab 1", "lab", null, "bio101_f2006", "bio101_f2006_lab1");
-		cmAdmin.createSection("bio101_f2006_lab2", "Lab 2", "Intro to Biology, Fall 06, Lab 2", "lab", null, "bio101_f2006", "bio101_f2006_lab2");
+		Section lec1 = cmAdmin.createSection("bio101_f2006_lec1", "Bio 101, Lecture", "Intro to Biology, Fall 06, Lecture", "lecture", null, null, "bio101_f2006", "bio101_f2006_lec1");
+		cmAdmin.createSection("bio101_f2006_lab1", "Lab 1", "Intro to Biology, Fall 06, Lab 1", "lab", null, null, "bio101_f2006", "bio101_f2006_lab1");
+		cmAdmin.createSection("bio101_f2006_lab2", "Lab 2", "Intro to Biology, Fall 06, Lab 2", "lab", null, null, "bio101_f2006", "bio101_f2006_lab2");
 		
 		// Meetings
 		Set lecMeetings = new HashSet();

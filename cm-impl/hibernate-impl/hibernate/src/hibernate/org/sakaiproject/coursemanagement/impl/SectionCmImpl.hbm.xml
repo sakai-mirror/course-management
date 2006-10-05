@@ -6,6 +6,7 @@
 			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl">
 
 		<property name="category" column="CATEGORY" type="string" />
+		<property name="maxSize" column="MAX_SIZE" type="integer" />
 
 		<many-to-one name="courseOffering" column="COURSE_OFFERING" index="CM_SECTION_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl" />
 		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl" />

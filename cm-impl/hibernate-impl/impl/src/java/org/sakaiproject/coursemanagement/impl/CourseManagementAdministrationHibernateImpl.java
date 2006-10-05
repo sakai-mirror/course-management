@@ -277,7 +277,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 	}
 
-	public Section createSection(String eid, String title, String description, String category,
+	public Section createSection(String eid, String title, String description, String category, Integer maxSize,
 		String parentSectionEid, String courseOfferingEid, String enrollmentSetEid) throws IdExistsException {
 		
 		// The objects related to this section
@@ -300,7 +300,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			es = cmService.getEnrollmentSet(enrollmentSetEid);
 		}
 
-		SectionCmImpl section = new SectionCmImpl(eid, title, description, category, parent, co, es);
+		SectionCmImpl section = new SectionCmImpl(eid, title, description, category, maxSize, parent, co, es);
 		try {
 			getHibernateTemplate().save(section);
 			return section;

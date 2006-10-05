@@ -17,13 +17,15 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 	private CourseOffering courseOffering;
 	private Section parent;
 	private EnrollmentSet enrollmentSet;
+	private Integer maxSize;
 	
 	public SectionCmImpl() {}
 	
-	public SectionCmImpl(String eid, String title, String description, String category, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet) {
+	public SectionCmImpl(String eid, String title, String description, String category, Integer maxSize, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet) {
 		this.eid = eid;
 		this.title = title;
 		this.description = description;
+		this.maxSize = maxSize;
 		this.category = category;
 		this.parent = parent;
 		this.courseOffering = courseOffering;
@@ -65,5 +67,11 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 	}
 	public void setMeetings(Set meetings) {
 		this.meetings = meetings;
+	}
+	public Integer getMaxSize() {
+		return maxSize;
+	}
+	public void setMaxSize(Integer maxSize) {
+		this.maxSize = maxSize;
 	}
 }

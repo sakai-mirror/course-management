@@ -316,11 +316,11 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 
-		cmAdmin.createSection("sec1", "sec 1", "a sec", "lecture", null, "co1", null);
+		cmAdmin.createSection("sec1", "sec 1", "a sec", "lecture", null, null, "co1", null);
 		Assert.assertTrue(cm.getSection("sec1").getTitle().equals("sec 1"));
 		
 		try {
-			cmAdmin.createSection("sec1", "sec 1", "a sec", "lecture", null, null, null);
+			cmAdmin.createSection("sec1", "sec 1", "a sec", "lecture", null, null, null, null);
 			fail();
 		} catch (IdExistsException ide) {}
 	}
@@ -332,7 +332,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Add a section
-		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
+		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, null, "co1", null);
 		
 		// Create a membership in the section
 		cmAdmin.addOrUpdateSectionMembership("josh", "student", "sec1");
@@ -355,7 +355,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Add a section
-		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
+		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, null, "co1", null);
 		
 		// Create a membership in the section
 		cmAdmin.addOrUpdateSectionMembership("josh", "student", "sec1");
@@ -374,7 +374,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Add a section
-		Section section1 = cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
+		Section section1 = cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, null, "co1", null);
 		
 		// Add some meetings for the section
 		Meeting meeting1 = cmAdmin.newSectionMeeting("sec1","a lecture hall", "8am sharp", "If you're late, I won't let you in.");
@@ -428,7 +428,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createAcademicSession("as", "as", "as", null, null);
 		cmAdmin.createCanonicalCourse("cc", "cc", "cc");
 		cmAdmin.createCourseOffering("co", "co", "co", "co", "as", "cc", null, null);
-		cmAdmin.createSection("sec", "sec", "sec", "sec", null, "co", null);
+		cmAdmin.createSection("sec", "sec", "sec", "sec", null, null, "co", null);
 		cmAdmin.addOrUpdateSectionMembership("member1", "TA", "sec");
 		
 		// Remove the section
@@ -452,7 +452,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCanonicalCourse("cc", "cc", "cc");
 		cmAdmin.createCourseOffering("co", "co", "co", "co", "as", "cc", null, null);
 		cmAdmin.createEnrollmentSet("es", "es", "es", "es", "3", "co", null);
-		cmAdmin.createSection("sec", "sec", "sec", "sec", null, "co", "es");
+		cmAdmin.createSection("sec", "sec", "sec", "sec", null, null, "co", "es");
 		
 		// Remove the CO
 		cmAdmin.removeCourseOffering("co");

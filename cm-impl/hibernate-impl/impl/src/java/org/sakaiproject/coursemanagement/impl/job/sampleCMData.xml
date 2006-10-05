@@ -66,6 +66,7 @@
 			<title>Intro to Biology Lecture</title>
 			<description>Main lecture section for biology_101</description>
 			<category>Lecture</category>
+			<max-size>20</max-size>
 			<parent-section-eid/>
 			<enrollment-set-eid>biology_101_01_lec01_es</enrollment-set-eid>
 			

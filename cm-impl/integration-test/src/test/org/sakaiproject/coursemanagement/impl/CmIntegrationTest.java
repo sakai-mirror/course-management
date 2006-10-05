@@ -99,7 +99,7 @@ public class CmIntegrationTest extends SakaiTestBase {
 		Set instructors = new HashSet();
 		instructors.add("cm-instructor1");
 		cmAdmin.createEnrollmentSet("CM-ES1", "CM-ES1", "CM-ES1", "lecture", "3", "CM-CO1", instructors);
-		cmAdmin.createSection("CM-SEC1", "CM-SEC1", "CM-SEC1", "lecture", null, "CM-CO1", "CM-ES1");
+		cmAdmin.createSection("CM-SEC1", "CM-SEC1", "CM-SEC1", "lecture", null, null, "CM-CO1", "CM-ES1");
 		
 		// Create some CM memberships, etc
 		cmAdmin.addOrUpdateCourseOfferingMembership("cm-instructor2", "Just helping out with guest lectures", "CM-CO1");

@@ -217,6 +217,8 @@ public interface CourseManagementService {
 	/**
 	 * Determines whether a CourseSet has any CanonicalCourses or CourseSets.
 	 * 
+	 * @deprecated -- Why is this method here?
+	 * 
 	 * @param courseSetEid
 	 * @return
 	 */

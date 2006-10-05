@@ -74,6 +74,14 @@ public interface Section {
 	public void setMeetings(Set meetingTimes);
 
 	/**
+	 * The maximum number of seats in this section.
+	 * 
+	 * @return
+	 */
+	public Integer getMaxSize();
+	public void setMaxSize(Integer maxSize);
+	
+	/**
 	 * Gets the parent Section for this Section, or null if this is not a subSection.
 	 * @return
 	 */

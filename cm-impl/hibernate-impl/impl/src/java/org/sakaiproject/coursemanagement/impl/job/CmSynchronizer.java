@@ -495,7 +495,17 @@ public abstract class CmSynchronizer {
 		if(cmService.isEnrollmentSetDefined(enrollmentSetEidFromXml)) {
 			enrollmentSetEid = enrollmentSetEidFromXml;
 		}
-		return cmAdmin.createSection(eid, title, description, category, parentSectionEid, courseOfferingEid, enrollmentSetEid);
+		String maxSizeFromXml =  element.getChildText("max-size");
+		Integer maxSize = null;
+		if(maxSizeFromXml != null) {
+			try {
+				maxSize = new Integer(Integer.parseInt(maxSizeFromXml));
+			} catch (Exception e) {
+				log.error("Could not parse max size " + maxSizeFromXml);
+			}
+		}
+
+		return cmAdmin.createSection(eid, title, description, category, maxSize, parentSectionEid, courseOfferingEid, enrollmentSetEid);
 	}
 
 	protected void updateSectionMembers(Element membersElement, Section section) {
