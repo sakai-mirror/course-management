@@ -17,6 +17,7 @@
 		<property name="role" column="ROLE" type="string" not-null="true" />
 
 		<many-to-one name="memberContainer" column="MEMBER_CONTAINER_ID" class="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl" />
+                <property name="status" column="STATUS" type="string" />
 
 	</class>
 

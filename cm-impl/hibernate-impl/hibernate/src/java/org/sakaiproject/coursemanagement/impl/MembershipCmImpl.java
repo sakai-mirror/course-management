@@ -32,6 +32,7 @@ public class MembershipCmImpl extends AbstractPersistentCourseManagementObjectCm
 	private String userId;
 	private String role;
 	private AbstractMembershipContainerCmImpl memberContainer;
+	private String status;
 	
 	public MembershipCmImpl() {}
 	
@@ -60,5 +61,13 @@ public class MembershipCmImpl extends AbstractPersistentCourseManagementObjectCm
 
 	public void setMemberContainer(AbstractMembershipContainerCmImpl memberContainer) {
 		this.memberContainer = memberContainer;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

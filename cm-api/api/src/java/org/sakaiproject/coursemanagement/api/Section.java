@@ -93,4 +93,10 @@ public interface Section {
 	 */
 	public String getCourseOfferingEid();
 	
+	/**
+	 * Gets maximum size allowed in a Section
+	 * @return
+	 */
+	public Integer getMaxSize();
+	public void setMaxSize(Integer maxSize);
 }

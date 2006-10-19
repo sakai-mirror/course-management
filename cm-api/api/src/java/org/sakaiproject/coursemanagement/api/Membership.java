@@ -44,4 +44,11 @@ public interface Membership {
 	 * @return 
 	 */
 	public String getAuthority();
+
+	/**
+	 * Gets the status of this Membership.  This might be active, inactive for example.
+	 * @return
+	 */
+	public String getStatus();
+	public void setStatus(String status);
 }
