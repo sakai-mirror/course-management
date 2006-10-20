@@ -96,6 +96,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		courseSetMember.setRole("departmentAdmin");
 		courseSetMember.setUserId("user1");
 		courseSetMember.setMemberContainer(cSet);
+		courseSetMember.setStatus("active");
 		getHibernateTemplate().save(courseSetMember);
 		
 		CourseSetCmImpl cSetChild = new CourseSetCmImpl("BIO_CHEM_GROUP", "Biochem Group", "Biochemistry group, Department of Biology", "DEPT_GROUP", cSet);
@@ -212,10 +213,10 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		getHibernateTemplate().update(bioChemCset);
 		
 		// Add a member to some CourseOfferings
-		MembershipCmImpl member1 = new MembershipCmImpl("coUser", "coRole1", co1);
+		MembershipCmImpl member1 = new MembershipCmImpl("coUser", "coRole1", co1, "active");
 		getHibernateTemplate().save(member1);
 
-		MembershipCmImpl member2 = new MembershipCmImpl("coUser", "coRole2", co2);
+		MembershipCmImpl member2 = new MembershipCmImpl("coUser", "coRole2", co2, "active");
 		getHibernateTemplate().save(member2);
 }
 	
@@ -237,6 +238,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		member.setRole("AN_ENTERPRISE_ROLE");
 		member.setUserId("AN_ENTERPRISE_USER");
 		member.setMemberContainer(section);
+		member.setStatus("active");
 		getHibernateTemplate().save(member);
 
 		// Add a child section
@@ -267,6 +269,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		member2.setRole("student");
 		member2.setUserId("josh");
 		member2.setMemberContainer(futureSection);
+		member2.setStatus("active");
 		getHibernateTemplate().save(member2);
 	}
 	

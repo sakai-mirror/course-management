@@ -64,7 +64,7 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 
 		// Course Sets
 		cmAdmin.createCourseSet("bio", "Biology Department", "We study wet things in the Bio Dept", "DEPT", null);
-		cmAdmin.addOrUpdateCourseSetMembership("da1","DeptAdmin", "bio");
+		cmAdmin.addOrUpdateCourseSetMembership("da1","DeptAdmin", "bio", "active");
 		
 		// Canonical Courses
 		cmAdmin.createCanonicalCourse("bio101", "Intro to Biology", "An introduction to biology");

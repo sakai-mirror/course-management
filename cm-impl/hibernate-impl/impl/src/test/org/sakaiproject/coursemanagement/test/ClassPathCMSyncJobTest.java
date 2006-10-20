@@ -133,7 +133,7 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		Assert.assertEquals("assistant", member.getRole());
 		
 		// Add a new membership
-		Membership newMember = cmAdmin.addOrUpdateCourseOfferingMembership("foo", "bar", "biology_101_01");
+		Membership newMember = cmAdmin.addOrUpdateCourseOfferingMembership("foo", "bar", "biology_101_01","active");
 		
 		// Ensure it was added
 		Assert.assertTrue(cmService.getCourseOfferingMemberships("biology_101_01").contains(newMember));
@@ -177,7 +177,7 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		Assert.assertEquals("assistant", member.getRole());
 		
 		// Add a new membership
-		Membership newMember = cmAdmin.addOrUpdateSectionMembership("foo", "bar", "biology_101_01_lec01");
+		Membership newMember = cmAdmin.addOrUpdateSectionMembership("foo", "bar", "biology_101_01_lec01","active");
 		
 		// Ensure it was added
 		Assert.assertTrue(cmService.getSectionMemberships("biology_101_01_lec01").contains(newMember));
@@ -248,7 +248,7 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		Assert.assertEquals("president", member.getRole());
 		
 		// Add a new membership
-		Membership newMember = cmAdmin.addOrUpdateCourseSetMembership("foo", "bar", "ucb");
+		Membership newMember = cmAdmin.addOrUpdateCourseSetMembership("foo", "bar", "ucb", "active");
 		
 		// Ensure it was added
 		Assert.assertTrue(cmService.getCourseSetMemberships("ucb").contains(newMember));
