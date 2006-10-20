@@ -21,7 +21,7 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 	
 	public SectionCmImpl() {}
 	
-	public SectionCmImpl(String eid, String title, String description, String category, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet) {
+    public SectionCmImpl(String eid, String title, String description, String category, Section parent, CourseOffering courseOffering, EnrollmentSet enrollmentSet, Integer maxSize) {
 		this.eid = eid;
 		this.title = title;
 		this.description = description;
@@ -29,6 +29,7 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 		this.parent = parent;
 		this.courseOffering = courseOffering;
 		this.enrollmentSet = enrollmentSet;
+                this.maxSize = maxSize;
 	}
 
 	public String getCategory() {

@@ -289,7 +289,8 @@ public abstract class CmSynchronizer {
 			Element memberElement = (Element)iter.next();
 			String userEid = memberElement.getAttributeValue("userEid");
 			String role = memberElement.getAttributeValue("role");
-			newMembers.add(cmAdmin.addOrUpdateCourseOfferingMembership(userEid, role, courseOffering.getEid()));
+			String status = memberElement.getAttributeValue("status");
+			newMembers.add(cmAdmin.addOrUpdateCourseOfferingMembership(userEid, role, courseOffering.getEid(), status));
 		}
 		
 		// For everybody not in the newMembers set, remove their memberships
@@ -515,7 +516,8 @@ public abstract class CmSynchronizer {
 			Element memberElement = (Element)iter.next();
 			String userEid = memberElement.getAttributeValue("userEid");
 			String role = memberElement.getAttributeValue("role");
-			newMembers.add(cmAdmin.addOrUpdateSectionMembership(userEid, role, section.getEid()));
+			String status = memberElement.getAttributeValue("status");
+			newMembers.add(cmAdmin.addOrUpdateSectionMembership(userEid, role, section.getEid(), status));
 		}
 		
 		// For everybody not in the newMembers set, remove their memberships
@@ -578,7 +580,8 @@ public abstract class CmSynchronizer {
 			Element memberElement = (Element)iter.next();
 			String userEid = memberElement.getAttributeValue("userEid");
 			String role = memberElement.getAttributeValue("role");
-			newMembers.add(cmAdmin.addOrUpdateCourseSetMembership(userEid, role, courseSet.getEid()));
+			String status = memberElement.getAttributeValue("status");
+			newMembers.add(cmAdmin.addOrUpdateCourseSetMembership(userEid, role, courseSet.getEid(), status));
 		}
 		
 		// For everybody not in the newMembers set, remove their memberships

@@ -284,6 +284,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		Section parent = null;
 		CourseOffering co = null;
 		EnrollmentSet es = null;
+                Integer maxSize = null;
 
 		// Get the enrollment set, if needed
 		if(courseOfferingEid != null) {
@@ -300,7 +301,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			es = cmService.getEnrollmentSet(enrollmentSetEid);
 		}
 
-		SectionCmImpl section = new SectionCmImpl(eid, title, description, category, parent, co, es);
+		SectionCmImpl section = new SectionCmImpl(eid, title, description, category, parent, co, es, maxSize);
 		try {
 			getHibernateTemplate().save(section);
 			return section;
@@ -313,16 +314,17 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().update(section);
 	}
 	
-	public Membership addOrUpdateCourseSetMembership(final String userId, String role, final String courseSetEid) throws IdNotFoundException {
+    public Membership addOrUpdateCourseSetMembership(final String userId, String role, final String courseSetEid, final String status) throws IdNotFoundException {
 		CourseSetCmImpl cs = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
 		MembershipCmImpl member =getMembership(userId, cs);
 		if(member == null) {
 			// Add the new member
-			member = new MembershipCmImpl(userId, role, cs);
+		    member = new MembershipCmImpl(userId, role, cs, status);
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
 			member.setRole(role);
+			member.setStatus(status);
 			getHibernateTemplate().update(member);
 		}
 		return member;
@@ -338,16 +340,17 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 	}
 
-	public Membership addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid) {
+    public Membership addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid, String status) {
 		CourseOfferingCmImpl co = (CourseOfferingCmImpl)cmService.getCourseOffering(courseOfferingEid);
 		MembershipCmImpl member =getMembership(userId, co);
 		if(member == null) {
 			// Add the new member
-			member = new MembershipCmImpl(userId, role, co);
+		    member = new MembershipCmImpl(userId, role, co, status);
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
 			member.setRole(role);
+			member.setStatus(status);
 			getHibernateTemplate().update(member);
 		}
 		return member;
@@ -364,16 +367,17 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 	}
 	
-	public Membership addOrUpdateSectionMembership(String userId, String role, String sectionEid) {
+    public Membership addOrUpdateSectionMembership(String userId, String role, String sectionEid, String status) {
 		SectionCmImpl sec = (SectionCmImpl)cmService.getSection(sectionEid);
 		MembershipCmImpl member =getMembership(userId, sec);
 		if(member == null) {
 			// Add the new member
-			member = new MembershipCmImpl(userId, role, sec);
+		    member = new MembershipCmImpl(userId, role, sec, status);
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
 			member.setRole(role);
+			member.setStatus(status);
 			getHibernateTemplate().update(member);
 		}
 		return member;

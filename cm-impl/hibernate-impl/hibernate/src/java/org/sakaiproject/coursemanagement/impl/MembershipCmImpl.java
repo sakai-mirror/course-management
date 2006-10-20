@@ -36,10 +36,12 @@ public class MembershipCmImpl extends AbstractPersistentCourseManagementObjectCm
 	
 	public MembershipCmImpl() {}
 	
-	public MembershipCmImpl(String userId, String role, AbstractMembershipContainerCmImpl memberContainer) {
+    public MembershipCmImpl(String userId, String role, AbstractMembershipContainerCmImpl memberContainer,
+                            String status) {
 		this.userId = userId;
 		this.role = role;
 		this.memberContainer = memberContainer;
+                this.status = status;
 	}
 	
 	public String getRole() {
