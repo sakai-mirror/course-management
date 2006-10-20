@@ -247,13 +247,13 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null, null);
 		
 		// Create a membership in the courseSet
-		cmAdmin.addOrUpdateCourseSetMembership("josh", "student", "cs1");
+		cmAdmin.addOrUpdateCourseSetMembership("josh", "student", "cs1", "active");
 		
 		// Ensure that the membership was added
 		Assert.assertEquals(1, cm.getCourseSetMemberships("cs1").size());
 
 		// Add the same username, this time with a different role
-		cmAdmin.addOrUpdateCourseSetMembership("josh", "ta", "cs1");
+		cmAdmin.addOrUpdateCourseSetMembership("josh", "ta", "cs1","active");
 		
 		// Ensure that the membership was updated, not added
 		Assert.assertEquals(1, cm.getCourseSetMemberships("cs1").size());
@@ -265,7 +265,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseSet("cs1", "cs1", "cs1", null, null);
 		
 		// Create a membership in the courseSet
-		cmAdmin.addOrUpdateCourseSetMembership("josh", "student", "cs1");
+		cmAdmin.addOrUpdateCourseSetMembership("josh", "student", "cs1", "active");
 
 		// Remove the membership (should return true)
 		Assert.assertTrue(cmAdmin.removeCourseSetMembership("josh", "cs1"));
@@ -281,13 +281,13 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Create a membership in the courseOffering
-		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "student", "co1");
+		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "student", "co1", "active");
 		
 		// Ensure that the membership was added
 		Assert.assertEquals(1, cm.getCourseOfferingMemberships("co1").size());
 
 		// Add the same username, this time with a different role
-		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "ta", "co1");
+		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "ta", "co1", "active");
 		
 		// Ensure that the membership was updated, not added
 		Assert.assertEquals(1, cm.getCourseOfferingMemberships("co1").size());
@@ -301,7 +301,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCourseOffering("co1", "course 1", "course", "open", "as1", "cc1", null, null);
 		
 		// Create a membership in the courseOffering
-		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "student", "co1");
+		cmAdmin.addOrUpdateCourseOfferingMembership("josh", "student", "co1", "active");
 
 		// Remove the membership (should return true)
 		Assert.assertTrue(cmAdmin.removeCourseOfferingMembership("josh", "co1"));
@@ -335,13 +335,13 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
 		
 		// Create a membership in the section
-		cmAdmin.addOrUpdateSectionMembership("josh", "student", "sec1");
+		cmAdmin.addOrUpdateSectionMembership("josh", "student", "sec1", "active");
 		
 		// Ensure that the membership was added
 		Assert.assertEquals(1, cm.getSectionMemberships("sec1").size());
 
 		// Add the same username, this time with a different role
-		cmAdmin.addOrUpdateSectionMembership("josh", "ta", "sec1");
+		cmAdmin.addOrUpdateSectionMembership("josh", "ta", "sec1", "active");
 		
 		// Ensure that the membership was updated, not added
 		Assert.assertEquals(1, cm.getSectionMemberships("sec1").size());
@@ -358,7 +358,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
 		
 		// Create a membership in the section
-		cmAdmin.addOrUpdateSectionMembership("josh", "student", "sec1");
+		cmAdmin.addOrUpdateSectionMembership("josh", "student", "sec1", "active");
 
 		// Remove the membership (should return true)
 		Assert.assertTrue(cmAdmin.removeSectionMembership("josh", "sec1"));
@@ -429,7 +429,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCanonicalCourse("cc", "cc", "cc");
 		cmAdmin.createCourseOffering("co", "co", "co", "co", "as", "cc", null, null);
 		cmAdmin.createSection("sec", "sec", "sec", "sec", null, "co", null);
-		cmAdmin.addOrUpdateSectionMembership("member1", "TA", "sec");
+		cmAdmin.addOrUpdateSectionMembership("member1", "TA", "sec", "active");
 		
 		// Remove the section
 		cmAdmin.removeSection("sec");
