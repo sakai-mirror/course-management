@@ -443,9 +443,10 @@ public abstract class CmSynchronizer {
 				for(Iterator meetingIter = meetingsElement.getChildren().iterator(); meetingIter.hasNext();) {
 					Element meetingElement = (Element)meetingIter.next();
 					String location = meetingElement.getChildText("location");
-					String time = meetingElement.getChildText("time");
+					// TODO Sync start and finish times
+//					String time = meetingElement.getChildText("time");
 					String notes = meetingElement.getChildText("notes");
-					Meeting meeting = cmAdmin.newSectionMeeting(eid, location, time, notes);
+					Meeting meeting = cmAdmin.newSectionMeeting(eid, location, null, null, notes);
 					meetingTimes.add(meeting);
 				}
 				cmAdmin.updateSection(section);

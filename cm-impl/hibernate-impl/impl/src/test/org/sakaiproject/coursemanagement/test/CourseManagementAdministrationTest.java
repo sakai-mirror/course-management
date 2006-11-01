@@ -20,6 +20,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.test;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -377,7 +378,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		Section section1 = cmAdmin.createSection("sec1", "sec1", "sec1", "sec1", null, "co1", null);
 		
 		// Add some meetings for the section
-		Meeting meeting1 = cmAdmin.newSectionMeeting("sec1","a lecture hall", "8am sharp", "If you're late, I won't let you in.");
+		Meeting meeting1 = cmAdmin.newSectionMeeting("sec1","a lecture hall", new Time(new Date().getTime()), new Time(new Date().getTime()), "If you're late, I won't let you in.");
 		section1.getMeetings().add(meeting1);
 		
 		// Update the section

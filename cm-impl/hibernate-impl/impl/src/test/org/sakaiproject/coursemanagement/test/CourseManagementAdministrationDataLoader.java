@@ -114,7 +114,7 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		
 		// Meetings
 		Set lecMeetings = new HashSet();
-		lecMeetings.add(cmAdmin.newSectionMeeting("bio101_f2006_lec1", "someplace", "sometime", "somenotes"));
+		lecMeetings.add(cmAdmin.newSectionMeeting("bio101_f2006_lec1", "a location", null, null, "somenotes"));
 		lec1.setMeetings(lecMeetings);
 		cmAdmin.updateSection(lec1);
 

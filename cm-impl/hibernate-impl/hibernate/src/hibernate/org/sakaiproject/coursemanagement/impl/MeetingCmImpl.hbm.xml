@@ -11,8 +11,16 @@
         </id>
 
 		<property name="location" column="LOCATION" type="string" />
-		<property name="time" column="TIME_OF_DAY" type="string" />
+		<property name="startTime" type="time" column="START_TIME" />
+		<property name="finishTime" type="time" column="FINISH_TIME" />
 		<property name="notes" column="NOTES" type="string" />
+         <property name="monday" column="MONDAY" type="boolean"/>
+         <property name="tuesday" column="TUESDAY" type="boolean"/>
+         <property name="wednesday" column="WEDNESDAY" type="boolean"/>
+         <property name="thursday" column="THURSDAY" type="boolean"/>
+         <property name="friday" column="FRIDAY" type="boolean"/>
+         <property name="saturday" column="SATURDAY" type="boolean"/>
+         <property name="sunday" column="SUNDAY" type="boolean"/>
 
 		<many-to-one name="section" column="SECTION_ID" class="org.sakaiproject.coursemanagement.impl.SectionCmImpl" not-null="true"/>
 

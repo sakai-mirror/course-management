@@ -15,7 +15,9 @@
 		    <key column="SECTION_ID"/>
 		    <one-to-many class="org.sakaiproject.coursemanagement.impl.MeetingCmImpl"/>
 		</set>
-                <property name="maxSize" type="integer" column="MAXSIZE" not-null="false" />
+
+		<property name="maxSize" type="integer" column="MAXSIZE" not-null="false" />
+
 	</subclass>
 
     <query name="isSectionDefined">

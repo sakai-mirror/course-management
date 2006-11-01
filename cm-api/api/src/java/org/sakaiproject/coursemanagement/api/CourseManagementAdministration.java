@@ -20,6 +20,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.api;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.Set;
 
@@ -289,10 +290,11 @@ public interface CourseManagementAdministration {
 	 * and the section must be updated for the meeting to be persisted.
 	 * 
 	 * @param location The location of the meeting
-	 * @param time The time of this meeting
+	 * @param startTime The time that the section starts
+	 * @param startTime The time that the section finishes
 	 * @param notes Optional notes about this meeting
 	 */
-	public Meeting newSectionMeeting(String sectionEid, String location, String time, String notes);
+	public Meeting newSectionMeeting(String sectionEid, String location, Time startTime, Time finishTime, String notes);
 	
 	/**
 	 * Updates an existing Section.

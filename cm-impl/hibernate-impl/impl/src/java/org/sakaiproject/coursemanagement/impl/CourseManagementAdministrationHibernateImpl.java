@@ -20,6 +20,7 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -412,9 +413,9 @@ public class CourseManagementAdministrationHibernateImpl extends
 		return (MembershipCmImpl)getHibernateTemplate().execute(hc);
 	}
 
-	public Meeting newSectionMeeting(String sectionEid, String location, String time, String notes) {
+	public Meeting newSectionMeeting(String sectionEid, String location, Time startTime, Time finishTime, String notes) {
 		Section section = cmService.getSection(sectionEid);
-		MeetingCmImpl meeting = new MeetingCmImpl(section, location, time, notes);
+		MeetingCmImpl meeting = new MeetingCmImpl(section, location, startTime, finishTime, notes);
 		Set meetings = section.getMeetings();
 		if(meetings == null) {
 			meetings = new HashSet();
