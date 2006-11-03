@@ -41,6 +41,7 @@ import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
+import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -405,11 +406,11 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public String getSectionCategoryDescription(String categoryCode) {
-		List list = getHibernateTemplate().findByNamedQueryAndNamedParam("findSectionCategoryDescription", "categoryCode", categoryCode);
-		if(list.size() == 1) {
-			return (String)list.get(0);
-		} else {
+		SectionCategory cat = (SectionCategory)getHibernateTemplate().load(SectionCategoryCmImpl.class, categoryCode);
+		if(cat == null) {
 			return null;
+		} else {
+			return cat.getCategoryDescription();
 		}
 	}
 

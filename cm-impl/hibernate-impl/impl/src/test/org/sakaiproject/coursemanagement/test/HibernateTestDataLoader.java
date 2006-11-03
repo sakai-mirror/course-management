@@ -39,6 +39,7 @@ import org.sakaiproject.coursemanagement.impl.CrossListingCmImpl;
 import org.sakaiproject.coursemanagement.impl.EnrollmentCmImpl;
 import org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl;
 import org.sakaiproject.coursemanagement.impl.MembershipCmImpl;
+import org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl;
 import org.sakaiproject.coursemanagement.impl.SectionCmImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -223,9 +224,14 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 	void loadSectionsAndMembers() {
 		CourseOffering co = cm.getCourseOffering("BIO101_F2006_01");
 
+		// Add the section categories
+		getHibernateTemplate().save(new SectionCategoryCmImpl("lct", "Lecture"));
+		getHibernateTemplate().save(new SectionCategoryCmImpl("lab", "Lab"));
+		getHibernateTemplate().save(new SectionCategoryCmImpl("dis", "Discussion"));
+		
 		// Add a section
 		SectionCmImpl section = new SectionCmImpl();
-		section.setCategory("lecture");
+		section.setCategory("lct");
 		section.setCourseOffering(co);
 		section.setDescription("The lecture");
 		section.setEid("BIO101_F2006_01_SEC01");

@@ -313,5 +313,14 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 		Map deptAdminMap = cm.findCourseSetRoles("user1");
 		Assert.assertEquals("departmentAdmin", deptAdminMap.get("BIO_DEPT"));
 	}
+	
+	public void testFindCategories() throws Exception {
+		List categories = cm.getSectionCategories();
+		Assert.assertEquals(3, categories.size());
+	}
 
+	public void testFindCategoryDescription() throws Exception {
+		Assert.assertEquals("Lecture", cm.getSectionCategoryDescription("lct"));
+	}
+	
 }

@@ -20,10 +20,11 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sakaiproject.coursemanagement.api.SectionCategory;
 
-public class SectionCategoryCmImpl extends AbstractPersistentCourseManagementObjectCmImpl
-	implements SectionCategory {
+public class SectionCategoryCmImpl implements SectionCategory {
 	protected String categoryCode;
 	protected String categoryDescription;
 	
@@ -45,6 +46,22 @@ public class SectionCategoryCmImpl extends AbstractPersistentCourseManagementObj
 	}
 	public void setCategoryDescription(String categoryDescription) {
 		this.categoryDescription = categoryDescription;
+	}
+
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).append(categoryCode).append(categoryDescription).toHashCode();
+	}
+
+	public boolean equals(Object obj) {
+		SectionCategoryCmImpl other = null;
+		try {
+			other = (SectionCategoryCmImpl)obj;
+		} catch (ClassCastException cce) {
+			return false;
+		}
+		
+		return new EqualsBuilder().append(categoryCode, other.getCategoryCode()).
+			append(categoryDescription, other.getCategoryDescription()).isEquals();
 	}
 	
 }
