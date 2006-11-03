@@ -24,6 +24,7 @@
                 <value>org/sakaiproject/coursemanagement/impl/EnrollmentSetCmImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/MembershipCmImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/SectionCmImpl.hbm.xml</value>
+                <value>org/sakaiproject/coursemanagement/impl/SectionCategoryCmImpl.hbm.xml</value>
                 <value>org/sakaiproject/coursemanagement/impl/MeetingCmImpl.hbm.xml</value>
             </list>
         </property>

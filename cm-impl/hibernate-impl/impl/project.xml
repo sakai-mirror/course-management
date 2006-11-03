@@ -96,12 +96,12 @@
 			<version>1.8.0.5</version>
 		</dependency>
 
+		<!--
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>3.1.12</version>
         </dependency>
-		<!--
         <dependency>
     	    <groupId>oracle</groupId>
     	    <artifactId>oracle</artifactId>

@@ -43,6 +43,7 @@ import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
+import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -507,6 +508,12 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 		// Remove the section itself
 		getHibernateTemplate().delete(sec);
+	}
+
+	public SectionCategory addSectionCategory(String categoryCode, String categoryDescription) {
+		SectionCategoryCmImpl cat = new SectionCategoryCmImpl(categoryCode, categoryDescription);
+		getHibernateTemplate().save(cat);
+		return cat;
 	}
 
 }

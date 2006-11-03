@@ -217,4 +217,12 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 	public boolean isSectionDefined(String eid) {
 		throw new UnsupportedOperationException();
 	}
+
+	public List getSectionCategories() {
+		return null;
+	}
+
+	public String getSectionCategoryDescription(String categoryCode) {
+		return null;
+	}
 }

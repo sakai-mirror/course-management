@@ -249,6 +249,22 @@ public interface CourseManagementService {
 	public Set getSections(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
+	 * Gets the list of section categories defined by the institution.
+	 * 
+	 * @return
+	 */
+	public List getSectionCategories();
+
+	/**
+	 * Gets the description for a category, identified by the category code, or null
+	 * if the category code can not be found.
+	 * 
+	 * @param sectionCategoryCode
+	 * @return
+	 */
+	public String getSectionCategoryDescription(String categoryCode);
+	
+	/**
 	 * Gets the child Sections from a parent Section.
 	 * 
 	 * @param parentSectionEid The parent Section eid

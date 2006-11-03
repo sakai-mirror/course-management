@@ -400,4 +400,17 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return ((Integer)getHibernateTemplate().findByNamedQueryAndNamedParam("isSectionDefined", "eid", eid).get(0)).intValue() == 1;
 	}
 
+	public List getSectionCategories() {
+		return getHibernateTemplate().findByNamedQuery("findSectionCategories");
+	}
+
+	public String getSectionCategoryDescription(String categoryCode) {
+		List list = getHibernateTemplate().findByNamedQueryAndNamedParam("findSectionCategoryDescription", "categoryCode", categoryCode);
+		if(list.size() == 1) {
+			return (String)list.get(0);
+		} else {
+			return null;
+		}
+	}
+
 }

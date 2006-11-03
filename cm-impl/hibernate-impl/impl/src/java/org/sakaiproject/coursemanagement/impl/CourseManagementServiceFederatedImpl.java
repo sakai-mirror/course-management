@@ -40,6 +40,7 @@ import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Section;
+import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 
 /**
@@ -879,5 +880,37 @@ public class CourseManagementServiceFederatedImpl implements
 			}
 		}
 		return false;
+	}
+
+	public List getSectionCategories() {
+		List resultSet = new ArrayList();
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			List list = cm.getSectionCategories();
+			if(list != null) {
+				resultSet.addAll(list);
+			}
+		}
+		
+		// The federated list should be sorted by description.
+		Collections.sort(resultSet, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				SectionCategory cat1 = (SectionCategory)o1;
+				SectionCategory cat2 = (SectionCategory)o2;
+				return cat1.getCategoryDescription().compareTo(cat2.getCategoryDescription());
+			}
+		});
+		return resultSet;
+	}
+
+	public String getSectionCategoryDescription(String categoryCode) {
+		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = (CourseManagementService)implIter.next();
+			String descr = cm.getSectionCategoryDescription(categoryCode);
+			if(descr != null) {
+				return descr;
+			}
+		}
+		return null;
 	}
 }

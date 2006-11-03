@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.Section;
+import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import junit.framework.TestCase;
@@ -62,6 +63,13 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		
 		cmAdmin.createAcademicSession("IND", "Ongoing Courses", "Ongoing session for independent study", null, null);
 
+		// Section Categories
+		SectionCategory lectureCategory = cmAdmin.addSectionCategory("lct", "Lecture");
+		SectionCategory labCategory = cmAdmin.addSectionCategory("lab", "Lab");
+		SectionCategory discussionCategory = cmAdmin.addSectionCategory("dsc", "Discussion");
+		SectionCategory recitationCategory = cmAdmin.addSectionCategory("rec", "Recitation");
+		SectionCategory studioCategory = cmAdmin.addSectionCategory("sto", "Studio");
+		
 		// Course Sets
 		cmAdmin.createCourseSet("bio", "Biology Department", "We study wet things in the Bio Dept", "DEPT", null);
 		cmAdmin.addOrUpdateCourseSetMembership("da1","DeptAdmin", "bio", "active");
@@ -108,13 +116,14 @@ public class CourseManagementAdministrationDataLoader extends TestCase implement
 		cmAdmin.addOrUpdateEnrollment("student3", "bio101_f2006_lab2", "waitlisted", "1", "standard");
 
 		// Sections
-		Section lec1 = cmAdmin.createSection("bio101_f2006_lec1", "Bio 101, Lecture", "Intro to Biology, Fall 06, Lecture", "lecture", null, "bio101_f2006", "bio101_f2006_lec1");
-		cmAdmin.createSection("bio101_f2006_lab1", "Lab 1", "Intro to Biology, Fall 06, Lab 1", "lab", null, "bio101_f2006", "bio101_f2006_lab1");
-		cmAdmin.createSection("bio101_f2006_lab2", "Lab 2", "Intro to Biology, Fall 06, Lab 2", "lab", null, "bio101_f2006", "bio101_f2006_lab2");
+		Section lec1 = cmAdmin.createSection("bio101_f2006_lec1", "Bio 101, Lecture", "Intro to Biology, Fall 06, Lecture", lectureCategory.getCategoryCode(), null, "bio101_f2006", "bio101_f2006_lec1");
+		cmAdmin.createSection("bio101_f2006_lab1", "Lab 1", "Intro to Biology, Fall 06, Lab 1", labCategory.getCategoryCode(), null, "bio101_f2006", "bio101_f2006_lab1");
+		cmAdmin.createSection("bio101_f2006_lab2", "Lab 2", "Intro to Biology, Fall 06, Lab 2", labCategory.getCategoryCode(), null, "bio101_f2006", "bio101_f2006_lab2");
 		
 		// Meetings
 		Set lecMeetings = new HashSet();
 		lecMeetings.add(cmAdmin.newSectionMeeting("bio101_f2006_lec1", "a location", null, null, "somenotes"));
+		lecMeetings.add(cmAdmin.newSectionMeeting("bio101_f2006_lec1", "another location", null, null, "some other notes"));
 		lec1.setMeetings(lecMeetings);
 		cmAdmin.updateSection(lec1);
 

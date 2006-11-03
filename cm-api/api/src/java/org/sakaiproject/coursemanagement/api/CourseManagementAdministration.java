@@ -285,6 +285,8 @@ public interface CourseManagementAdministration {
 			String enrollmentSetEid) throws IdExistsException;
 
 	
+	public SectionCategory addSectionCategory(String categoryCode, String categoryDescription);
+	
 	/**
 	 * Creates a new meeting instance.  The meeting must be associated with a section
 	 * and the section must be updated for the meeting to be persisted.

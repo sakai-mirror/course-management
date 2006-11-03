@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="false">
+	<class name="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" table="CM_SEC_CATEGORY_T">
+
+        <id name="key" column="CATEGORY_ID" type="long">
+            <generator class="native">
+                <param name="sequence">CM_SEC_CATEGORY_S</param>
+            </generator>
+        </id>
+
+		<property name="categoryCode" column="CAT_CODE" type="string" />
+		<property name="categoryDescription" column="CAT_DESCR" type="string" />
+	</class>
+
+
+    <query name="findSectionCategories">
+        <![CDATA[
+        from SectionCategoryCmImpl as cat
+        ]]>
+    </query>
+
+    <query name="findSectionCategoryDescription">
+        <![CDATA[
+        select cat.categoryDescription from SectionCategoryCmImpl as cat where cat.categoryCode=:categoryCode
+        ]]>
+    </query>
+
+</hibernate-mapping>
