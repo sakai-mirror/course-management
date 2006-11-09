@@ -335,16 +335,18 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 
 
 	public Map findCourseOfferingRoles(final String userEid) {
+		// Keep track of CourseOfferings that we've already queried
+		Set<String> queriedCourseOfferingEids = new HashSet<String>();
 		List results = getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findCourseOfferingRoles", "userEid", userEid);
-		Map courseOfferingRoleMap = new HashMap();
+		Map<String, String> courseOfferingRoleMap = new HashMap<String, String>();
 		for(Iterator iter = results.iterator(); iter.hasNext();) {
 			Object[] oa = (Object[])iter.next();
-			courseOfferingRoleMap.put(oa[0], oa[1]);
+			courseOfferingRoleMap.put((String)oa[0], (String)oa[1]);
+			queriedCourseOfferingEids.add((String)oa[0]);
 		}
 		return courseOfferingRoleMap;
 	}
-
 
 	public Map findCourseSetRoles(final String userEid) {
 		List results = getHibernateTemplate().findByNamedQueryAndNamedParam(
@@ -406,7 +408,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public String getSectionCategoryDescription(String categoryCode) {
-		SectionCategory cat = (SectionCategory)getHibernateTemplate().load(SectionCategoryCmImpl.class, categoryCode);
+		SectionCategory cat = (SectionCategory)getHibernateTemplate().get(SectionCategoryCmImpl.class, categoryCode);
 		if(cat == null) {
 			return null;
 		} else {
