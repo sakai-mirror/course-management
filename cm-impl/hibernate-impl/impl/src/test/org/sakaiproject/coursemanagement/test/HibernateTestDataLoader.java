@@ -31,6 +31,7 @@ import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.impl.DataLoader;
 import org.sakaiproject.coursemanagement.impl.AcademicSessionCmImpl;
 import org.sakaiproject.coursemanagement.impl.CanonicalCourseCmImpl;
 import org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl;

@@ -78,7 +78,7 @@
 		<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>
 	</bean>
 	
-	<bean id="org.sakaiproject.coursemanagement.test.DataLoader" parent="cmTxTemplate">
+	<bean id="org.sakaiproject.coursemanagement.impl.DataLoader" parent="cmTxTemplate">
         <property name="target">
             <bean class="org.sakaiproject.coursemanagement.test.HibernateTestDataLoader">
         		<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>
@@ -94,6 +94,7 @@
         		
         		<!-- Use the internal hibernate service only, not the federated service -->
 	        	<property name="cmService"><ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl"/></property>
+	        	
             </bean>
         </property>
 	</bean>

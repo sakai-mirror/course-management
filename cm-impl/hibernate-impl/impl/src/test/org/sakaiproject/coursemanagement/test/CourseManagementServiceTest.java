@@ -36,6 +36,7 @@ import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl;
+import org.sakaiproject.coursemanagement.impl.DataLoader;
 
 public class CourseManagementServiceTest extends CourseManagementTestBase {
 	private static final Log log = LogFactory.getLog(CourseManagementServiceTest.class);

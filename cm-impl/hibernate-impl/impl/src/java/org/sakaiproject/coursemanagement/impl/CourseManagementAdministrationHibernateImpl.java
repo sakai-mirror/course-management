@@ -24,6 +24,7 @@ import java.sql.Time;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -61,18 +62,45 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 	private static final Log log = LogFactory.getLog(CourseManagementAdministrationHibernateImpl.class);
 	
-	CourseManagementService cmService;
+	// Dependency Injection
+	protected CourseManagementService cmService;
+	protected List defaultSectionCategories;
 	
 	public void setCmService(CourseManagementService cmService) {
 		this.cmService = cmService;
 	}
+	public void setDefaultSectionCategories(List defaultSectionCategories) {
+		this.defaultSectionCategories = defaultSectionCategories;
+	}
+	// End Dependency Injection
 	
+
 	public void init() {
 		log.info("Initializing " + getClass().getName());
+		ensureMinimalDataExists();
 	}
 
 	public void destroy() {
 		log.info("Destroying " + getClass().getName());
+	}
+
+	protected void ensureMinimalDataExists() {
+		// If we don't have any section categories, just add the defaults
+		List categories = cmService.getSectionCategories();
+		if(categories == null || categories.isEmpty()) {
+			// Were there any defaults set?
+			if(defaultSectionCategories == null) {
+				log.warn("No default section categories set, and none found in the CM Service.");
+				return;
+			}
+			for(Iterator iter = defaultSectionCategories.iterator(); iter.hasNext();) {
+				SectionCategory cat = (SectionCategory)iter.next();
+				if(log.isInfoEnabled()) log.info("Adding default section category " + cat);
+				getHibernateTemplate().save(cat);
+			}
+		} else {
+			if(log.isInfoEnabled()) log.info("Skipping CM Data Load");
+		}
 	}
 	
 	public AcademicSession createAcademicSession(String eid, String title,

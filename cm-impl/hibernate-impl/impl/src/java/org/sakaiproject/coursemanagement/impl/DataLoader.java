@@ -18,7 +18,7 @@
  * limitations under the License.
  *
  **********************************************************************************/
-package org.sakaiproject.coursemanagement.test;
+package org.sakaiproject.coursemanagement.impl;
 
 public interface DataLoader {
 	public void load() throws Exception;

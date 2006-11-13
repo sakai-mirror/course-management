@@ -28,6 +28,7 @@ import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.sakaiproject.coursemanagement.impl.DataLoader;
 
 import junit.framework.TestCase;
 

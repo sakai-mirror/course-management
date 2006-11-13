@@ -60,6 +60,42 @@
 		</property>
 	</bean>
 
+	<!-- Do not reference this bean ID.  It is for internal CM use only. -->
+	<!-- TODO: Hide this bean inside another, if possible, to make it private -->
+	<bean id="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl" class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl"
+		init-method="init" destroy-method="destroy">
+		<property name="sessionFactory">
+			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+		</property>
+		<!-- Use the internal hibernate service only, not the federated service -->
+		<property name="cmService">
+			<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" />
+		</property>
+		<property name="defaultSectionCategories">
+			<list>
+				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
+					<constructor-arg><value>lct</value></constructor-arg>
+					<constructor-arg><value>Lecture</value></constructor-arg>
+				</bean>
+				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
+					<constructor-arg><value>lab</value></constructor-arg>
+					<constructor-arg><value>Lab</value></constructor-arg>
+				</bean>
+				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
+					<constructor-arg><value>dsc</value></constructor-arg>
+					<constructor-arg><value>Discussion</value></constructor-arg>
+				</bean>
+				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
+					<constructor-arg><value>rec</value></constructor-arg>
+					<constructor-arg><value>Recitation</value></constructor-arg>
+				</bean>
+				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
+					<constructor-arg><value>sto</value></constructor-arg>
+					<constructor-arg><value>Studio</value></constructor-arg>
+				</bean>
+			</list>
+		</property>
+	</bean>
 
 	<!--
 		This is a complex bean that's hard to read, so here's the "wrapper hierarchy":
@@ -92,16 +128,7 @@
 					<list><value>cmAdminAuthzAdvisor</value></list>
 				</property>
 				<property name="target">
-					<bean class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl"
-						init-method="init" destroy-method="destroy">
-						<property name="sessionFactory">
-							<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
-						</property>
-						<!-- Use the internal hibernate service only, not the federated service -->
-						<property name="cmService">
-							<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" />
-						</property>
-					</bean>
+					<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl"/>
 				</property>
 			</bean>
 		</property>
