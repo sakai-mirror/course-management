@@ -170,10 +170,10 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		co1.setTitle("Bio 101: It's all about the gene");
 		co1.setDescription("Fall 2006 Bio 101 Offering");
 		
-		// Make this always a "current" course offering
+		// Make this almost always a "current" course offering (until 2020, that is)
 		co1.setStartDate(new Date(0));
-		co1.setEndDate(new Date(Long.MAX_VALUE));
-
+		co1.setEndDate(new Date(1577836800000L));
+		
 		getHibernateTemplate().save(co1);
 
 		CourseOfferingCmImpl co2 = new CourseOfferingCmImpl();
@@ -184,9 +184,9 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		co2.setTitle("Chem 101: It's all about the gene");
 		co2.setDescription("Fall 2006 Chem 101 Offering");
 		
-		// Make this almost never a "current" course offering (until 2036, that is)
-		co2.setStartDate(new Date(Long.MAX_VALUE));
-		co2.setEndDate(new Date(Long.MAX_VALUE));
+		// Make this almost never a "current" course offering (until 2020, that is)
+		co2.setStartDate(new Date(1577836800000L));
+		co2.setEndDate(new Date(1577836800000L));
 
 		getHibernateTemplate().save(co2);
 

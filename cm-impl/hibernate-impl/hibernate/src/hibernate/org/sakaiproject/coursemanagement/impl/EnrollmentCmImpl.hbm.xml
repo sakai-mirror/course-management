@@ -14,9 +14,9 @@
 		<version name="version" type="integer" column="VERSION" />
 
 		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
-		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
+		<property name="lastModifiedDate" type="date" column="LAST_MODIFIED_DATE" />
 		<property name="createdBy" column="CREATED_BY" />
-		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+		<property name="createdDate" type="date" column="CREATED_DATE" />
 
 		<property name="userId" column="USER_ID" type="string" not-null="true" />
 		<property name="enrollmentStatus" column="STATUS" type="string" not-null="true" />
@@ -49,8 +49,8 @@
 	<query name="findCurrentlyEnrolledEnrollmentSets">
         <![CDATA[
         select enr.enrollmentSet from EnrollmentCmImpl as enr where enr.userId=:userId and enr.dropped=false and
-        	(enr.enrollmentSet.courseOffering.startDate is null or enr.enrollmentSet.courseOffering.startDate <= sysdate) and
-        	(enr.enrollmentSet.courseOffering.endDate is null or enr.enrollmentSet.courseOffering.endDate >= sysdate)
+        	(enr.enrollmentSet.courseOffering.startDate is null or enr.enrollmentSet.courseOffering.startDate <= current_date()) and
+        	(enr.enrollmentSet.courseOffering.endDate is null or enr.enrollmentSet.courseOffering.endDate >= current_date())
         ]]>
     </query>
 

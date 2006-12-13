@@ -8,8 +8,8 @@
         <property name="status" column="STATUS" type="string" />
 
 		<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListingCmImpl" />
-        <property name="startDate" column="START_DATE" type="timestamp" not-null="false" />
-        <property name="endDate" column="END_DATE" type="timestamp" not-null="false" />
+        <property name="startDate" column="START_DATE" type="date" not-null="false" />
+        <property name="endDate" column="END_DATE" type="date" not-null="false" />
 
 		<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" index="CM_CO_CANON_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseCmImpl" />
 		<many-to-one name="academicSession" column="ACADEMIC_SESSION" index="CM_CO_ACADEMIC_SESS_IDX" class="org.sakaiproject.coursemanagement.impl.AcademicSessionCmImpl" />

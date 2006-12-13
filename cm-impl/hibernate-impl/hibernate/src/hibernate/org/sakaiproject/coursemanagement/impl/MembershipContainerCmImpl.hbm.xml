@@ -19,9 +19,9 @@
         <version name="version" type="integer" column="VERSION"/>
 
 		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
-		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
+		<property name="lastModifiedDate" type="date" column="LAST_MODIFIED_DATE" />
 		<property name="createdBy" column="CREATED_BY" />
-		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+		<property name="createdDate" type="date" column="CREATED_DATE" />
 
         <property name="eid">
         	<column name="ENTERPRISE_ID" not-null="true" unique-key="CM_EID_IDX" length="100"/>

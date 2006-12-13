@@ -14,9 +14,9 @@
 		<version name="version" type="integer" column="VERSION" />
 
 		<property name="lastModifiedBy" column="LAST_MODIFIED_BY" />
-		<property name="lastModifiedDate" type="timestamp" column="LAST_MODIFIED_DATE" />
+		<property name="lastModifiedDate" type="date" column="LAST_MODIFIED_DATE" />
 		<property name="createdBy" column="CREATED_BY" />
-		<property name="createdDate" type="timestamp" column="CREATED_DATE" />
+		<property name="createdDate" type="date" column="CREATED_DATE" />
 
 		<property name="eid" column="ENTERPRISE_ID" type="string" unique="true" not-null="true" />
 		<property name="title" column="TITLE" type="string" not-null="true" />
@@ -55,8 +55,8 @@
 	<query name="findCurrentlyInstructingEnrollmentSets">
         <![CDATA[
         from EnrollmentSetCmImpl as enrollmentSet where :userId in elements(enrollmentSet.officialInstructors) and
-        	(enrollmentSet.courseOffering.startDate is null or enrollmentSet.courseOffering.startDate <= sysdate) and
-        	(enrollmentSet.courseOffering.endDate is null or enrollmentSet.courseOffering.endDate >= sysdate)
+        	(enrollmentSet.courseOffering.startDate is null or enrollmentSet.courseOffering.startDate <= current_date()) and
+        	(enrollmentSet.courseOffering.endDate is null or enrollmentSet.courseOffering.endDate >= current_date())
         ]]>
     </query>
 
