@@ -192,12 +192,6 @@
 			<artifactId>jaxen</artifactId>
 			<version>1.1-beta-10</version>
 		</dependency>
-
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.6.0</version>
-		</dependency>
     </dependencies>
 
     <reports/>
