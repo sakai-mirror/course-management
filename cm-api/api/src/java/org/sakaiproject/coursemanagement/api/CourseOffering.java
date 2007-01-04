@@ -102,6 +102,6 @@ public interface CourseOffering {
 	 * Gets the Set <String> of course set EIDs that contain this canonical course.
 	 * @return
 	 */
-	public Set getCourseSetEids();
+	public Set<String> getCourseSetEids();
 
 }

@@ -40,6 +40,7 @@ import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
@@ -85,20 +86,20 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (CourseSet)getObjectByEid(eid, CourseSetCmImpl.class.getName());
 	}
 
-	public Set getChildCourseSets(final String parentCourseSetEid) throws IdNotFoundException {
+	public Set<CourseSet> getChildCourseSets(final String parentCourseSetEid) throws IdNotFoundException {
 		// Ensure that the parent exists
 		if(!isCourseSetDefined(parentCourseSetEid)) {
 			throw new IdNotFoundException(parentCourseSetEid, CourseSetCmImpl.class.getName());
 		}
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam(
+		return new HashSet<CourseSet>(getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findChildCourseSets", "parentEid", parentCourseSetEid));
 	}
 
-	public Set getCourseSets() {
-		return new HashSet(getHibernateTemplate().findByNamedQuery("findTopLevelCourseSets"));
+	public Set<CourseSet> getCourseSets() {
+		return new HashSet<CourseSet>(getHibernateTemplate().findByNamedQuery("findTopLevelCourseSets"));
 	}
 
-	public Set getCourseSetMemberships(String courseSetEid) throws IdNotFoundException {
+	public Set<Membership> getCourseSetMemberships(String courseSetEid) throws IdNotFoundException {
 		return getMemberships((CourseSetCmImpl)getCourseSet(courseSetEid));
 	}
 
@@ -106,7 +107,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (CanonicalCourse)getObjectByEid(eid, CanonicalCourseCmImpl.class.getName());
 	}
 
-	public Set getEquivalentCanonicalCourses(String canonicalCourseEid) {
+	public Set<CanonicalCourse> getEquivalentCanonicalCourses(String canonicalCourseEid) {
 		final CanonicalCourseCmImpl canonicalCourse = (CanonicalCourseCmImpl)getCanonicalCourse(canonicalCourseEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
@@ -116,18 +117,18 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				return q.list();
 			}
 		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
+		return new HashSet<CanonicalCourse>(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getCanonicalCourses(final String courseSetEid) throws IdNotFoundException {
+	public Set<CanonicalCourse> getCanonicalCourses(final String courseSetEid) throws IdNotFoundException {
 		return ((CourseSetCmImpl)getCourseSet(courseSetEid)).getCanonicalCourses();
 	}
 
-	public List getAcademicSessions() {
+	public List<AcademicSession> getAcademicSessions() {
 		return getHibernateTemplate().findByNamedQuery("findAcademicSessions");
 	}
 
-	public List getCurrentAcademicSessions() {
+	public List<AcademicSession> getCurrentAcademicSessions() {
 		return getHibernateTemplate().findByNamedQuery("findCurrentAcademicSessions");
 	}
 
@@ -139,14 +140,14 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (CourseOffering)getObjectByEid(eid, CourseOfferingCmImpl.class.getName());
 	}
 
-	public Set getCourseOfferingsInCourseSet(final String courseSetEid) throws IdNotFoundException {
+	public Set<CourseOffering> getCourseOfferingsInCourseSet(final String courseSetEid) throws IdNotFoundException {
 		if( ! isCourseSetDefined(courseSetEid)) {
 			throw new IdNotFoundException(courseSetEid, CourseOfferingCmImpl.class.getName());
 		}
 		return ((CourseSetCmImpl)getCourseSet(courseSetEid)).getCourseOfferings();
 	}
 
-	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {
+	public Set<CourseOffering> getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {
 		final CourseOfferingCmImpl courseOffering = (CourseOfferingCmImpl)getCourseOffering(courseOfferingEid);
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
@@ -156,10 +157,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				return q.list();
 			}
 		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
+		return new HashSet<CourseOffering>(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException {
+	public Set<Membership> getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException {
 		return getMemberships((CourseOfferingCmImpl)getCourseOffering(courseOfferingEid));
 	}
 
@@ -171,7 +172,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	 * @param container
 	 * @return
 	 */
-	private Set getMemberships(final AbstractMembershipContainerCmImpl container) {
+	private Set<Membership> getMemberships(final AbstractMembershipContainerCmImpl container) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
@@ -183,7 +184,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				return q.list();
 			}
 		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
+		return new HashSet<Membership>(getHibernateTemplate().executeFind(hc));
 	}
 
 
@@ -191,21 +192,21 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (Section)getObjectByEid(eid, SectionCmImpl.class.getName());
 	}
 
-	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
+	public Set<Section> getSections(String courseOfferingEid) throws IdNotFoundException {
 		CourseOffering courseOffering = getCourseOffering(courseOfferingEid);
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam(
+		return new HashSet<Section>(getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findTopLevelSectionsInCourseOffering", "courseOffering", courseOffering));
 	}
 
-	public Set getChildSections(final String parentSectionEid) throws IdNotFoundException {
+	public Set<Section> getChildSections(final String parentSectionEid) throws IdNotFoundException {
 		if( ! isSectionDefined(parentSectionEid)) {
 			throw new IdNotFoundException(parentSectionEid, SectionCmImpl.class.getName());
 		}
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam(
+		return new HashSet<Section>(getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findChildSections", "parentEid", parentSectionEid));
 	}
 
-	public Set getSectionMemberships(String sectionEid) throws IdNotFoundException {
+	public Set<Membership> getSectionMemberships(String sectionEid) throws IdNotFoundException {
 		return getMemberships((SectionCmImpl)getSection(sectionEid));
 	}
 
@@ -213,23 +214,23 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (EnrollmentSet)getObjectByEid(eid, EnrollmentSetCmImpl.class.getName());
 	}
 
-	public Set getEnrollmentSets(final String courseOfferingEid) throws IdNotFoundException {
+	public Set<EnrollmentSet> getEnrollmentSets(final String courseOfferingEid) throws IdNotFoundException {
 		if(! isCourseOfferingDefined(courseOfferingEid)) {
 			throw new IdNotFoundException(courseOfferingEid, CourseOfferingCmImpl.class.getName());
 		}
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam(
+		return new HashSet<EnrollmentSet>(getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findEnrollmentSetsByCourseOffering", "courseOfferingEid", courseOfferingEid));
 	}
 
-	public Set getEnrollments(final String enrollmentSetEid) throws IdNotFoundException {
+	public Set<Enrollment> getEnrollments(final String enrollmentSetEid) throws IdNotFoundException {
 		if( ! isEnrollmentSetDefined(enrollmentSetEid)) {
 			throw new IdNotFoundException(enrollmentSetEid, EnrollmentSetCmImpl.class.getName());
 		}
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam(
+		return new HashSet<Enrollment>(getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findEnrollments", "enrollmentSetEid", enrollmentSetEid));
 	}
 
-	public boolean isEnrolled(final String userId, final Set enrollmentSetEids) {
+	public boolean isEnrolled(final String userId, final Set<String> enrollmentSetEids) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("countEnrollments");
@@ -244,7 +245,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public boolean isEnrolled(String userId, String enrollmentSetEid) {
-		HashSet enrollmentSetEids = new HashSet();
+		HashSet<String> enrollmentSetEids = new HashSet<String>();
 		enrollmentSetEids.add(enrollmentSetEid);
 		return isEnrolled(userId, enrollmentSetEids);
 	}
@@ -265,33 +266,33 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return (Enrollment)getHibernateTemplate().execute(hc);
 	}
 	
-	public Set getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException {
+	public Set<String> getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException {
 		EnrollmentSet es = getEnrollmentSet(enrollmentSetEid);
 		return es.getOfficialInstructors();
 	}
 
 
-	public Set findCurrentlyEnrolledEnrollmentSets(final String userId) {
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam("findCurrentlyEnrolledEnrollmentSets", "userId", userId));
+	public Set<EnrollmentSet> findCurrentlyEnrolledEnrollmentSets(final String userId) {
+		return new HashSet<EnrollmentSet>(getHibernateTemplate().findByNamedQueryAndNamedParam("findCurrentlyEnrolledEnrollmentSets", "userId", userId));
 	}
 
 
-	public Set findCurrentlyInstructingEnrollmentSets(final String userId) {
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam(
+	public Set<EnrollmentSet> findCurrentlyInstructingEnrollmentSets(final String userId) {
+		return new HashSet<EnrollmentSet>(getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findCurrentlyInstructingEnrollmentSets", "userId", userId));
 	}
 
-	public Set findInstructingSections(final String userId) {
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam(
+	public Set<Section> findInstructingSections(final String userId) {
+		return new HashSet<Section>(getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findInstructingSections", "userId", userId));
 	}
 
-	public Set findEnrolledSections(final String userId) {
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam(
+	public Set<Section> findEnrolledSections(final String userId) {
+		return new HashSet<Section>(getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findEnrolledSections", "userId", userId));
 	}
 
-	public Set findInstructingSections(final String userId, final String academicSessionEid) {
+	public Set<Section> findInstructingSections(final String userId, final String academicSessionEid) {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findInstructingSectionsByAcademicSession");
@@ -300,10 +301,10 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				return q.list();
 			}
 		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
+		return new HashSet<Section>(getHibernateTemplate().executeFind(hc));
 	}
 
-	public Set findCourseOfferings(final String courseSetEid, final String academicSessionEid) throws IdNotFoundException {
+	public Set<CourseOffering> findCourseOfferings(final String courseSetEid, final String academicSessionEid) throws IdNotFoundException {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				Query q = session.getNamedQuery("findCourseOfferingsByCourseSetAndAcademicSession");
@@ -312,9 +313,8 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				return q.list();
 			}
 		};
-		return new HashSet(getHibernateTemplate().executeFind(hc));
+		return new HashSet<CourseOffering>(getHibernateTemplate().executeFind(hc));
 	}
-
 
 	public boolean isEmpty(final String courseSetEid) {
 		HibernateCallback hc = new HibernateCallback() {
@@ -328,13 +328,13 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 
-	public List findCourseSets(final String category) {
+	public List<CourseSet> findCourseSets(final String category) {
 		return getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findCourseSetByCategory", "category", category);
 	}
 
 
-	public Map findCourseOfferingRoles(final String userEid) {
+	public Map<String, String> findCourseOfferingRoles(final String userEid) {
 		// Keep track of CourseOfferings that we've already queried
 		Set<String> queriedCourseOfferingEids = new HashSet<String>();
 		List results = getHibernateTemplate().findByNamedQueryAndNamedParam(
@@ -348,35 +348,35 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return courseOfferingRoleMap;
 	}
 
-	public Map findCourseSetRoles(final String userEid) {
+	public Map<String, String> findCourseSetRoles(final String userEid) {
 		List results = getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findCourseSetRoles", "userEid", userEid);
-		Map courseSetRoleMap = new HashMap();
+		Map<String, String> courseSetRoleMap = new HashMap<String, String>();
 		for(Iterator iter = results.iterator(); iter.hasNext();) {
 			Object[] oa = (Object[])iter.next();
-			courseSetRoleMap.put(oa[0], oa[1]);
+			courseSetRoleMap.put((String)oa[0], (String)oa[1]);
 		}
 		return courseSetRoleMap;
 	}
 
 
-	public Map findSectionRoles(final String userEid) {
+	public Map<String, String> findSectionRoles(final String userEid) {
 		List results = getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findSectionRoles", "userEid", userEid);
-		Map sectionRoleMap = new HashMap();
+		Map<String, String> sectionRoleMap = new HashMap<String, String>();
 		for(Iterator iter = results.iterator(); iter.hasNext();) {
 			Object[] oa = (Object[])iter.next();
-			sectionRoleMap.put(oa[0], oa[1]);
+			sectionRoleMap.put((String)oa[0], (String)oa[1]);
 		}
 		return sectionRoleMap;
 	}
 
 
-	public Set getCourseOfferingsInCanonicalCourse(final String canonicalCourseEid) throws IdNotFoundException {
+	public Set<CourseOffering> getCourseOfferingsInCanonicalCourse(final String canonicalCourseEid) throws IdNotFoundException {
 		if(!isCanonicalCourseDefined(canonicalCourseEid)) {
 			throw new IdNotFoundException(canonicalCourseEid, CanonicalCourseCmImpl.class.getName());
 		}
-		return new HashSet(getHibernateTemplate().findByNamedQueryAndNamedParam("findCourseOfferingsByCanonicalCourse", "canonicalCourseEid", canonicalCourseEid));
+		return new HashSet<CourseOffering>(getHibernateTemplate().findByNamedQueryAndNamedParam("findCourseOfferingsByCanonicalCourse", "canonicalCourseEid", canonicalCourseEid));
 	}
 
 	public boolean isAcademicSessionDefined(String eid) {
@@ -403,7 +403,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		return ((Integer)getHibernateTemplate().findByNamedQueryAndNamedParam("isSectionDefined", "eid", eid).get(0)).intValue() == 1;
 	}
 
-	public List getSectionCategories() {
+	public List<String> getSectionCategories() {
 		return getHibernateTemplate().findByNamedQuery("findSectionCategories");
 	}
 

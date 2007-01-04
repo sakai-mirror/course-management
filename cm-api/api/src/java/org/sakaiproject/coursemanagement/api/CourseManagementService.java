@@ -57,14 +57,14 @@ public interface CourseManagementService {
 	 * @param parentCourseSetEid The parent CourseSet eid
 	 * @return The Set of child CourseSets
 	 */
-	public Set getChildCourseSets(String parentCourseSetEid) throws IdNotFoundException;
+	public Set<CourseSet> getChildCourseSets(String parentCourseSetEid) throws IdNotFoundException;
 
 	/**
 	 * Gets all of the top level CourseSets
 	 * 
 	 * @return The Set of CourseSets that have no parent CourseSet
 	 */
-	public Set getCourseSets();
+	public Set<CourseSet> getCourseSets();
 		
 	/**
 	 * Gets the memberships directly contained by this CourseSet.
@@ -74,7 +74,7 @@ public interface CourseManagementService {
 	 * set.
 	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
 	 */
-	public Set getCourseSetMemberships(String courseSetEid) throws IdNotFoundException;
+	public Set<Membership> getCourseSetMemberships(String courseSetEid) throws IdNotFoundException;
 
 	/**
 	 * Gets a CanonicalCourse by its eid.
@@ -100,7 +100,7 @@ public interface CourseManagementService {
 	 * @return The set of CanonicalCourses that are equivalent (in the Enterprise
 	 * view, not in the Java view -- this is independent of CanonicalCourse.equals()).
 	 */
-	public Set getEquivalentCanonicalCourses(String canonicalCourseEid) throws IdNotFoundException;
+	public Set<CanonicalCourse> getEquivalentCanonicalCourses(String canonicalCourseEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the CanonicalCourses in a CourseSet.
@@ -109,21 +109,21 @@ public interface CourseManagementService {
 	 * @return The set of CanonicalCourses in the CourseSet
 	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
 	 */
-	public Set getCanonicalCourses(String courseSetEid) throws IdNotFoundException;
+	public Set<CanonicalCourse> getCanonicalCourses(String courseSetEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the list of all known AcademicSessions, sorted by start date.
 	 * 
 	 * @return
 	 */
-	public List getAcademicSessions();
+	public List<AcademicSession> getAcademicSessions();
 	
 	/**
 	 * Gets the list of current AcademicSessions, sorted by start date.
 	 * 
 	 * @return
 	 */
-	public List getCurrentAcademicSessions();
+	public List<AcademicSession> getCurrentAcademicSessions();
 	
 	/**
 	 * Gets a AcademicSession by its eid.
@@ -166,7 +166,7 @@ public interface CourseManagementService {
 	 * view, not in the Java view -- this is independent of CourseOffering.equals()).
 	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
-	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException;
+	public Set<CourseOffering> getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the memberships directly contained by this CourseOffering.
@@ -176,7 +176,7 @@ public interface CourseManagementService {
 	 * set of Memberships.
 	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
-	public Set getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException;
+	public Set<Membership> getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the CourseOfferings in a CourseSet.
@@ -185,7 +185,7 @@ public interface CourseManagementService {
 	 * @return The set of CourseOfferings in the CourseSet
 	 * @throws IdNotFoundException If the eid is not associated with any CourseSet
 	 */
-	public Set getCourseOfferingsInCourseSet(String courseSetEid) throws IdNotFoundException;
+	public Set<CourseOffering> getCourseOfferingsInCourseSet(String courseSetEid) throws IdNotFoundException;
 
 	/**
 	 * Finds all of the course offerings in a course set that are current for any given
@@ -196,7 +196,7 @@ public interface CourseManagementService {
 	 * @return The set of course offerings
 	 * @throws IdNotFoundException
 	 */
-	public Set findCourseOfferings(String courseSetEid, String academicSessionEid) throws IdNotFoundException;
+	public Set<CourseOffering> findCourseOfferings(String courseSetEid, String academicSessionEid) throws IdNotFoundException;
 	
 	/**
 	 * Finds all course offerings belonging to a canonical course.
@@ -205,14 +205,14 @@ public interface CourseManagementService {
 	 * @return The set of course offerings
 	 * @throws IdNotFoundException
 	 */
-	public Set getCourseOfferingsInCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException;
+	public Set<CourseOffering> getCourseOfferingsInCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException;
 	
 	/**
 	 * Finds all course sets in a given category.  Useful for listing the departments
 	 * @param category
 	 * @return The list of course sets, sorted by title, ascending
 	 */
-	public List findCourseSets(String category);
+	public List<CourseSet> findCourseSets(String category);
 	
 	/**
 	 * Determines whether a CourseSet has any CanonicalCourses or CourseSets.
@@ -246,14 +246,14 @@ public interface CourseManagementService {
 	 * @return The Set of Sections
 	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
-	public Set getSections(String courseOfferingEid) throws IdNotFoundException;
+	public Set<Section> getSections(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the list of section categories defined by the institution.
 	 * 
 	 * @return
 	 */
-	public List getSectionCategories();
+	public List<String> getSectionCategories();
 
 	/**
 	 * Gets the description for a category, identified by the category code, or null
@@ -271,7 +271,7 @@ public interface CourseManagementService {
 	 * @return The Set of child Sections
 	 * @throws IdNotFoundException If the eid is not associated with any parent Section
 	 */
-	public Set getChildSections(String parentSectionEid) throws IdNotFoundException;
+	public Set<Section> getChildSections(String parentSectionEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the members directly contained by this Section.
@@ -281,7 +281,7 @@ public interface CourseManagementService {
 	 * set.
 	 * @throws IdNotFoundException If the eid is not associated with any Section
 	 */
-	public Set getSectionMemberships(String sectionEid) throws IdNotFoundException;
+	public Set<Membership> getSectionMemberships(String sectionEid) throws IdNotFoundException;
 	
 	/**
 	 * Gets an EnrollmentSet by its eid.
@@ -307,7 +307,7 @@ public interface CourseManagementService {
 	 * @return The Set of EnrollmentSets
 	 * @throws IdNotFoundException If the eid is not associated with any CourseOffering
 	 */
-	public Set getEnrollmentSets(String courseOfferingEid) throws IdNotFoundException;
+	public Set<EnrollmentSet> getEnrollmentSets(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the Enrollments in an EnrollmentSet
@@ -316,7 +316,7 @@ public interface CourseManagementService {
 	 * @return The Set of Enrollments
 	 * @throws IdNotFoundException If the eid is not associated with any EnrollmentSet
 	 */
-	public Set getEnrollments(String enrollmentSetEid) throws IdNotFoundException;
+	public Set<Enrollment> getEnrollments(String enrollmentSetEid) throws IdNotFoundException;
 
 	/**
 	 * Gets the set of user ids that are, according to the enterprise, responsible for
@@ -327,7 +327,7 @@ public interface CourseManagementService {
 	 * @return The set of ids for users who are responsible for this EnrollmentSet
 	 * @throws IdNotFoundException If the eid is not associated with any EnrollmentSet
 	 */
-	public Set getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException;
+	public Set<String> getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException;
 	
 	/**
 	 * Determines whether a user is enrolled in an EnrollmentSet.  This
@@ -337,7 +337,7 @@ public interface CourseManagementService {
 	 * @param enrollmentSetEids The set of EnrollmentSetEids
 	 * @return
 	 */
-	public boolean isEnrolled(String userEid, Set enrollmentSetEids);
+	public boolean isEnrolled(String userEid, Set<String> enrollmentSetEids);
 
 	/**
 	 * Convenience method for checking whether a user is enrolled in an EnrollmentSet.
@@ -370,7 +370,7 @@ public interface CourseManagementService {
 	 * @param userEid
 	 * @return
 	 */
-	public Set findCurrentlyEnrolledEnrollmentSets(String userEid);
+	public Set<EnrollmentSet> findCurrentlyEnrolledEnrollmentSets(String userEid);
 
 	/**
 	 * Finds the set of current EnrollmentSets for which a user is an instructor of
@@ -381,7 +381,7 @@ public interface CourseManagementService {
 	 * @param userEid
 	 * @return
 	 */
-	public Set findCurrentlyInstructingEnrollmentSets(String userEid);
+	public Set<EnrollmentSet> findCurrentlyInstructingEnrollmentSets(String userEid);
 	
 	/**
 	 * Finds all Sections that are linked to an EnrollmentSet for
@@ -390,7 +390,7 @@ public interface CourseManagementService {
 	 * @param userEid
 	 * @return
 	 */
-	public Set findInstructingSections(String userEid);
+	public Set<Section> findInstructingSections(String userEid);
 
 	/**
 	 * Finds all Sections that are linked to an EnrollmentSet for
@@ -399,7 +399,7 @@ public interface CourseManagementService {
 	 * @param userEid
 	 * @return
 	 */
-	public Set findEnrolledSections(String userEid);
+	public Set<Section> findEnrolledSections(String userEid);
 
 	/**
 	 * Finds all Sections that are linked to an EnrollmentSet for which a user is an
@@ -410,7 +410,7 @@ public interface CourseManagementService {
 	 * @param academicSessionEid
 	 * @return
 	 */
-	public Set findInstructingSections(String userEid, String academicSessionEid) throws IdNotFoundException;
+	public Set<Section> findInstructingSections(String userEid, String academicSessionEid) throws IdNotFoundException;
 
 	/**
 	 * Finds the Sections (and roles) for which a user is a member.
@@ -418,7 +418,7 @@ public interface CourseManagementService {
 	 * @param userEid
 	 * @return A Map of Section EIDs to roles for the user
 	 */
-	public Map findSectionRoles(String userEid);
+	public Map<String, String> findSectionRoles(String userEid);
 
 	/**
 	 * Finds the CourseOfferings (and roles) for which a user is a member.
@@ -426,7 +426,7 @@ public interface CourseManagementService {
 	 * @param userEid
 	 * @return A Map of CourseOffering EIDs to roles for the user
 	 */
-	public Map findCourseOfferingRoles(String userEid);
+	public Map<String, String> findCourseOfferingRoles(String userEid);
 
 
 	/**
@@ -435,6 +435,6 @@ public interface CourseManagementService {
 	 * @param userEid
 	 * @return A Map of CourseSet EIDs to roles for the user
 	 */
-	public Map findCourseSetRoles(String userEid);
+	public Map<String, String> findCourseSetRoles(String userEid);
 
 }

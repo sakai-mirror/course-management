@@ -78,6 +78,6 @@ public interface EnrollmentSet {
 	 * The official grader(s) for this EnrollmentSet.
 	 * @return
 	 */
-	public Set getOfficialInstructors();
-	public void setOfficialInstructors(Set officialInstructors);
+	public Set<String> getOfficialInstructors();
+	public void setOfficialInstructors(Set<String> officialInstructors);
 }

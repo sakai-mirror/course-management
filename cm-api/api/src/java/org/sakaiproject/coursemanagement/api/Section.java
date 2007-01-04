@@ -70,8 +70,8 @@ public interface Section {
 	 * The meeting time for this section.
 	 * @return
 	 */
-	public Set getMeetings();
-	public void setMeetings(Set meetingTimes);
+	public Set<Meeting> getMeetings();
+	public void setMeetings(Set<Meeting> meetingTimes);
 
 	/**
 	 * Gets the parent Section for this Section, or null if this is not a subSection.

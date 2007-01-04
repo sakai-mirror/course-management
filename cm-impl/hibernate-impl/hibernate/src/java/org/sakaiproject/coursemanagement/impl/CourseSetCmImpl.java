@@ -23,6 +23,8 @@ package org.sakaiproject.coursemanagement.impl;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.sakaiproject.coursemanagement.api.CanonicalCourse;
+import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 
 public class CourseSetCmImpl extends AbstractMembershipContainerCmImpl
@@ -32,8 +34,8 @@ public class CourseSetCmImpl extends AbstractMembershipContainerCmImpl
 
 	private CourseSet parent;
 	private String category;
-	private Set courseOfferings;
-	private Set canonicalCourses;
+	private Set<CourseOffering> courseOfferings;
+	private Set<CanonicalCourse> canonicalCourses;
 
 	public CourseSetCmImpl() {}
 	
@@ -52,18 +54,21 @@ public class CourseSetCmImpl extends AbstractMembershipContainerCmImpl
 		this.parent = parent;
 	}
 	
-	public Set getCourseOfferings() {
-		return courseOfferings;
-	}
-	public void setCourseOfferings(Set courseOfferings) {
-		this.courseOfferings = courseOfferings;
-	}
 
-	public Set getCanonicalCourses() {
+	public Set<CanonicalCourse> getCanonicalCourses() {
 		return canonicalCourses;
 	}
-	public void setCanonicalCourses(Set canonicalCourses) {
+
+	public void setCanonicalCourses(Set<CanonicalCourse> canonicalCourses) {
 		this.canonicalCourses = canonicalCourses;
+	}
+
+	public Set<CourseOffering> getCourseOfferings() {
+		return courseOfferings;
+	}
+
+	public void setCourseOfferings(Set<CourseOffering> courseOfferings) {
+		this.courseOfferings = courseOfferings;
 	}
 
 	public String getCategory() {
