@@ -408,6 +408,9 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public String getSectionCategoryDescription(String categoryCode) {
+		if(categoryCode == null) {
+			return null;
+		}
 		SectionCategory cat = (SectionCategory)getHibernateTemplate().get(SectionCategoryCmImpl.class, categoryCode);
 		if(cat == null) {
 			return null;
