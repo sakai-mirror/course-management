@@ -67,16 +67,15 @@
 			            <bean class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceSampleChainImpl"/>
 
             			<!-- The internal, hibernate-backed implementation -->
-            			<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl"/>
+						<bean class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl">
+							<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>
+						</bean>
 					</list>
             	</property>
             </bean>
         </property>
 	</bean>
 
-	<bean id="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl">
-		<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>
-	</bean>
 	
 	<bean id="org.sakaiproject.coursemanagement.impl.DataLoader" parent="cmTxTemplate">
         <property name="target">
@@ -91,11 +90,7 @@
         <property name="target">
             <bean class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl">
         		<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>
-        		
-        		<!-- Use the internal hibernate service only, not the federated service -->
-	        	<property name="cmService"><ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl"/></property>
-	        	
-            </bean>
+        	</bean>
         </property>
 	</bean>
 

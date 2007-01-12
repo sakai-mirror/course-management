@@ -56,6 +56,14 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport implements CourseManagementService {
 	private static final Log log = LogFactory.getLog(CourseManagementServiceHibernateImpl.class);
 	
+	public void init() {
+		log.info("Initializing " + getClass().getName());
+	}
+
+	public void destroy() {
+		log.info("Destroying " + getClass().getName());
+	}
+	
 	/**
 	 * A generic approach to finding objects by their eid.  This is "coding by convention",
 	 * since it expects the parameterized query to use "eid" as the single named parameter.

@@ -415,7 +415,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.removeEnrollmentSet("es");
 		
 		// Ensure that the enrollment was deleted as well
-		Assert.assertNull(cm.findEnrollment("student1", "es"));
+		Assert.assertEquals(0, cm.getEnrollments("es").size());
 
 		// Ensure that the CM service can no longer find the ES
 		try {

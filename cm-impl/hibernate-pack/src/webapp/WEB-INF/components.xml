@@ -39,62 +39,23 @@
             		<!-- List the implementations here, in descending order of authority -->
             		<list>
 			            <!-- 
-			            	For testing, we use an impl that returns no data.
-			            	Replace this sample chained impl with your custom impl, if any.
+			            	For testing, we use an impl that returns no data.  Replace this
+			            	sample chained impl with your custom impl, if any, or replace the
+			            	federated impl entirely with your own custom impl.
 			            -->
 			            <bean class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceSampleChainImpl"/>
 
             			<!-- The internal, hibernate-backed implementation -->
-            			<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl"/>
+						<bean class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl"
+							init-method="init" destroy-method="destroy">
+							<property name="sessionFactory">
+								<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+							</property>
+						</bean>
 					</list>
             	</property>
             </bean>
         </property>
-	</bean>
-
-	<!-- Do not reference this bean ID.  It is for internal CM use only. -->
-	<!-- TODO: Hide this bean inside another, if possible, to make it private -->
-	<bean id="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" class="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl">
-		<property name="sessionFactory">
-			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
-		</property>
-	</bean>
-
-	<!-- Do not reference this bean ID.  It is for internal CM use only. -->
-	<!-- TODO: Hide this bean inside another, if possible, to make it private -->
-	<bean id="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl" class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl"
-		init-method="init" destroy-method="destroy">
-		<property name="sessionFactory">
-			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
-		</property>
-		<!-- Use the internal hibernate service only, not the federated service -->
-		<property name="cmService">
-			<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementServiceHibernateImpl" />
-		</property>
-		<property name="defaultSectionCategories">
-			<list>
-				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
-					<constructor-arg><value>lct</value></constructor-arg>
-					<constructor-arg><value>Lecture</value></constructor-arg>
-				</bean>
-				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
-					<constructor-arg><value>lab</value></constructor-arg>
-					<constructor-arg><value>Lab</value></constructor-arg>
-				</bean>
-				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
-					<constructor-arg><value>dsc</value></constructor-arg>
-					<constructor-arg><value>Discussion</value></constructor-arg>
-				</bean>
-				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
-					<constructor-arg><value>rec</value></constructor-arg>
-					<constructor-arg><value>Recitation</value></constructor-arg>
-				</bean>
-				<bean class="org.sakaiproject.coursemanagement.impl.SectionCategoryCmImpl" singleton="false">
-					<constructor-arg><value>sto</value></constructor-arg>
-					<constructor-arg><value>Studio</value></constructor-arg>
-				</bean>
-			</list>
-		</property>
 	</bean>
 
 	<!--
@@ -128,11 +89,25 @@
 					<list><value>cmAdminAuthzAdvisor</value></list>
 				</property>
 				<property name="target">
-					<ref bean="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl"/>
+					<bean class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl"
+						init-method="init" destroy-method="destroy">
+						<property name="sessionFactory">
+							<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+						</property>
+					</bean>
 				</property>
 			</bean>
 		</property>
 	</bean>
+
+	<!-- A DataLoader to load sample CM data into Sakai's CM reference impl. -->
+	<bean id="org.sakaiproject.coursemanagement.impl.DataLoader" class="org.sakaiproject.coursemanagement.impl.SampleDataLoader"
+		init-method="init" destroy-method="destroy">
+		<property name="cmAdmin"><ref bean="org.sakaiproject.coursemanagement.api.CourseManagementAdministration"/></property>
+		<property name="cmService"><ref bean="org.sakaiproject.coursemanagement.api.CourseManagementService"/></property>
+		<property name="scs"><ref bean="org.sakaiproject.component.api.ServerConfigurationService"/></property>
+		<property name="loadSampleData"><value>true</value></property>
+    </bean>
 
 	<!-- AOP Advisor performs Authz checks for the CM Admin service -->
 	<bean id="cmAdminAuthzAdvisor" 
@@ -161,7 +136,7 @@
    		</property>
    	</bean>
 
-   <!-- this is the helper that will register the above bean with the schedule manager -->
+   <!-- this is the helper that will register the above bean with the job scheduler -->
    <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.SampleCMSyncJob"
       class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
       singleton="true" init-method="init">

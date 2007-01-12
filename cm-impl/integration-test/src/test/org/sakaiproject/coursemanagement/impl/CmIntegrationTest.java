@@ -103,7 +103,7 @@ public class CmIntegrationTest extends SakaiTestBase {
 		
 		// Create some CM memberships, etc
 		cmAdmin.addOrUpdateCourseOfferingMembership("cm-instructor2", "Just helping out with guest lectures", "CM-CO1","active");
-		cmAdmin.addOrUpdateEnrollment("cm-student1", "CM-ES1", "Waitlisted", "4", "letter grade");
+		cmAdmin.addOrUpdateEnrollment("cm-student1", "CM-ES1", "waitlisted", "4", "letter grade");
 		
 		// Create a site
 		site = siteService.addSite("CM1", "course");

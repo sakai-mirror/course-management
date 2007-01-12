@@ -36,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
-import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
@@ -61,46 +60,13 @@ public class CourseManagementAdministrationHibernateImpl extends
 		HibernateDaoSupport implements CourseManagementAdministration {
 
 	private static final Log log = LogFactory.getLog(CourseManagementAdministrationHibernateImpl.class);
-	
-	// Dependency Injection
-	protected CourseManagementService cmService;
-	protected List defaultSectionCategories;
-	
-	public void setCmService(CourseManagementService cmService) {
-		this.cmService = cmService;
-	}
-	public void setDefaultSectionCategories(List defaultSectionCategories) {
-		this.defaultSectionCategories = defaultSectionCategories;
-	}
-	// End Dependency Injection
-	
 
 	public void init() {
 		log.info("Initializing " + getClass().getName());
-		ensureMinimalDataExists();
 	}
 
 	public void destroy() {
 		log.info("Destroying " + getClass().getName());
-	}
-
-	protected void ensureMinimalDataExists() {
-		// If we don't have any section categories, just add the defaults
-		List categories = cmService.getSectionCategories();
-		if(categories == null || categories.isEmpty()) {
-			// Were there any defaults set?
-			if(defaultSectionCategories == null) {
-				log.warn("No default section categories set, and none found in the CM Service.");
-				return;
-			}
-			for(Iterator iter = defaultSectionCategories.iterator(); iter.hasNext();) {
-				SectionCategory cat = (SectionCategory)iter.next();
-				if(log.isInfoEnabled()) log.info("Adding default section category " + cat);
-				getHibernateTemplate().save(cat);
-			}
-		} else {
-			if(log.isInfoEnabled()) log.info("Skipping CM Data Load");
-		}
 	}
 	
 	public AcademicSession createAcademicSession(String eid, String title,
@@ -122,7 +88,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			String parentCourseSetEid) throws IdExistsException {
 		CourseSet parent = null;
 		if(parentCourseSetEid != null) {
-			parent = cmService.getCourseSet(parentCourseSetEid);
+			parent = (CourseSet)getObjectByEid(parentCourseSetEid, CourseSetCmImpl.class.getName());
 		}
 		CourseSetCmImpl courseSet = new CourseSetCmImpl(eid, title, description, category, parent);
 		try {
@@ -152,11 +118,12 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void addCanonicalCourseToCourseSet(String courseSetEid, String canonicalCourseEid) throws IdNotFoundException {
-		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
-		CanonicalCourseCmImpl canonCourse = (CanonicalCourseCmImpl)cmService.getCanonicalCourse(canonicalCourseEid);
-		Set canonCourses = courseSet.getCanonicalCourses();
+		CourseSetCmImpl courseSet = (CourseSetCmImpl)getObjectByEid(courseSetEid, CourseSetCmImpl.class.getName());
+		CanonicalCourseCmImpl canonCourse = (CanonicalCourseCmImpl)getObjectByEid(canonicalCourseEid, CanonicalCourseCmImpl.class.getName());
+		
+		Set<CanonicalCourse> canonCourses = courseSet.getCanonicalCourses();
 		if(canonCourses == null) {
-			canonCourses = new HashSet();
+			canonCourses = new HashSet<CanonicalCourse>();
 			courseSet.setCanonicalCourses(canonCourses);
 		}
 		canonCourses.add(canonCourse);
@@ -164,8 +131,9 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeCanonicalCourseFromCourseSet(String courseSetEid, String canonicalCourseEid) {
-		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
-		CanonicalCourseCmImpl canonCourse = (CanonicalCourseCmImpl)cmService.getCanonicalCourse(canonicalCourseEid);
+		CourseSetCmImpl courseSet = (CourseSetCmImpl)getObjectByEid(courseSetEid, CourseSetCmImpl.class.getName());
+		CanonicalCourseCmImpl canonCourse = (CanonicalCourseCmImpl)getObjectByEid(canonicalCourseEid, CanonicalCourseCmImpl.class.getName());
+		
 		Set courses = courseSet.getCanonicalCourses();
 		if(courses == null || ! courses.contains(canonCourse)) {
 			return false;
@@ -178,7 +146,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	private void setEquivalents(Set crossListables) {
 		CrossListingCmImpl newCrossListing = new CrossListingCmImpl();
 		getHibernateTemplate().save(newCrossListing);
-		Set oldCrossListings = new HashSet();
+		Set<CrossListingCmImpl> oldCrossListings = new HashSet<CrossListingCmImpl>();
 
 		for(Iterator iter = crossListables.iterator(); iter.hasNext();) {
 			CrossListableCmImpl clable = (CrossListableCmImpl)iter.next();
@@ -212,8 +180,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 	public CourseOffering createCourseOffering(String eid, String title, String description,
 			String status, String academicSessionEid, String canonicalCourseEid, Date startDate, Date endDate) throws IdExistsException {
-		AcademicSession as = cmService.getAcademicSession(academicSessionEid);
-		CanonicalCourse cc = cmService.getCanonicalCourse(canonicalCourseEid);
+		AcademicSession as = (AcademicSession)getObjectByEid(academicSessionEid, AcademicSessionCmImpl.class.getName());
+		CanonicalCourse cc = (CanonicalCourse)getObjectByEid(canonicalCourseEid, CanonicalCourseCmImpl.class.getName());
 		CourseOfferingCmImpl co = new CourseOfferingCmImpl(eid, title, description, status, as, cc, startDate, endDate);
 		try {
 			getHibernateTemplate().save(co);
@@ -237,11 +205,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 	public void addCourseOfferingToCourseSet(String courseSetEid, String courseOfferingEid) {
 		// CourseSet's set of courses are controlled on the CourseSet side of the bi-directional relationship
-		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
-		CourseOfferingCmImpl courseOffering = (CourseOfferingCmImpl)cmService.getCourseOffering(courseOfferingEid);
-		Set offerings = courseSet.getCourseOfferings();
+		CourseSetCmImpl courseSet = (CourseSetCmImpl)getObjectByEid(courseSetEid, CourseSetCmImpl.class.getName());
+		CourseOfferingCmImpl courseOffering = (CourseOfferingCmImpl)getObjectByEid(courseOfferingEid, CourseOfferingCmImpl.class.getName());
+		Set<CourseOffering> offerings = courseSet.getCourseOfferings();
 		if(offerings == null) {
-			offerings = new HashSet();
+			offerings = new HashSet<CourseOffering>();
 		}
 		offerings.add(courseOffering);
 		courseSet.setCourseOfferings(offerings);
@@ -249,8 +217,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeCourseOfferingFromCourseSet(String courseSetEid, String courseOfferingEid) {
-		CourseSetCmImpl courseSet = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
-		CourseOffering courseOffering = cmService.getCourseOffering(courseOfferingEid);
+		CourseSetCmImpl courseSet = (CourseSetCmImpl)getObjectByEid(courseSetEid, CourseSetCmImpl.class.getName());
+		CourseOffering courseOffering = (CourseOffering)getObjectByEid(courseOfferingEid, CourseOfferingCmImpl.class.getName());
 		Set offerings = courseSet.getCourseOfferings();
 		if(offerings == null || ! offerings.contains(courseOffering)) {
 			return false;
@@ -266,7 +234,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		if(courseOfferingEid == null) {
 			throw new IllegalArgumentException("You can not create an EnrollmentSet without specifying a courseOffering");
 		}
-		CourseOffering co = cmService.getCourseOffering(courseOfferingEid);
+		CourseOffering co = (CourseOffering)getObjectByEid(courseOfferingEid, CourseOfferingCmImpl.class.getName());
 		EnrollmentSetCmImpl enrollmentSet = new EnrollmentSetCmImpl(eid, title, description, category, defaultEnrollmentCredits, co, officialGraders);
 		try {
 			getHibernateTemplate().save(enrollmentSet);
@@ -282,25 +250,33 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 	public Enrollment addOrUpdateEnrollment(String userId, String enrollmentSetEid, String enrollmentStatus, String credits, String gradingScheme) {
 		EnrollmentCmImpl enrollment = null;
-		if(cmService.isEnrolled(userId,enrollmentSetEid)) {
-			enrollment = (EnrollmentCmImpl)cmService.findEnrollment(userId, enrollmentSetEid);
+		
+		List enrollments = getHibernateTemplate().findByNamedQueryAndNamedParam("findEnrollment",
+				new String[] {"enrollmentSetEid", "userId"},
+				new Object[] {enrollmentSetEid, userId});
+		if(enrollments.isEmpty()) {
+			EnrollmentSet enrollmentSet = (EnrollmentSet)getObjectByEid(enrollmentSetEid, EnrollmentSetCmImpl.class.getName());
+			enrollment = new EnrollmentCmImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
+			getHibernateTemplate().save(enrollment);
+		} else {
+			enrollment = (EnrollmentCmImpl)enrollments.get(0);
 			enrollment.setEnrollmentStatus(enrollmentStatus);
 			enrollment.setCredits(credits);
 			enrollment.setGradingScheme(gradingScheme);
 			getHibernateTemplate().update(enrollment);
-		} else {
-			EnrollmentSet enrollmentSet = cmService.getEnrollmentSet(enrollmentSetEid);
-			enrollment = new EnrollmentCmImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
-			getHibernateTemplate().save(enrollment);
 		}
 		return enrollment;
 	}
 
 	public boolean removeEnrollment(String userId, String enrollmentSetEid) {
-		EnrollmentCmImpl enr = (EnrollmentCmImpl)cmService.findEnrollment(userId, enrollmentSetEid);
-		if(enr == null) {
+		List enrollments = getHibernateTemplate().findByNamedQueryAndNamedParam("findEnrollment",
+				new String[] {"enrollmentSetEid", "userId"},
+				new Object[] {enrollmentSetEid, userId});
+		
+		if(enrollments.isEmpty()) {
 			return false;
 		} else {
+			Enrollment enr = (Enrollment)enrollments.get(0);
 			enr.setDropped(true);
 			getHibernateTemplate().update(enr);
 			return true;
@@ -318,17 +294,17 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 		// Get the enrollment set, if needed
 		if(courseOfferingEid != null) {
-			co = cmService.getCourseOffering(courseOfferingEid);
+			co = (CourseOffering)getObjectByEid(courseOfferingEid, CourseOfferingCmImpl.class.getName());
 		}
 
 		// Get the parent section, if needed
 		if(parentSectionEid != null) {
-			parent = cmService.getSection(parentSectionEid);
+			parent = (Section)getObjectByEid(parentSectionEid, SectionCmImpl.class.getName());
 		}
 		
 		// Get the enrollment set, if needed
 		if(enrollmentSetEid != null) {
-			es = cmService.getEnrollmentSet(enrollmentSetEid);
+			es = (EnrollmentSet)getObjectByEid(enrollmentSetEid, EnrollmentSetCmImpl.class.getName());
 		}
 
 		SectionCmImpl section = new SectionCmImpl(eid, title, description, category, parent, co, es, maxSize);
@@ -345,7 +321,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 	
     public Membership addOrUpdateCourseSetMembership(final String userId, String role, final String courseSetEid, final String status) throws IdNotFoundException {
-		CourseSetCmImpl cs = (CourseSetCmImpl)cmService.getCourseSet(courseSetEid);
+		CourseSetCmImpl cs = (CourseSetCmImpl)getObjectByEid(courseSetEid, CourseSetCmImpl.class.getName());
 		MembershipCmImpl member =getMembership(userId, cs);
 		if(member == null) {
 			// Add the new member
@@ -361,7 +337,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeCourseSetMembership(String userId, String courseSetEid) {
-		MembershipCmImpl member = getMembership(userId, (CourseSetCmImpl)cmService.getCourseSet(courseSetEid));
+		MembershipCmImpl member = getMembership(userId, (CourseSetCmImpl)getObjectByEid(courseSetEid, CourseSetCmImpl.class.getName()));
 		if(member == null) {
 			return false;
 		} else {
@@ -371,7 +347,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
     public Membership addOrUpdateCourseOfferingMembership(String userId, String role, String courseOfferingEid, String status) {
-		CourseOfferingCmImpl co = (CourseOfferingCmImpl)cmService.getCourseOffering(courseOfferingEid);
+		CourseOfferingCmImpl co = (CourseOfferingCmImpl)getObjectByEid(courseOfferingEid, CourseOfferingCmImpl.class.getName());
 		MembershipCmImpl member =getMembership(userId, co);
 		if(member == null) {
 			// Add the new member
@@ -387,7 +363,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeCourseOfferingMembership(String userId, String courseOfferingEid) {
-		CourseOfferingCmImpl courseOffering = (CourseOfferingCmImpl)cmService.getCourseOffering(courseOfferingEid);
+		CourseOfferingCmImpl courseOffering = (CourseOfferingCmImpl)getObjectByEid(courseOfferingEid, CourseOfferingCmImpl.class.getName());
 		MembershipCmImpl member = getMembership(userId, courseOffering);
 		if(member == null) {
 			return false;
@@ -398,7 +374,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 	
     public Membership addOrUpdateSectionMembership(String userId, String role, String sectionEid, String status) {
-		SectionCmImpl sec = (SectionCmImpl)cmService.getSection(sectionEid);
+		SectionCmImpl sec = (SectionCmImpl)getObjectByEid(sectionEid, SectionCmImpl.class.getName());
 		MembershipCmImpl member =getMembership(userId, sec);
 		if(member == null) {
 			// Add the new member
@@ -414,7 +390,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public boolean removeSectionMembership(String userId, String sectionEid) {
-		SectionCmImpl sec = (SectionCmImpl)cmService.getSection(sectionEid);
+		SectionCmImpl sec = (SectionCmImpl)getObjectByEid(sectionEid, SectionCmImpl.class.getName());
 		MembershipCmImpl member = getMembership(userId, sec);
 		if(member == null) {
 			return false;
@@ -443,31 +419,32 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public Meeting newSectionMeeting(String sectionEid, String location, Time startTime, Time finishTime, String notes) {
-		Section section = cmService.getSection(sectionEid);
+		Section section = (Section)getObjectByEid(sectionEid, SectionCmImpl.class.getName());
 		MeetingCmImpl meeting = new MeetingCmImpl(section, location, startTime, finishTime, notes);
-		Set meetings = section.getMeetings();
+		Set<Meeting> meetings = section.getMeetings();
 		if(meetings == null) {
-			meetings = new HashSet();
+			meetings = new HashSet<Meeting>();
 			section.setMeetings(meetings);
 		}
 		return meeting;
 	}
 
 	public void removeAcademicSession(String eid) {
-		AcademicSession as = cmService.getAcademicSession(eid);
-		getHibernateTemplate().delete(as);
+		getHibernateTemplate().delete(
+				getObjectByEid(eid, AcademicSessionCmImpl.class.getName())
+		);
 	}
 
 	public void removeCanonicalCourse(String eid) {
-		CanonicalCourseCmImpl cc = (CanonicalCourseCmImpl)cmService.getCanonicalCourse(eid);
+		CanonicalCourseCmImpl cc = (CanonicalCourseCmImpl)getObjectByEid(eid, CanonicalCourseCmImpl.class.getName());
 		
 		// Remove any equivalents
 		removeEquiv(cc);
 		
 		// Remove the associated course offerings (see removeCourseOffering for further cascades)
-		Set coSet = cmService.getCourseOfferingsInCanonicalCourse(eid);
-		for(Iterator iter = coSet.iterator(); iter.hasNext();) {
-			CourseOffering co = (CourseOffering)iter.next();
+		Set<CourseOffering> coSet = new HashSet<CourseOffering>(getHibernateTemplate().findByNamedQueryAndNamedParam("findCourseOfferingsByCanonicalCourse", "canonicalCourseEid",eid));
+		for(Iterator<CourseOffering> iter = coSet.iterator(); iter.hasNext();) {
+			CourseOffering co = iter.next();
 			removeCourseOffering(co.getEid());
 		}
 		
@@ -475,22 +452,25 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void removeCourseOffering(String eid) {
-		CourseOffering co = cmService.getCourseOffering(eid);
-		Set memberships = cmService.getCourseOfferingMemberships(eid);
+		CourseOfferingCmImpl co = (CourseOfferingCmImpl)getObjectByEid(eid, CourseOfferingCmImpl.class.getName());
 		
 		// Remove the memberships
-		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
+		for(Iterator iter = getMemberships(co).iterator(); iter.hasNext();) {
 			getHibernateTemplate().delete(iter.next());
 		}
 
 		// Remove the sections
-		for(Iterator iter = cmService.getSections(eid).iterator(); iter.hasNext();) {
+		List sections = getHibernateTemplate().findByNamedQueryAndNamedParam(
+				"findTopLevelSectionsInCourseOffering", "courseOffering",co);
+		for(Iterator iter = sections.iterator(); iter.hasNext();) {
 			Section sec = (Section)iter.next();
 			removeSection(sec.getEid());
 		}
 		
+		List enrollmentSets = getHibernateTemplate().findByNamedQueryAndNamedParam(
+				"findEnrollmentSetsByCourseOffering", "courseOfferingEid",eid);
 		// Remove the enrollment sets
-		for(Iterator iter = cmService.getEnrollmentSets(eid).iterator(); iter.hasNext();) {
+		for(Iterator iter = enrollmentSets.iterator(); iter.hasNext();) {
 			EnrollmentSet enr = (EnrollmentSet)iter.next();
 			removeEnrollmentSet(enr.getEid());
 		}
@@ -500,23 +480,22 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void removeCourseSet(String eid) {
-		CourseSet cs = cmService.getCourseSet(eid);
-		Set memberships = cmService.getCourseSetMemberships(eid);
+		CourseSetCmImpl cs = (CourseSetCmImpl)getObjectByEid(eid, CourseSetCmImpl.class.getName());
 
 		// Remove the memberships
-		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
+		for(Iterator iter = getMemberships(cs).iterator(); iter.hasNext();) {
 			getHibernateTemplate().delete(iter.next());
 		}
-		
+
 		// Remove the course set itself
 		getHibernateTemplate().delete(cs);
 	}
 
 	public void removeEnrollmentSet(String eid) {
-		EnrollmentSet es = cmService.getEnrollmentSet(eid);
+		EnrollmentSet es = (EnrollmentSet)getObjectByEid(eid, EnrollmentSetCmImpl.class.getName());
 
-		// Remove the enrollments
-		Set enrollments = cmService.getEnrollments(eid);
+		List enrollments = getHibernateTemplate().findByNamedQueryAndNamedParam(
+				"findEnrollments", "enrollmentSetEid", eid);
 		for(Iterator iter = enrollments.iterator(); iter.hasNext();) {
 			getHibernateTemplate().delete(iter.next());
 		}
@@ -526,11 +505,10 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void removeSection(String eid) {
-		Section sec = cmService.getSection(eid);
-		Set memberships = cmService.getSectionMemberships(eid);
-		
+		SectionCmImpl sec = (SectionCmImpl)getObjectByEid(eid, SectionCmImpl.class.getName());
+
 		// Remove the memberships
-		for(Iterator iter = memberships.iterator(); iter.hasNext();) {
+		for(Iterator iter = getMemberships(sec).iterator(); iter.hasNext();) {
 			getHibernateTemplate().delete(iter.next());
 		}
 
@@ -543,5 +521,58 @@ public class CourseManagementAdministrationHibernateImpl extends
 		getHibernateTemplate().save(cat);
 		return cat;
 	}
+	
+	
+	// TODO: The following two methods were copied from CM Service.  Consolidate them.
+	
+	/**
+	 * A generic approach to finding objects by their eid.  This is "coding by convention",
+	 * since it expects the parameterized query to use "eid" as the single named parameter.
+	 * 
+	 * @param eid The eid of the object we're trying to load
+	 * @param className The name of the class / interface we're looking for
+	 * @return The object, if found
+	 * @throws IdNotFoundException
+	 */
+	private Object getObjectByEid(final String eid, final String className) throws IdNotFoundException {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				StringBuffer hql = new StringBuffer();
+				hql.append("from ").append(className).append(" as obj where obj.eid=:eid");
+				Query q = session.createQuery(hql.toString());
+				q.setParameter("eid", eid);
+				Object result = q.uniqueResult();
+				if(result == null) {
+					throw new IdNotFoundException(eid, className);
+				}
+				return result;
+			}
+		};
+		return getHibernateTemplate().execute(hc);
+	}
+	
+	/**
+	 * Gets the memberships for a membership container.  This query can not be
+	 * performed using just the container's eid, since it may conflict with other kinds
+	 * of objects with the same eid.
+	 * 
+	 * @param container
+	 * @return
+	 */
+	private Set<Membership> getMemberships(final AbstractMembershipContainerCmImpl container) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
+					sb.append(container.getClass().getName());
+					sb.append(" as container where mbr.memberContainer=container ");
+					sb.append("and container.eid=:eid");
+				Query q = session.createQuery(sb.toString());
+				q.setParameter("eid", container.getEid());
+				return q.list();
+			}
+		};
+		return new HashSet<Membership>(getHibernateTemplate().executeFind(hc));
+	}
+
 
 }
