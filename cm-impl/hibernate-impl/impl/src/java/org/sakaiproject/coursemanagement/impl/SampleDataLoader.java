@@ -219,6 +219,7 @@ public class SampleDataLoader implements DataLoader {
 
 				// Discussion section memberships: intructor
 				cmAdmin.addOrUpdateSectionMembership("instructor", "I",discussion.getEid(), "section_leader");
+				cmAdmin.addOrUpdateSectionMembership("admin", "I",discussion.getEid(), "section_leader");
 
 				// Meetings
 				Set<Meeting> discMeetings = new HashSet<Meeting>();
