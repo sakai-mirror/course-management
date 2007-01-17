@@ -15,6 +15,7 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 	private String category;
 	private Set meetings;
 	private CourseOffering courseOffering;
+	private String courseOfferingEid; // We keep this here to avoid lazy loading of the courseOffering
 	private Section parent;
 	private EnrollmentSet enrollmentSet;
         private Integer maxSize;
@@ -28,6 +29,9 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 		this.category = category;
 		this.parent = parent;
 		this.courseOffering = courseOffering;
+		if(courseOffering != null) {
+			this.courseOfferingEid = courseOffering.getEid();
+		}
 		this.enrollmentSet = enrollmentSet;
                 this.maxSize = maxSize;
 	}
@@ -42,13 +46,15 @@ public class SectionCmImpl extends AbstractMembershipContainerCmImpl
 		return courseOffering;
 	}
 	public String getCourseOfferingEid() {
-		if(courseOffering == null) {
-			return null;
-		}
-		return courseOffering.getEid();
+		return courseOfferingEid;
 	}
 	public void setCourseOffering(CourseOffering courseOffering) {
 		this.courseOffering = courseOffering;
+		if(courseOffering == null) {
+			this.courseOfferingEid = null;
+		} else {
+			this.courseOfferingEid = courseOffering.getEid(); // Make sure we update the cached eid
+		}
 	}
 	public Section getParent() {
 		return parent;

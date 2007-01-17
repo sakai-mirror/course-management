@@ -181,7 +181,27 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		// Remove one that wasn't crosslisted
 		Assert.assertFalse(cmAdmin.removeEquivalency(cm.getCanonicalCourse("cc3")));
 	}
-	
+
+	public void testSetEquivalentCourseOfferings() throws Exception {
+		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
+		cmAdmin.createAcademicSession("as2", "academic session 2", "another academic session", new Date(), new Date());
+		cmAdmin.createCanonicalCourse("cc1", "cc1", "cc1");
+		cmAdmin.createCourseOffering("co1", "co1", "co1", "", "as1", "cc1", null, null);
+		cmAdmin.createCourseOffering("co2", "co2", "co2", "", "as2", "cc1", null, null);
+		
+		// Add them to a set
+		Set<CourseOffering> courses = new HashSet<CourseOffering>();
+		courses.add(cm.getCourseOffering("co1"));
+		courses.add(cm.getCourseOffering("co2"));
+
+		// Crosslist them
+		cmAdmin.setEquivalentCourseOfferings(courses);
+		
+		// Ensure that CM sees them as crosslisted
+		Set equivalents = cm.getEquivalentCourseOfferings("co1");
+		Assert.assertTrue(equivalents.contains(cm.getCourseOffering("co2")));
+	}
+
 	public void testCreateEnrollmentSet() throws Exception {
 		cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
 		cmAdmin.createCanonicalCourse("cc1", "cc 1", "a canon course");

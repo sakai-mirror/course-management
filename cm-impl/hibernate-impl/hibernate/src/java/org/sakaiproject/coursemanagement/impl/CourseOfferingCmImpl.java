@@ -38,6 +38,7 @@ public class CourseOfferingCmImpl extends CrossListableCmImpl
 
 	private String status;
 	private CanonicalCourse canonicalCourse;
+	private String canonicalCourseEid;
 	private AcademicSession academicSession;
 	private CrossListingCmImpl crossListingCmImpl;
 	private Set courseSets;
@@ -56,6 +57,11 @@ public class CourseOfferingCmImpl extends CrossListableCmImpl
 		this.status = status;
 		this.academicSession = academicSession;
 		this.canonicalCourse = canonicalCourse;
+		if(canonicalCourse == null) {
+			this.canonicalCourseEid = null;
+		} else {
+			this.canonicalCourseEid = canonicalCourse.getEid();
+		}
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
@@ -68,13 +74,13 @@ public class CourseOfferingCmImpl extends CrossListableCmImpl
 
 		// Update our cache of courseSetEids
 		if(courseSets == null) {
-			courseSetEids = null;
-			return;
-		}
-		courseSetEids = new HashSet(courseSets.size());
-		for(Iterator iter = courseSets.iterator(); iter.hasNext();) {
-			CourseSet courseSet = (CourseSet)iter.next();
-			courseSetEids.add(courseSet.getEid());
+			courseSetEids = new HashSet();
+		} else {
+			courseSetEids = new HashSet(courseSets.size());
+			for(Iterator iter = courseSets.iterator(); iter.hasNext();) {
+				CourseSet courseSet = (CourseSet)iter.next();
+				courseSetEids.add(courseSet.getEid());
+			}
 		}
 	}
 
@@ -90,6 +96,11 @@ public class CourseOfferingCmImpl extends CrossListableCmImpl
 	}
 	public void setCanonicalCourse(CanonicalCourse canonicalCourse) {
 		this.canonicalCourse = canonicalCourse;
+		if(canonicalCourse == null) {
+			this.canonicalCourseEid = null;
+		} else {
+			this.canonicalCourseEid = canonicalCourse.getEid();
+		}
 	}
 	
 	public AcademicSession getAcademicSession() {
@@ -113,7 +124,7 @@ public class CourseOfferingCmImpl extends CrossListableCmImpl
 	}
 
 	public String getCanonicalCourseEid() {
-		return canonicalCourse.getEid();
+		return canonicalCourseEid;
 	}
 
 	public Set getCourseSetEids() {

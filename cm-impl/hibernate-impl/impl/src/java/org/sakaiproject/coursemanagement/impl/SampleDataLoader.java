@@ -22,8 +22,6 @@ package org.sakaiproject.coursemanagement.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,10 +33,10 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.cover.AuthzGroupService;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
+import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
-import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Section;
@@ -120,7 +118,6 @@ public class SampleDataLoader implements DataLoader {
 	}
 
 	public void load() throws Exception {
-		// TODO: Loading sample SIS data for each of these terms takes forever.  Let's just do the last two terms (which takes about a minute on winxp + mysql), shall we?
 		String[] legacyTerms = scs.getStrings("termterm");
 		String[] legacyYears = scs.getStrings("termyear");
 		String[] legacyStartTimes = scs.getStrings("termstarttime");		
@@ -157,28 +154,43 @@ public class SampleDataLoader implements DataLoader {
 		cmAdmin.addSectionCategory("05.sto", "Studio");
 
 		// Course Sets
-		CourseSet cs = cmAdmin.createCourseSet("SMPL", "Sample Department",
+		cmAdmin.createCourseSet("SMPL", "Sample Department",
 				"We study wet things in the Sample Dept", "DEPT", null);
-		cmAdmin.addOrUpdateCourseSetMembership("da1","DeptAdmin", cs.getEid(), "active");
+		cmAdmin.addOrUpdateCourseSetMembership("da1","DeptAdmin", "SMPL", "active");
 		
-		// Canonical Courses
-		cmAdmin.createCanonicalCourse("SMPL101", "Sample 101", "A survey of samples");
+		// Cross-listed Canonical Courses
+		Set<CanonicalCourse> cc = new HashSet<CanonicalCourse>();
+		cc.add(cmAdmin.createCanonicalCourse("SMPL101", "Sample 101", "A survey of samples"));
+		cc.add(cmAdmin.createCanonicalCourse("SMPL202", "Sample 202", "An in depth study of samples"));
+		cmAdmin.setEquivalentCanonicalCourses(cc);
 		
-		// Course Offerings 
-		List<CourseOffering> courseOfferings = new ArrayList<CourseOffering>();
-		
-		// Only work with the last two academic sessions, since the data load is slow
+		// Only work with the last two academic sessions, since the data load is so slow
 		int startIndex = 0;
 		if(academicSessions.size() > 2) {
 			startIndex = academicSessions.size() - 2;
 		}
 		for(int i = startIndex; i < academicSessions.size(); i++) {
 			AcademicSession as = academicSessions.get(i);
-			CourseOffering co = cmAdmin.createCourseOffering("SMPL101 "+ as.getEid(),
-					"SMPL 101", "Sample course offering, " + as.getEid(), "open", as.getEid(),
+			CourseOffering co1 = cmAdmin.createCourseOffering("SMPL101 "+ as.getEid(),
+					"SMPL 101", "Sample course offering #1, " + as.getEid(), "open", as.getEid(),
 					"SMPL101", as.getStartDate(), as.getEndDate());
-			courseOfferings.add(co);
-			cmAdmin.addCourseOfferingToCourseSet(cs.getEid(), co.getEid());
+			CourseOffering co2 = cmAdmin.createCourseOffering("SMPL202 "+ as.getEid(),
+					"SMPL 202", "Sample course offering #2, " + as.getEid(), "open", as.getEid(),
+					"SMPL202", as.getStartDate(), as.getEndDate());
+
+			Set<CourseOffering> courseOfferingSet = new HashSet<CourseOffering>();
+			courseOfferingSet.add(co1);
+			courseOfferingSet.add(co2);
+			
+			// Cross list these course offerings
+			cmAdmin.setEquivalentCourseOfferings(courseOfferingSet);
+
+			cmAdmin.addCourseOfferingToCourseSet("SMPL", co1.getEid());
+			cmAdmin.addCourseOfferingToCourseSet("SMPL", co2.getEid());
+						
+			// And add some other instructors at the offering level (this should help with testing cross listings)
+			cmAdmin.addOrUpdateCourseOfferingMembership("instructor1","I", co1.getEid(), null);
+			cmAdmin.addOrUpdateCourseOfferingMembership("instructor2","I", co2.getEid(), null);
 		}
 
 		// Enrollment sets and sections
@@ -186,18 +198,21 @@ public class SampleDataLoader implements DataLoader {
 		instructors.add("admin");
 		instructors.add("instructor");
 
+		Set<CourseOffering> courseOfferings = cmService.getCourseOfferingsInCourseSet("SMPL");
 		for(Iterator<CourseOffering> iter = courseOfferings.iterator(); iter.hasNext();) {
 			CourseOffering co = iter.next();
-			EnrollmentSet es = cmAdmin.createEnrollmentSet("SMPL101 " + co.getAcademicSession().getEid() + "es",
-					"SMPL 101 Lecture", "SMPL 101 Lecture", "lecture", "3", co.getEid(), instructors);
+			EnrollmentSet es = cmAdmin.createEnrollmentSet(co.getEid() + "es",
+					co.getTitle() + " Enrollment Set", co.getDescription() + " Enrollment Set",
+					"lecture", "3", co.getEid(), instructors);
+			
 			// Enrollments
 			for(int enrollmentCounter = 1; enrollmentCounter <= 180; enrollmentCounter++) {
 				cmAdmin.addOrUpdateEnrollment("student" + enrollmentCounter, es.getEid(), "enrolled", "3", "standard");
 			}
 
 			// Sections
-			Section lec = cmAdmin.createSection("SMPL101 " + co.getAcademicSession().getEid() + " Lecture",
-					"SMPL 101, Lecture", "Intro to Samples, Lecture", lectureCategory.getCategoryCode(),
+			Section lec = cmAdmin.createSection(co.getEid() + " Lecture",
+					co.getEid() + " Lecture", "Samples Lecture", lectureCategory.getCategoryCode(),
 					null, co.getEid(), es.getEid());
 			
 			// Meetings
@@ -206,10 +221,9 @@ public class SampleDataLoader implements DataLoader {
 			lec.setMeetings(lecMeetings);
 			cmAdmin.updateSection(lec);
 
-			for(int sectionCounter = 0; sectionCounter < 6; sectionCounter++) {
-				String discussionLabel = "Discussion " + (sectionCounter+1);
-				Section discussion = cmAdmin.createSection("SMPL101 " + co.getAcademicSession().getEid() + " " + discussionLabel,
-						"Discussion " + sectionCounter, "Intro to Samples, Discussion " + sectionCounter,
+			for(int sectionCounter = 1; sectionCounter <= 6; sectionCounter++) {
+				Section discussion = cmAdmin.createSection(co.getEid() + " Discussion " + sectionCounter,
+						"Discussion " + sectionCounter, "Samples, Discussion " + sectionCounter,
 						discussionCategory.getCategoryCode(), null, co.getEid(), null);
 
 				// Discussion section memberships: students

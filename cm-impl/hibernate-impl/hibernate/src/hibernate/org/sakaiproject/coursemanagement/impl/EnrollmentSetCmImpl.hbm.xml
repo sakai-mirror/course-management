@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="false">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="true">
 
 	<class name="org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl" table="CM_ENROLLMENT_SET_T">
 
@@ -24,7 +24,7 @@
 		<property name="category" column="CATEGORY" type="string" not-null="true" />
 		<property name="defaultEnrollmentCredits" column="DEFAULT_CREDITS" type="string" not-null="true" />
 
-		<set name="officialInstructors" table="CM_OFFICIAL_INSTRUCTORS_T" cascade="all">
+		<set name="officialInstructors" table="CM_OFFICIAL_INSTRUCTORS_T" cascade="all" lazy="false">
 			<key column="ENROLLMENT_SET_ID" />
 			<element type="string" column="INSTRUCTOR_ID" />
 		</set>

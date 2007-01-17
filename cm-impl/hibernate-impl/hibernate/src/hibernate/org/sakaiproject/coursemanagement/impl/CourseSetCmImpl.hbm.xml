@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="false">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="true">
 	<subclass name="org.sakaiproject.coursemanagement.impl.CourseSetCmImpl"
 			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl">
 
 		<property name="category" column="CATEGORY" type="string" />
 
-		<many-to-one name="parent" column="PARENT_COURSE_SET" index="CM_COURSE_SET_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.CourseSetCmImpl" />
+		<many-to-one name="parent" column="PARENT_COURSE_SET" lazy="false" index="CM_COURSE_SET_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.CourseSetCmImpl" />
 	
 		<!-- 
 		The many-to-many relationship between CourseSets and CourseOfferings/CanonicalCourses

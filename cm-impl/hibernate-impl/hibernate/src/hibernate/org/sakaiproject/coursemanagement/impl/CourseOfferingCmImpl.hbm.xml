@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="false">
+<hibernate-mapping default-cascade="none" package="org.sakaiproject.coursemanagement.impl" default-lazy="true">
 	<subclass name="org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl"
 			extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl">
 
@@ -12,7 +12,7 @@
         <property name="endDate" column="END_DATE" type="date" not-null="false" />
 
 		<many-to-one name="canonicalCourse" column="CANONICAL_COURSE" index="CM_CO_CANON_COURSE_IDX" class="org.sakaiproject.coursemanagement.impl.CanonicalCourseCmImpl" />
-		<many-to-one name="academicSession" column="ACADEMIC_SESSION" index="CM_CO_ACADEMIC_SESS_IDX" class="org.sakaiproject.coursemanagement.impl.AcademicSessionCmImpl" />
+		<many-to-one name="academicSession" column="ACADEMIC_SESSION" lazy="false" index="CM_CO_ACADEMIC_SESS_IDX" class="org.sakaiproject.coursemanagement.impl.AcademicSessionCmImpl" />
 
 		<set name="courseSets" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="true">
 			<key column="COURSE_OFFERING" />
