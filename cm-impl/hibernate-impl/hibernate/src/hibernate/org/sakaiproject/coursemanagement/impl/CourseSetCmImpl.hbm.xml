@@ -14,12 +14,12 @@
 		are managed on the CourseSetImpl.  If you modify the set of CourseSets on a
 		CourseOffering/CanonicalCourse, it will not be persisted.
 		-->
-		<set name="canonicalCourses" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="false" cascade="save-update">
+		<set name="canonicalCourses" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="false">
 			<key column="COURSE_SET" />
 			<many-to-many class="org.sakaiproject.coursemanagement.impl.CanonicalCourseCmImpl" column="CANON_COURSE" />
 		</set>
 
-		<set name="courseOfferings" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="false" cascade="save-update">
+		<set name="courseOfferings" table="CM_COURSE_SET_OFFERING_ASSOC_T" inverse="false">
 			<key column="COURSE_SET" />
 			<many-to-many class="org.sakaiproject.coursemanagement.impl.CourseOfferingCmImpl" column="COURSE_OFFERING" />
 		</set>

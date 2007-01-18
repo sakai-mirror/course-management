@@ -5,7 +5,7 @@
 	<subclass name="org.sakaiproject.coursemanagement.impl.CanonicalCourseCmImpl"
 		extends="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl">
 
-		<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListingCmImpl" />
+		<many-to-one name="crossListing" column="CROSS_LISTING_ID" class="org.sakaiproject.coursemanagement.impl.CrossListingCmImpl" />
 			
 		<set name="courseSets" table="CM_COURSE_SET_CANON_ASSOC_T" inverse="true">
 			<key column="CANON_COURSE" />
