@@ -49,13 +49,13 @@ import org.sakaiproject.tool.cover.SessionManager;
 
 public class SampleDataLoader implements DataLoader {
 	private static final Log log = LogFactory.getLog(SampleDataLoader.class);
-	
+
 	// Begin Dependency Injection //
 	protected CourseManagementAdministration cmAdmin;
 	public void setCmAdmin(CourseManagementAdministration cmAdmin) {
 		this.cmAdmin = cmAdmin;
 	}
-	
+
 	protected ServerConfigurationService scs;
 	public void setScs(ServerConfigurationService scs) {
 		this.scs = scs;
@@ -87,7 +87,6 @@ public class SampleDataLoader implements DataLoader {
 			}
 			logoutFromSakai();
 		}
-
 	}
 	
 	public void destroy() {

@@ -7,7 +7,7 @@
 
         <property name="status" column="STATUS" type="string" />
 
-		<many-to-one name="crossListing" column="CROSS_LISTING_ID" class="org.sakaiproject.coursemanagement.impl.CrossListingCmImpl" />
+		<many-to-one name="crossListing" column="CROSS_LISTING" class="org.sakaiproject.coursemanagement.impl.CrossListingCmImpl" />
         <property name="startDate" column="START_DATE" type="date" not-null="false" />
         <property name="endDate" column="END_DATE" type="date" not-null="false" />
 
