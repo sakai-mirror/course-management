@@ -94,6 +94,9 @@
 						<property name="sessionFactory">
 							<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
 						</property>
+		        		<property name="authn">
+		        			<bean class="org.sakaiproject.coursemanagement.impl.facade.SakaiAuthentication"/>
+		        		</property>
 					</bean>
 				</property>
 			</bean>

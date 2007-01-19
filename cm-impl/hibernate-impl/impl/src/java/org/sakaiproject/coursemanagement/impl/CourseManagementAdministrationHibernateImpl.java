@@ -46,6 +46,7 @@ import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
+import org.sakaiproject.coursemanagement.impl.facade.Authentication;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -61,6 +62,11 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 	private static final Log log = LogFactory.getLog(CourseManagementAdministrationHibernateImpl.class);
 
+	protected Authentication authn;
+	public void setAuthn(Authentication authn) {
+		this.authn = authn;
+	}
+	
 	public void init() {
 		log.info("Initializing " + getClass().getName());
 	}
@@ -72,6 +78,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 	public AcademicSession createAcademicSession(String eid, String title,
 			String description, Date startDate, Date endDate) throws IdExistsException {
 		AcademicSessionCmImpl academicSession = new AcademicSessionCmImpl(eid, title, description, startDate, endDate);
+		academicSession.setCreatedBy(authn.getUserEid());
+		academicSession.setCreatedDate(new Date());
 		try {
 			getHibernateTemplate().save(academicSession);
 			return academicSession;
@@ -81,7 +89,10 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void updateAcademicSession(AcademicSession academicSession) {
-		getHibernateTemplate().update(academicSession);
+		AcademicSessionCmImpl as = (AcademicSessionCmImpl)academicSession;
+		as.setLastModifiedBy(authn.getUserEid());
+		as.setLastModifiedDate(new Date());
+		getHibernateTemplate().update(as);
 	}
 
 	public CourseSet createCourseSet(String eid, String title, String description, String category,
@@ -91,6 +102,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 			parent = (CourseSet)getObjectByEid(parentCourseSetEid, CourseSetCmImpl.class.getName());
 		}
 		CourseSetCmImpl courseSet = new CourseSetCmImpl(eid, title, description, category, parent);
+		courseSet.setCreatedBy(authn.getUserEid());
+		courseSet.setCreatedDate(new Date());
 		try {
 			getHibernateTemplate().save(courseSet);
 			return courseSet;
@@ -100,11 +113,16 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void updateCourseSet(CourseSet courseSet) {
-		getHibernateTemplate().update(courseSet);
+		CourseSetCmImpl cs = (CourseSetCmImpl)courseSet;
+		cs.setLastModifiedBy(authn.getUserEid());
+		cs.setLastModifiedDate(new Date());
+		getHibernateTemplate().update(cs);
 	}
 
 	public CanonicalCourse createCanonicalCourse(String eid, String title, String description) throws IdExistsException {
 		CanonicalCourseCmImpl canonCourse = new CanonicalCourseCmImpl(eid, title, description);
+		canonCourse.setCreatedBy(authn.getUserEid());
+		canonCourse.setCreatedDate(new Date());
 		try {
 			getHibernateTemplate().save(canonCourse);
 			return canonCourse;
@@ -114,7 +132,10 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void updateCanonicalCourse(CanonicalCourse canonicalCourse) {
-		getHibernateTemplate().update(canonicalCourse);
+		CanonicalCourseCmImpl cc = (CanonicalCourseCmImpl)canonicalCourse;
+		cc.setLastModifiedBy(authn.getUserEid());
+		cc.setLastModifiedDate(new Date());
+		getHibernateTemplate().update(cc);
 	}
 
 	public void addCanonicalCourseToCourseSet(String courseSetEid, String canonicalCourseEid) throws IdNotFoundException {
@@ -127,6 +148,9 @@ public class CourseManagementAdministrationHibernateImpl extends
 			courseSet.setCanonicalCourses(canonCourses);
 		}
 		canonCourses.add(canonCourse);
+		
+		courseSet.setLastModifiedBy(authn.getUserEid());
+		courseSet.setLastModifiedDate(new Date());
 		getHibernateTemplate().update(courseSet);
 	}
 
@@ -139,13 +163,19 @@ public class CourseManagementAdministrationHibernateImpl extends
 			return false;
 		}
 		courses.remove(canonCourse);
+
+		courseSet.setLastModifiedBy(authn.getUserEid());
+		courseSet.setLastModifiedDate(new Date());
 		getHibernateTemplate().update(courseSet);
 		return true;
 	}
 
 	private void setEquivalents(Set crossListables) {
 		CrossListingCmImpl newCrossListing = new CrossListingCmImpl();
+		newCrossListing.setCreatedBy(authn.getUserEid());
+		newCrossListing.setCreatedDate(new Date());
 		getHibernateTemplate().save(newCrossListing);
+		
 		Set<CrossListingCmImpl> oldCrossListings = new HashSet<CrossListingCmImpl>();
 
 		for(Iterator iter = crossListables.iterator(); iter.hasNext();) {
@@ -157,6 +187,9 @@ public class CourseManagementAdministrationHibernateImpl extends
 			if(log.isDebugEnabled()) log.debug("Setting crosslisting for crosslistable " +
 					clable.getEid() + " to " + newCrossListing.getKey());
 			clable.setCrossListing(newCrossListing);
+			
+			clable.setLastModifiedBy(authn.getUserEid());
+			clable.setLastModifiedDate(new Date());
 			getHibernateTemplate().update(clable);
 		}
 		
@@ -170,6 +203,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 	private boolean removeEquiv(CrossListableCmImpl impl) {
 		boolean hadCrossListing = impl.getCrossListing() != null;
 		impl.setCrossListing(null);
+		impl.setLastModifiedBy(authn.getUserEid());
+		impl.setLastModifiedDate(new Date());
 		getHibernateTemplate().update(impl);
 		return hadCrossListing;
 	}
@@ -183,6 +218,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 		AcademicSession as = (AcademicSession)getObjectByEid(academicSessionEid, AcademicSessionCmImpl.class.getName());
 		CanonicalCourse cc = (CanonicalCourse)getObjectByEid(canonicalCourseEid, CanonicalCourseCmImpl.class.getName());
 		CourseOfferingCmImpl co = new CourseOfferingCmImpl(eid, title, description, status, as, cc, startDate, endDate);
+		co.setCreatedBy(authn.getUserEid());
+		co.setCreatedDate(new Date());
 		try {
 			getHibernateTemplate().save(co);
 			return co;
@@ -192,7 +229,10 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void updateCourseOffering(CourseOffering courseOffering) {
-		getHibernateTemplate().update(courseOffering);
+		CourseOfferingCmImpl co = (CourseOfferingCmImpl)courseOffering;
+		co.setLastModifiedBy(authn.getUserEid());
+		co.setLastModifiedDate(new Date());
+		getHibernateTemplate().update(co);
 	}
 
 	public void setEquivalentCourseOfferings(Set courseOfferings) {
@@ -213,6 +253,9 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 		offerings.add(courseOffering);
 		courseSet.setCourseOfferings(offerings);
+		
+		courseSet.setLastModifiedBy(authn.getUserEid());
+		courseSet.setLastModifiedDate(new Date());
 		getHibernateTemplate().update(courseSet);
 	}
 
@@ -224,6 +267,9 @@ public class CourseManagementAdministrationHibernateImpl extends
 			return false;
 		}
 		offerings.remove(courseOffering);
+
+		courseSet.setLastModifiedBy(authn.getUserEid());
+		courseSet.setLastModifiedDate(new Date());
 		getHibernateTemplate().update(courseSet);
 		return true;
 	}
@@ -236,6 +282,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 		CourseOffering co = (CourseOffering)getObjectByEid(courseOfferingEid, CourseOfferingCmImpl.class.getName());
 		EnrollmentSetCmImpl enrollmentSet = new EnrollmentSetCmImpl(eid, title, description, category, defaultEnrollmentCredits, co, officialGraders);
+		enrollmentSet.setCreatedBy(authn.getUserEid());
+		enrollmentSet.setCreatedDate(new Date());
 		try {
 			getHibernateTemplate().save(enrollmentSet);
 			return enrollmentSet;
@@ -245,7 +293,10 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void updateEnrollmentSet(EnrollmentSet enrollmentSet) {
-		getHibernateTemplate().update(enrollmentSet);
+		EnrollmentSetCmImpl es = (EnrollmentSetCmImpl)enrollmentSet;
+		es.setLastModifiedBy(authn.getUserEid());
+		es.setLastModifiedDate(new Date());
+		getHibernateTemplate().update(es);
 	}
 
 	public Enrollment addOrUpdateEnrollment(String userId, String enrollmentSetEid, String enrollmentStatus, String credits, String gradingScheme) {
@@ -257,12 +308,17 @@ public class CourseManagementAdministrationHibernateImpl extends
 		if(enrollments.isEmpty()) {
 			EnrollmentSet enrollmentSet = (EnrollmentSet)getObjectByEid(enrollmentSetEid, EnrollmentSetCmImpl.class.getName());
 			enrollment = new EnrollmentCmImpl(userId, enrollmentSet, enrollmentStatus, credits, gradingScheme);
+			enrollment.setCreatedBy(authn.getUserEid());
+			enrollment.setCreatedDate(new Date());
 			getHibernateTemplate().save(enrollment);
 		} else {
 			enrollment = (EnrollmentCmImpl)enrollments.get(0);
 			enrollment.setEnrollmentStatus(enrollmentStatus);
 			enrollment.setCredits(credits);
 			enrollment.setGradingScheme(gradingScheme);
+			
+			enrollment.setLastModifiedBy(authn.getUserEid());
+			enrollment.setLastModifiedDate(new Date());
 			getHibernateTemplate().update(enrollment);
 		}
 		return enrollment;
@@ -276,8 +332,10 @@ public class CourseManagementAdministrationHibernateImpl extends
 		if(enrollments.isEmpty()) {
 			return false;
 		} else {
-			Enrollment enr = (Enrollment)enrollments.get(0);
+			EnrollmentCmImpl enr = (EnrollmentCmImpl)enrollments.get(0);
 			enr.setDropped(true);
+			enr.setLastModifiedBy(authn.getUserEid());
+			enr.setLastModifiedDate(new Date());
 			getHibernateTemplate().update(enr);
 			return true;
 		}
@@ -308,6 +366,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 		}
 
 		SectionCmImpl section = new SectionCmImpl(eid, title, description, category, parent, co, es, maxSize);
+		section.setCreatedBy(authn.getUserEid());
+		section.setCreatedDate(new Date());
 		try {
 			getHibernateTemplate().save(section);
 			return section;
@@ -317,7 +377,10 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void updateSection(Section section) {
-		getHibernateTemplate().update(section);
+		SectionCmImpl sec = (SectionCmImpl)section;
+		sec.setLastModifiedBy(authn.getUserEid());
+		sec.setLastModifiedDate(new Date());
+		getHibernateTemplate().update(sec);
 	}
 	
     public Membership addOrUpdateCourseSetMembership(final String userId, String role, final String courseSetEid, final String status) throws IdNotFoundException {
@@ -326,11 +389,15 @@ public class CourseManagementAdministrationHibernateImpl extends
 		if(member == null) {
 			// Add the new member
 		    member = new MembershipCmImpl(userId, role, cs, status);
+		    member.setCreatedBy(authn.getUserEid());
+		    member.setCreatedDate(new Date());
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
 			member.setRole(role);
 			member.setStatus(status);
+			member.setLastModifiedBy(authn.getUserEid());
+			member.setLastModifiedDate(new Date());
 			getHibernateTemplate().update(member);
 		}
 		return member;
@@ -352,11 +419,15 @@ public class CourseManagementAdministrationHibernateImpl extends
 		if(member == null) {
 			// Add the new member
 		    member = new MembershipCmImpl(userId, role, co, status);
+		    member.setCreatedBy(authn.getUserEid());
+		    member.setCreatedDate(new Date());
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
 			member.setRole(role);
 			member.setStatus(status);
+			member.setLastModifiedBy(authn.getUserEid());
+			member.setLastModifiedDate(new Date());
 			getHibernateTemplate().update(member);
 		}
 		return member;
@@ -379,11 +450,15 @@ public class CourseManagementAdministrationHibernateImpl extends
 		if(member == null) {
 			// Add the new member
 		    member = new MembershipCmImpl(userId, role, sec, status);
+		    member.setCreatedBy(authn.getUserEid());
+		    member.setCreatedDate(new Date());
 			getHibernateTemplate().save(member);
 		} else {
 			// Update the existing member
 			member.setRole(role);
 			member.setStatus(status);
+			member.setLastModifiedBy(authn.getUserEid());
+			member.setLastModifiedDate(new Date());
 			getHibernateTemplate().update(member);
 		}
 		return member;
@@ -421,6 +496,8 @@ public class CourseManagementAdministrationHibernateImpl extends
 	public Meeting newSectionMeeting(String sectionEid, String location, Time startTime, Time finishTime, String notes) {
 		Section section = (Section)getObjectByEid(sectionEid, SectionCmImpl.class.getName());
 		MeetingCmImpl meeting = new MeetingCmImpl(section, location, startTime, finishTime, notes);
+		meeting.setCreatedBy(authn.getUserEid());
+		meeting.setCreatedDate(new Date());
 		Set<Meeting> meetings = section.getMeetings();
 		if(meetings == null) {
 			meetings = new HashSet<Meeting>();

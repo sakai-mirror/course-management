@@ -90,6 +90,9 @@
         <property name="target">
             <bean class="org.sakaiproject.coursemanagement.impl.CourseManagementAdministrationHibernateImpl">
         		<property name="sessionFactory"><ref bean="cmSessionFactory"/></property>
+        		<property name="authn">
+        			<bean class="org.sakaiproject.coursemanagement.impl.facade.TestAuthentication"/>
+        		</property>
         	</bean>
         </property>
 	</bean>
