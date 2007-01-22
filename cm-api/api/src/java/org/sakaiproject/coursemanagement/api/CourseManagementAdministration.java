@@ -57,7 +57,8 @@ public interface CourseManagementAdministration {
 	public void updateAcademicSession(AcademicSession academicSession);
 
 	/**
-	 * Removes an academic session.
+	 * Removes an academic session and all CourseOfferings associated with this
+	 * academic session.
 	 * 
 	 * @param eid The enterprise id of the academic session
 	 */

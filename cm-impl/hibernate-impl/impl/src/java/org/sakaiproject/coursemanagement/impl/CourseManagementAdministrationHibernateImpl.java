@@ -507,9 +507,16 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void removeAcademicSession(String eid) {
-		getHibernateTemplate().delete(
-				getObjectByEid(eid, AcademicSessionCmImpl.class.getName())
-		);
+		AcademicSessionCmImpl as = (AcademicSessionCmImpl)getObjectByEid(eid, AcademicSessionCmImpl.class.getName());
+
+		// Remove the course offerings in this academic session
+		List<CourseOffering> courseOfferings = getHibernateTemplate().find("select co from CourseOfferingCmImpl as co where co.academicSession.eid = ?", eid);
+		for(Iterator<CourseOffering> iter = courseOfferings.iterator(); iter.hasNext();) {
+			removeCourseOffering(iter.next().getEid());
+		}
+
+		// Remove the academic session itself
+		getHibernateTemplate().delete(as);
 	}
 
 	public void removeCanonicalCourse(String eid) {
@@ -569,15 +576,15 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 
 	public void removeEnrollmentSet(String eid) {
-		EnrollmentSet es = (EnrollmentSet)getObjectByEid(eid, EnrollmentSetCmImpl.class.getName());
+		EnrollmentSetCmImpl es = (EnrollmentSetCmImpl)getObjectByEid(eid, EnrollmentSetCmImpl.class.getName());
 
 		List enrollments = getHibernateTemplate().findByNamedQueryAndNamedParam(
 				"findEnrollments", "enrollmentSetEid", eid);
 		for(Iterator iter = enrollments.iterator(); iter.hasNext();) {
 			getHibernateTemplate().delete(iter.next());
 		}
-		
-		// Remove the enrollment set itself
+
+		// Remove the enrollment set
 		getHibernateTemplate().delete(es);
 	}
 

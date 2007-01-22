@@ -133,13 +133,12 @@ public class CmIntegrationTest extends SakaiTestBase {
 		uds.removeUser(uds.editUser("cm-instructor1"));
 		uds.removeUser(uds.editUser("cm-instructor2"));
 
-		// TODO Figure out why these deletes are causing integrity constraint failures
-//		cmAdmin.removeEnrollmentSet("CM-ES1");
-//		cmAdmin.removeSection("CM-SEC1");
-//		cmAdmin.removeCourseOffering("CM-CO1");
-//		cmAdmin.removeCanonicalCourse("CM-CC1");
-//		cmAdmin.removeAcademicSession("CM-AS1");
-		
+		cmAdmin.removeSection("CM-SEC1");
+		cmAdmin.removeEnrollmentSet("CM-ES1");
+		cmAdmin.removeCourseOffering("CM-CO1");
+		cmAdmin.removeCanonicalCourse("CM-CC1");
+		cmAdmin.removeAcademicSession("CM-AS1");
+
 		siteService.removeSite(site);
 	}
 
