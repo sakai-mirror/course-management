@@ -125,6 +125,7 @@
 	</bean>
 
 	<!--  Reconciliation Job for CM data -->   
+<!--
    <bean id="sampleCMSyncJob"
    		class="org.sakaiproject.coursemanagement.impl.job.ClassPathCMSyncJob"
    		init-method="init" destroy-method="destroy">
@@ -138,8 +139,10 @@
    			<value>org/sakaiproject/coursemanagement/impl/job/sampleCMData.xml</value>
    		</property>
    	</bean>
+-->
 
    <!-- this is the helper that will register the above bean with the job scheduler -->
+<!-- 
    <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.SampleCMSyncJob"
       class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
       singleton="true" init-method="init">
@@ -153,6 +156,7 @@
          <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
       </property>
    </bean>
+-->
 
  </beans>
 
