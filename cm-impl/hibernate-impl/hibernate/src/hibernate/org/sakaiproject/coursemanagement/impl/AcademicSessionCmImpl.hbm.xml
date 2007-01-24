@@ -6,6 +6,8 @@
     <class name="org.sakaiproject.coursemanagement.impl.AcademicSessionCmImpl"
         table="CM_ACADEMIC_SESSION_T">
 
+		<cache usage="nonstrict-read-write" />
+		
         <id name="key" column="ACADEMIC_SESSION_ID" type="long">
             <generator class="native">
                 <param name="sequence">CM_ACADEMIC_SESSION_S</param>

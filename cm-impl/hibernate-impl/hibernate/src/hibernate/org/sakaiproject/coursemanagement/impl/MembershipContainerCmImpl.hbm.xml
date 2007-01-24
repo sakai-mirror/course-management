@@ -6,6 +6,8 @@
     <class name="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl"
         table="CM_MEMBER_CONTAINER_T" discriminator-value="0">
 
+		<cache usage="nonstrict-read-write" />
+
         <id name="key" column="MEMBER_CONTAINER_ID" type="long">
             <generator class="native">
                 <param name="sequence">CM_MEMBER_CONATINER_S</param>
