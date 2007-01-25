@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -476,8 +477,12 @@ public class CourseManagementAdministrationHibernateImpl extends
 	}
 	
 	private MembershipCmImpl getMembership(final String userId, final AbstractMembershipContainerCmImpl container) {
-        final StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
-		sb.append(container.getClass().getName());
+		// This may be a dynamic proxy.  In that case, make sure we're using the class
+		// that hibernate understands.
+		final String className = Hibernate.getClass(container).getName();
+
+		final StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
+		sb.append(className);
         sb.append(" as container where mbr.memberContainer=container ");
         sb.append("and container.eid=:eid ");
     	sb.append("and mbr.userId=:userId");
@@ -644,10 +649,14 @@ public class CourseManagementAdministrationHibernateImpl extends
 	 * @return
 	 */
 	private Set<Membership> getMemberships(final AbstractMembershipContainerCmImpl container) {
+		// This may be a dynamic proxy.  In that case, make sure we're using the class
+		// that hibernate understands.
+		final String className = Hibernate.getClass(container).getName();
+
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
 				StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
-					sb.append(container.getClass().getName());
+					sb.append(className);
 					sb.append(" as container where mbr.memberContainer=container ");
 					sb.append("and container.eid=:eid");
 				Query q = session.createQuery(sb.toString());
