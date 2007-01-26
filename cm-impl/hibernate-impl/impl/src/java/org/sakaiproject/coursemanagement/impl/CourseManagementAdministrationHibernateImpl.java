@@ -317,6 +317,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 			enrollment.setEnrollmentStatus(enrollmentStatus);
 			enrollment.setCredits(credits);
 			enrollment.setGradingScheme(gradingScheme);
+			enrollment.setDropped(false);
 			
 			enrollment.setLastModifiedBy(authn.getUserEid());
 			enrollment.setLastModifiedDate(new Date());

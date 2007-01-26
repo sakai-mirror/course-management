@@ -33,6 +33,7 @@ import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.CourseOffering;
+import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
@@ -260,7 +261,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.removeEnrollment("josh", "es1");
 		
 		// Ensure that the enrollment has been dropped
-		Assert.assertEquals(0, cm.getEnrollments("es1").size());
+		Assert.assertTrue(((Enrollment)cm.getEnrollments("es1").iterator().next()).isDropped());
 	}
 	
 	public void testAddCourseSetMembership() throws Exception {

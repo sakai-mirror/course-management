@@ -32,13 +32,13 @@
 	
 	<query name="findEnrollments">
         <![CDATA[
-        from EnrollmentCmImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid and enr.dropped=false
+        from EnrollmentCmImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid
         ]]>
     </query>
 
 	<query name="findEnrollment">
         <![CDATA[
-        from EnrollmentCmImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid and enr.userId=:userId and enr.dropped=false
+        from EnrollmentCmImpl as enr where enr.enrollmentSet.eid=:enrollmentSetEid and enr.userId=:userId
         ]]>
     </query>
 

@@ -73,7 +73,8 @@
         <![CDATA[
         select sec from SectionCmImpl as sec, EnrollmentCmImpl as enr
         	where enr.userId = :userId and
-        	sec.enrollmentSet = enr.enrollmentSet
+        	sec.enrollmentSet = enr.enrollmentSet and
+        	enr.dropped=false
         ]]>
     </query>
 

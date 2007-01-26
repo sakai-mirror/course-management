@@ -269,14 +269,14 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		// Remove an enrollment
 		cmAdmin.removeEnrollment("student1", "biology_101_01_lec01_es");
 		
-		// Ensure that it's gone
-		Assert.assertNull(cmService.findEnrollment("student1",  "biology_101_01_lec01_es"));
+		// Ensure that it's been dropped
+		Assert.assertTrue(cmService.findEnrollment("student1",  "biology_101_01_lec01_es").isDropped());
 		
 		// Reconcile again
 		job.syncAllCmObjects();
 		
 		// Ensure that the reconciliation added the enrollment
-		Assert.assertNotNull(cmService.findEnrollment("student1",  "biology_101_01_lec01_es"));
+		Assert.assertFalse(cmService.findEnrollment("student1",  "biology_101_01_lec01_es").isDropped());
 	}
 
 	public void testInstructorsLoaded() throws Exception {

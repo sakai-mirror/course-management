@@ -221,11 +221,13 @@ public class CourseManagementServiceTest extends CourseManagementTestBase {
 	}
 	
 	public void testFindEnrolledSections() throws Exception {
-		Assert.assertEquals(2, cm.findEnrolledSections("josh").size());
+		// one of the two enrollment records is flagged as 'dropped'
+		Assert.assertEquals(1, cm.findEnrolledSections("josh").size());
 	}
 
 	public void testGetEnrollment() throws Exception {
 		Assert.assertNotNull(cm.findEnrollment("josh", "BIO101_F2006_01_ES01"));
+		Assert.assertNotNull(cm.findEnrollment("josh", "CHEM101_F2006_01_ES01"));
 		Assert.assertNull(cm.findEnrollment("josh", "bad eid"));
 	}
 

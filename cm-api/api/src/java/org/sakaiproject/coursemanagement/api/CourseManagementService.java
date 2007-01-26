@@ -310,7 +310,7 @@ public interface CourseManagementService {
 	public Set<EnrollmentSet> getEnrollmentSets(String courseOfferingEid) throws IdNotFoundException;
 
 	/**
-	 * Gets the Enrollments in an EnrollmentSet
+	 * Gets the Enrollments in an EnrollmentSet (including dropped enrollments)
 	 * 
 	 * @param enrollmentSetEid
 	 * @return The Set of Enrollments
@@ -330,8 +330,8 @@ public interface CourseManagementService {
 	public Set<String> getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException;
 	
 	/**
-	 * Determines whether a user is enrolled in an EnrollmentSet.  This
-	 * method is needed to implement Sakai's GroupProvider.
+	 * Determines whether a user is enrolled (and not dropped) in an EnrollmentSet.
+	 * This method is needed to implement Sakai's GroupProvider.
 	 * 
 	 * @param userEid The student's userEid
 	 * @param enrollmentSetEids The set of EnrollmentSetEids
@@ -340,7 +340,8 @@ public interface CourseManagementService {
 	public boolean isEnrolled(String userEid, Set<String> enrollmentSetEids);
 
 	/**
-	 * Convenience method for checking whether a user is enrolled in an EnrollmentSet.
+	 * Convenience method for checking whether a user is enrolled (and not dropped)
+	 * in an EnrollmentSet.
 	 * 
 	 * @param userEid
 	 * @param enrollmentSetEid
@@ -351,7 +352,8 @@ public interface CourseManagementService {
 
 	/**
 	 * Finds the Enrollment for a user in an EnrollmentSet.  If the user isn't in the
-	 * EnrollmentSet, or the EnrollmentSet doesn't exist, this returns null.
+	 * EnrollmentSet, or the EnrollmentSet doesn't exist, this returns null.  Note that
+	 * this method will return enrollments flagged as "dropped".
 	 * 
 	 * TODO Should this throw more descriptive exceptions e.g. when the EnrollmentSet doesn't exist?
 	 * 
@@ -362,7 +364,7 @@ public interface CourseManagementService {
 	public Enrollment findEnrollment(String userEid, String enrollmentSetEid);
 
 	/**
-	 * Finds the set of current EnrollmentSets for which a user is enrolled.
+	 * Finds the set of current EnrollmentSets for which a user is enrolled but not dropped.
 	 * An EnrollmentSet is considered current if its CourseOffering's start date
 	 * (is null or prior to the current date/time) and its end date (is null or
 	 * after the current date/time).
@@ -394,7 +396,7 @@ public interface CourseManagementService {
 
 	/**
 	 * Finds all Sections that are linked to an EnrollmentSet for
-	 * which a user is enrolled.
+	 * which a user is enrolled (but not dropped).
 	 * 
 	 * @param userEid
 	 * @return

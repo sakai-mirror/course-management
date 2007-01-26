@@ -330,6 +330,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		enrollment2.setEnrollmentStatus("officially enrolled");
 		enrollment2.setGradingScheme("letter grade");
 		enrollment2.setUserId("josh");
+		enrollment2.setDropped(true);
 		getHibernateTemplate().save(enrollment2);
 		
 	}

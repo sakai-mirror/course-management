@@ -261,7 +261,8 @@ public interface CourseManagementAdministration {
 			String enrollmentStatus, String credits, String gradingScheme);
 
 	/**
-	 * Removes an Enrollment from an EnrollmentSet.
+	 * Removes an Enrollment from an EnrollmentSet by setting the Enrollment to
+	 * dropped=true.
 	 * 
 	 * @param userId
 	 * @param enrollmentSetEid
