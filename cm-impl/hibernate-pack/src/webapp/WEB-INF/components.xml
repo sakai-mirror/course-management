@@ -104,6 +104,8 @@
 	</bean>
 
 	<!-- A DataLoader to load sample CM data into Sakai's CM reference impl. -->
+	
+	<!--
 	<bean id="org.sakaiproject.coursemanagement.impl.DataLoader" class="org.sakaiproject.coursemanagement.impl.SampleDataLoader"
 		init-method="init" destroy-method="destroy">
 		<property name="cmAdmin"><ref bean="org.sakaiproject.coursemanagement.api.CourseManagementAdministration"/></property>
@@ -111,6 +113,29 @@
 		<property name="scs"><ref bean="org.sakaiproject.component.api.ServerConfigurationService"/></property>
 		<property name="loadSampleData"><value>true</value></property>
     </bean>
+	-->
+
+	<bean id="org.sakaiproject.coursemanagement.impl.DataLoader"
+			class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+		</property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+        <property name="target">
+			<bean class="org.sakaiproject.coursemanagement.impl.SampleDataLoader"
+				init-method="init" destroy-method="destroy">
+				<property name="cmAdmin"><ref bean="org.sakaiproject.coursemanagement.api.CourseManagementAdministration"/></property>
+				<property name="cmService"><ref bean="org.sakaiproject.coursemanagement.api.CourseManagementService"/></property>
+				<property name="scs"><ref bean="org.sakaiproject.component.api.ServerConfigurationService"/></property>
+				<property name="loadSampleData"><value>true</value></property>
+			</bean>
+		</property>
+	</bean>
+
 
 	<!-- AOP Advisor performs Authz checks for the CM Admin service -->
 	<bean id="cmAdminAuthzAdvisor" 

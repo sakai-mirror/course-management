@@ -47,7 +47,7 @@ import org.sakaiproject.event.cover.UsageSessionService;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.cover.SessionManager;
 
-public class SampleDataLoader implements DataLoader {
+public class SampleDataLoader {
 	private static final Log log = LogFactory.getLog(SampleDataLoader.class);
 
 	// Begin Dependency Injection //
