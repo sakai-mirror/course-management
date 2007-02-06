@@ -21,6 +21,7 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -218,11 +219,23 @@ public class CourseManagementServiceSampleChainImpl implements CourseManagementS
 		throw new UnsupportedOperationException();
 	}
 
-	public List getSectionCategories() {
+	public List<String> getSectionCategories() {
 		return null;
 	}
 
 	public String getSectionCategoryDescription(String categoryCode) {
+		return null;
+	}
+
+	public Map<String, String> getEnrollmentStatusDescriptions(Locale locale) {
+		return null;
+	}
+
+	public Map<String, String> getGradingSchemeDescriptions(Locale locale) {
+		return null;
+	}
+
+	public Map<String, String> getMembershipStatusDescriptions(Locale locale) {
 		return null;
 	}
 }

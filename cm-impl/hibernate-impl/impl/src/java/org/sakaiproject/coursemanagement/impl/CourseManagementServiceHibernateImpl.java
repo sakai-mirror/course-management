@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -430,6 +431,27 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 		} else {
 			return cat.getCategoryDescription();
 		}
+	}
+
+	public Map<String, String> getEnrollmentStatusDescriptions(Locale locale) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("enrolled", "Enrolled");
+		map.put("wait", "Waitlisted");
+		return map;
+	}
+
+	public Map<String, String> getGradingSchemeDescriptions(Locale locale) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("standard", "Letter Grades");
+		map.put("pnp", "Pass / Not Pass");
+		return map;
+	}
+
+	public Map<String, String> getMembershipStatusDescriptions(Locale locale) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member", "Member");
+		map.put("guest", "Guest");
+		return map;
 	}
 
 }

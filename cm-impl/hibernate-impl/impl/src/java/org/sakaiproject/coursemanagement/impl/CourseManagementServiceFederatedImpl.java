@@ -27,8 +27,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,8 +41,8 @@ import org.sakaiproject.coursemanagement.api.CourseOffering;
 import org.sakaiproject.coursemanagement.api.CourseSet;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.EnrollmentSet;
+import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
-import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 
 /**
@@ -75,23 +77,23 @@ public class CourseManagementServiceFederatedImpl implements
 
 	private static final Log log = LogFactory.getLog(CourseManagementServiceFederatedImpl.class);
 
-	private List implList;
+	private List<CourseManagementService> implList;
 	
 	/**
 	 * Sets the list of implementations to consult.  Implementations earlier in the list will override later ones.
 	 * @param implList
 	 */
-	public void setImplList(List implList) {
+	public void setImplList(List<CourseManagementService> implList) {
 		this.implList = implList;
 	}
 	
-	public Set findCourseOfferings(String courseSetEid,
+	public Set<CourseOffering> findCourseOfferings(String courseSetEid,
 			String academicSessionEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+		Set<CourseOffering> resultSet = new HashSet<CourseOffering>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<CourseOffering> set = null;
 			try {
 				set = cm.findCourseOfferings(courseSetEid, academicSessionEid);
 				if(set != null) {
@@ -110,44 +112,30 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public List findCourseSets(String category) {
-		List resultSet = new ArrayList();
+	public List<CourseSet> findCourseSets(String category) {
+		List<CourseSet> resultSet = new ArrayList<CourseSet>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			List list = cm.findCourseSets(category);
+			List<CourseSet> list = cm.findCourseSets(category);
 			if(list != null) {
 				resultSet.addAll(list);
 			}
 		}
 		
 		// The federated list should be sorted by title.
-		Collections.sort(resultSet, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				CourseSet cs1 = (CourseSet)o1;
-				CourseSet cs2 = (CourseSet)o2;
+		Collections.sort(resultSet, new Comparator<CourseSet>() {
+			public int compare(CourseSet cs1, CourseSet cs2) {
 				return cs1.getTitle().compareTo(cs2.getTitle());
 			}
 		});
 		return resultSet;
 	}
 
-//	public Set findSectionsWithMember(String userId) {
-//		Set resultSet = new HashSet();
-//		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
-//			CourseManagementService cm = (CourseManagementService)implIter.next();
-//			Set set = cm.findSectionsWithMember(userId);
-//			if(set != null) {
-//				resultSet.addAll(set);
-//			}
-//		}
-//		return resultSet;
-//	}
-
-	public Set findCurrentlyEnrolledEnrollmentSets(String userId) {
-		Set resultSet = new HashSet();
+	public Set<EnrollmentSet> findCurrentlyEnrolledEnrollmentSets(String userId) {
+		Set<EnrollmentSet> resultSet = new HashSet<EnrollmentSet>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = cm.findCurrentlyEnrolledEnrollmentSets(userId);
+			Set<EnrollmentSet> set = cm.findCurrentlyEnrolledEnrollmentSets(userId);
 			if(set != null) {
 				resultSet.addAll(set);
 			}
@@ -155,11 +143,11 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set findCurrentlyInstructingEnrollmentSets(String userId) {
-		Set resultSet = new HashSet();
+	public Set<EnrollmentSet> findCurrentlyInstructingEnrollmentSets(String userId) {
+		Set<EnrollmentSet> resultSet = new HashSet<EnrollmentSet>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = cm.findCurrentlyInstructingEnrollmentSets(userId);
+			Set<EnrollmentSet> set = cm.findCurrentlyInstructingEnrollmentSets(userId);
 			if(set != null) {
 				resultSet.addAll(set);
 			}
@@ -178,11 +166,11 @@ public class CourseManagementServiceFederatedImpl implements
 		return null;
 	}
 
-	public Set findInstructingSections(String userId) {
-		Set resultSet = new HashSet();
+	public Set<Section> findInstructingSections(String userId) {
+		Set<Section> resultSet = new HashSet<Section>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = cm.findInstructingSections(userId);
+			Set<Section> set = cm.findInstructingSections(userId);
 			if(set != null) {
 				resultSet.addAll(set);
 			}
@@ -190,12 +178,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set findInstructingSections(String userId, String academicSessionEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<Section> findInstructingSections(String userId, String academicSessionEid) throws IdNotFoundException {
+		Set<Section> resultSet = new HashSet<Section>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<Section> set = null;
 			try {
 				set = cm.findInstructingSections(userId, academicSessionEid);
 			} catch (IdNotFoundException ide) {
@@ -225,12 +213,12 @@ public class CourseManagementServiceFederatedImpl implements
 		throw new IdNotFoundException(eid, AcademicSession.class.getName());
 	}
 
-	public List getAcademicSessions() {
-		List resultSet = new ArrayList();
+	public List<AcademicSession> getAcademicSessions() {
+		List<AcademicSession> resultSet = new ArrayList<AcademicSession>();
 		
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			List list = cm.getAcademicSessions();
+			List<AcademicSession> list = cm.getAcademicSessions();
 			if(list != null) {
 				resultSet.addAll(list);
 			}
@@ -252,12 +240,12 @@ public class CourseManagementServiceFederatedImpl implements
 		throw new IdNotFoundException(canonicalCourseEid, CanonicalCourse.class.getName());
 	}
 
-	public Set getCanonicalCourses(String courseSetEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<CanonicalCourse> getCanonicalCourses(String courseSetEid) throws IdNotFoundException {
+		Set<CanonicalCourse> resultSet = new HashSet<CanonicalCourse>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<CanonicalCourse> set = null;
 			try {
 				set = cm.getCanonicalCourses(courseSetEid);
 			} catch (IdNotFoundException ide) {
@@ -275,12 +263,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getChildCourseSets(String parentCourseSetEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<CourseSet> getChildCourseSets(String parentCourseSetEid) throws IdNotFoundException {
+		Set<CourseSet> resultSet = new HashSet<CourseSet>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<CourseSet> set = null;
 			try {
 				set = cm.getChildCourseSets(parentCourseSetEid);
 			} catch (IdNotFoundException ide) {
@@ -298,12 +286,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getChildSections(String parentSectionEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<Section> getChildSections(String parentSectionEid) throws IdNotFoundException {
+		Set<Section> resultSet = new HashSet<Section>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<Section> set = null;
 			try {
 				set = cm.getChildSections(parentSectionEid);
 			} catch (IdNotFoundException ide) {
@@ -333,12 +321,12 @@ public class CourseManagementServiceFederatedImpl implements
 	throw new IdNotFoundException(courseOfferingEid, CanonicalCourse.class.getName());
 	}
 
-	public Set getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<Membership> getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException {
+		Set<Membership> resultSet = new HashSet<Membership>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<Membership> set = null;
 			try {
 				set = cm.getCourseOfferingMemberships(courseOfferingEid);
 			} catch (IdNotFoundException ide) {
@@ -356,12 +344,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getCourseOfferingsInCourseSet(String courseSetEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<CourseOffering> getCourseOfferingsInCourseSet(String courseSetEid) throws IdNotFoundException {
+		Set<CourseOffering> resultSet = new HashSet<CourseOffering>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<CourseOffering> set = null;
 			try {
 				set = cm.getCourseOfferingsInCourseSet(courseSetEid);
 			} catch (IdNotFoundException ide) {
@@ -391,12 +379,12 @@ public class CourseManagementServiceFederatedImpl implements
 	throw new IdNotFoundException(eid, CourseSet.class.getName());
 	}
 
-	public Set getCourseSetMemberships(String courseSetEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<Membership> getCourseSetMemberships(String courseSetEid) throws IdNotFoundException {
+		Set<Membership> resultSet = new HashSet<Membership>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<Membership> set = null;
 			try {
 				set = cm.getCourseSetMemberships(courseSetEid);
 			} catch (IdNotFoundException ide) {
@@ -414,11 +402,11 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getCourseSets() {
-		Set resultSet = new HashSet();
+	public Set<CourseSet> getCourseSets() {
+		Set<CourseSet> resultSet = new HashSet<CourseSet>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = cm.getCourseSets();
+			Set<CourseSet> set = cm.getCourseSets();
 			if(set != null) {
 				resultSet.addAll(set);
 			}
@@ -426,11 +414,11 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public List getCurrentAcademicSessions() {
-		List resultSet = new ArrayList();
+	public List<AcademicSession> getCurrentAcademicSessions() {
+		List<AcademicSession> resultSet = new ArrayList<AcademicSession>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			List list = cm.getCurrentAcademicSessions();
+			List<AcademicSession> list = cm.getCurrentAcademicSessions();
 			if(list != null) {
 				resultSet.addAll(list);
 			}
@@ -452,12 +440,12 @@ public class CourseManagementServiceFederatedImpl implements
 	throw new IdNotFoundException(enrollmentSetEid, EnrollmentSet.class.getName());
 	}
 
-	public Set getEnrollmentSets(String courseOfferingEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<EnrollmentSet> getEnrollmentSets(String courseOfferingEid) throws IdNotFoundException {
+		Set<EnrollmentSet> resultSet = new HashSet<EnrollmentSet>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<EnrollmentSet> set = null;
 			try {
 				set = cm.getEnrollmentSets(courseOfferingEid);
 			} catch (IdNotFoundException ide) {
@@ -475,12 +463,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getEnrollments(String enrollmentSetEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<Enrollment> getEnrollments(String enrollmentSetEid) throws IdNotFoundException {
+		Set<Enrollment> resultSet = new HashSet<Enrollment>();
 		int exceptions =0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<Enrollment> set = null;
 			try {
 				set = cm.getEnrollments(enrollmentSetEid);
 			} catch (IdNotFoundException ide) {
@@ -497,12 +485,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getEquivalentCanonicalCourses(String canonicalCourseEid)  throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<CanonicalCourse> getEquivalentCanonicalCourses(String canonicalCourseEid)  throws IdNotFoundException {
+		Set<CanonicalCourse> resultSet = new HashSet<CanonicalCourse>();
 		int exceptions =0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<CanonicalCourse> set = null;
 			try {
 				set = cm.getEquivalentCanonicalCourses(canonicalCourseEid);
 			} catch (IdNotFoundException ide) {
@@ -520,12 +508,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<CourseOffering> getEquivalentCourseOfferings(String courseOfferingEid) throws IdNotFoundException {
+		Set<CourseOffering> resultSet = new HashSet<CourseOffering>();
 		int exceptions =0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<CourseOffering> set = null;
 			try {
 				set = cm.getEquivalentCourseOfferings(courseOfferingEid);
 			} catch (IdNotFoundException ide) {
@@ -543,12 +531,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Set getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<String> getInstructorsOfRecordIds(String enrollmentSetEid) throws IdNotFoundException {
+		Set<String> resultSet = new HashSet<String>();
 		int exceptions =0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<String> set = null;
 			try {
 				set = cm.getInstructorsOfRecordIds(enrollmentSetEid);
 			} catch (IdNotFoundException ide) {
@@ -578,12 +566,12 @@ public class CourseManagementServiceFederatedImpl implements
 		throw new IdNotFoundException(sectionEid, Section.class.getName());
 	}
 
-	public Set getSectionMemberships(String sectionEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<Membership> getSectionMemberships(String sectionEid) throws IdNotFoundException {
+		Set<Membership> resultSet = new HashSet<Membership>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<Membership> set = null;
 			try {
 				set = cm.getSectionMemberships(sectionEid);
 			} catch (IdNotFoundException ide) {
@@ -601,23 +589,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-//	public String getSectionRole(String sectionEid, String userId) {
-//		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
-//			CourseManagementService cm = (CourseManagementService)implIter.next();
-//			String role = cm.getSectionRole(sectionEid, userId);
-//			if(role != null) {
-//				return role;
-//			}
-//		}
-//		return null;
-//	}
-
-	public Set getSections(String courseOfferingEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<Section> getSections(String courseOfferingEid) throws IdNotFoundException {
+		Set<Section> resultSet = new HashSet<Section>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<Section> set = null;
 			try {
 				set = cm.getSections(courseOfferingEid);
 			} catch (IdNotFoundException ide) {
@@ -650,7 +627,7 @@ public class CourseManagementServiceFederatedImpl implements
 		return true;
 	}
 
-	public boolean isEnrolled(String userId, Set enrollmentSetEids) {
+	public boolean isEnrolled(String userId, Set<String> enrollmentSetEids) {
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
 			try {
@@ -680,10 +657,8 @@ public class CourseManagementServiceFederatedImpl implements
 		return false;
 	}
 
-	protected static Comparator startDateComparator = new Comparator() {
-		public int compare(Object o1, Object o2) {
-			AcademicSession as1 = (AcademicSession)o1;
-			AcademicSession as2 = (AcademicSession)o2;
+	protected static Comparator<AcademicSession> startDateComparator = new Comparator<AcademicSession>() {
+		public int compare(AcademicSession as1, AcademicSession as2) {
 			if(as1.getStartDate() == null && as2.getStartDate() == null) {
 				return 0;
 			}
@@ -697,11 +672,11 @@ public class CourseManagementServiceFederatedImpl implements
 		}
 	};
 
-	public Set findEnrolledSections(String userId) {
-		Set resultSet = new HashSet();
+	public Set<Section> findEnrolledSections(String userId) {
+		Set<Section> resultSet = new HashSet<Section>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = cm.findEnrolledSections(userId);
+			Set<Section> set = cm.findEnrolledSections(userId);
 			if(set != null) {
 				resultSet.addAll(set);
 			}
@@ -709,8 +684,8 @@ public class CourseManagementServiceFederatedImpl implements
 		return resultSet;
 	}
 
-	public Map findCourseOfferingRoles(String userEid) {
-		Map courseOfferingRoleMap = new HashMap();
+	public Map<String, String> findCourseOfferingRoles(String userEid) {
+		Map<String, String> courseOfferingRoleMap = new HashMap<String, String>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
 			Map map = cm.findCourseOfferingRoles(userEid);
@@ -729,8 +704,8 @@ public class CourseManagementServiceFederatedImpl implements
 		return courseOfferingRoleMap;
 	}
 
-	public Map findCourseSetRoles(String userEid) {
-		Map courseSetRoleMap = new HashMap();
+	public Map<String, String> findCourseSetRoles(String userEid) {
+		Map<String, String> courseSetRoleMap = new HashMap<String, String>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
 			Map map = cm.findCourseSetRoles(userEid);
@@ -749,8 +724,8 @@ public class CourseManagementServiceFederatedImpl implements
 		return courseSetRoleMap;
 	}
 
-	public Map findSectionRoles(String userEid) {
-		Map sectionRoleMap = new HashMap();
+	public Map<String, String> findSectionRoles(String userEid) {
+		Map<String, String> sectionRoleMap = new HashMap<String, String>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
 			Map map = cm.findSectionRoles(userEid);
@@ -769,12 +744,12 @@ public class CourseManagementServiceFederatedImpl implements
 		return sectionRoleMap;
 	}
 
-	public Set getCourseOfferingsInCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException {
-		Set resultSet = new HashSet();
+	public Set<CourseOffering> getCourseOfferingsInCanonicalCourse(String canonicalCourseEid) throws IdNotFoundException {
+		Set<CourseOffering> resultSet = new HashSet<CourseOffering>();
 		int exceptions = 0;
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			Set set = null;
+			Set<CourseOffering> set = null;
 			try {
 				set = cm.getCourseOfferingsInCanonicalCourse(canonicalCourseEid);
 			} catch (IdNotFoundException ide) {
@@ -882,22 +857,20 @@ public class CourseManagementServiceFederatedImpl implements
 		return false;
 	}
 
-	public List getSectionCategories() {
-		List resultSet = new ArrayList();
+	public List<String> getSectionCategories() {
+		List<String> resultSet = new ArrayList<String>();
 		for(Iterator implIter = implList.iterator(); implIter.hasNext();) {
 			CourseManagementService cm = (CourseManagementService)implIter.next();
-			List list = cm.getSectionCategories();
+			List<String> list = cm.getSectionCategories();
 			if(list != null) {
 				resultSet.addAll(list);
 			}
 		}
 		
-		// The federated list should be sorted by description.
-		Collections.sort(resultSet, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				SectionCategory cat1 = (SectionCategory)o1;
-				SectionCategory cat2 = (SectionCategory)o2;
-				return cat1.getCategoryDescription().compareTo(cat2.getCategoryDescription());
+		// The federated list should be sorted as a single collection.
+		Collections.sort(resultSet, new Comparator<String>() {
+			public int compare(String cat1,String cat2) {
+				return cat1.compareTo(cat2);
 			}
 		});
 		return resultSet;
@@ -912,5 +885,62 @@ public class CourseManagementServiceFederatedImpl implements
 			}
 		}
 		return null;
+	}
+
+	public Map<String, String> getEnrollmentStatusDescriptions(Locale locale) {
+		Map<String, String> statusMap = new HashMap<String, String>();
+		for(Iterator<CourseManagementService> implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = implIter.next();
+			Map<String, String> map = cm.getEnrollmentStatusDescriptions(locale);
+			if(map == null) {
+				continue;
+			}
+			for(Iterator<Entry<String, String>> mapIter = map.entrySet().iterator(); mapIter.hasNext();) {
+				Entry<String, String> entry = mapIter.next();
+				// Earlier impls take precedence, so don't overwrite what's in the map
+				if( ! statusMap.containsKey(entry.getKey())) {
+					statusMap.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+		return statusMap;
+	}
+
+	public Map<String, String> getGradingSchemeDescriptions(Locale locale) {
+		Map<String, String> gradingSchemeMap = new HashMap<String, String>();
+		for(Iterator<CourseManagementService> implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = implIter.next();
+			Map<String, String> map = cm.getGradingSchemeDescriptions(locale);
+			if(map == null) {
+				continue;
+			}
+			for(Iterator<Entry<String, String>> mapIter = map.entrySet().iterator(); mapIter.hasNext();) {
+				Entry<String, String> entry = mapIter.next();
+				// Earlier impls take precedence, so don't overwrite what's in the map
+				if( ! gradingSchemeMap.containsKey(entry.getKey())) {
+					gradingSchemeMap.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+		return gradingSchemeMap;
+	}
+
+	public Map<String, String> getMembershipStatusDescriptions(Locale locale) {
+		Map<String, String> statusMap = new HashMap<String, String>();
+		for(Iterator<CourseManagementService> implIter = implList.iterator(); implIter.hasNext();) {
+			CourseManagementService cm = implIter.next();
+			Map<String, String> map = cm.getMembershipStatusDescriptions(locale);
+			if(map == null) {
+				continue;
+			}
+			for(Iterator<Entry<String, String>> mapIter = map.entrySet().iterator(); mapIter.hasNext();) {
+				Entry<String, String> entry = mapIter.next();
+				// Earlier impls take precedence, so don't overwrite what's in the map
+				if( ! statusMap.containsKey(entry.getKey())) {
+					statusMap.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+		return statusMap;
 	}
 }

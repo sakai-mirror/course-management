@@ -16,7 +16,7 @@
 
     <query name="findSectionCategories">
         <![CDATA[
-        from SectionCategoryCmImpl as cat
+        select categoryCode from SectionCategoryCmImpl as cat order by cat.categoryCode
         ]]>
     </query>
 

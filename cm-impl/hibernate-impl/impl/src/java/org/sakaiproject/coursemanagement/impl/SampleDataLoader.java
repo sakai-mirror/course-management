@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.cover.AuthzGroupService;
@@ -128,7 +129,7 @@ public class SampleDataLoader {
 		// AcademicSession for the first legacy term will be our indicator for existing
 		// data.
 		try {
-			cmService.getAcademicSession(legacyTerms[0] + " " + legacyYears[0]);
+			cmService.getAcademicSession(StringUtils.trim(legacyTerms[0]) + " " + StringUtils.trim(legacyYears[0]));
 			if(log.isInfoEnabled()) log.info("CM data exists, skipping data load.");
 			return;
 		} catch (IdNotFoundException ide) {
@@ -138,9 +139,9 @@ public class SampleDataLoader {
 		// Academic Sessions
 		List<AcademicSession> academicSessions = new ArrayList<AcademicSession>();
 		for(int i = 0; i < legacyTerms.length; i++) {
-			String termId =legacyTerms[i] + " " + legacyYears[i];
-			Date startDate = sdf.parse(legacyStartTimes[i]);
-			Date endDate = sdf.parse(legacyEndTimes[i]);
+			String termId =StringUtils.trim(legacyTerms[i]) + " " + StringUtils.trim(legacyYears[i]);
+			Date startDate = sdf.parse(StringUtils.trim(legacyStartTimes[i]));
+			Date endDate = sdf.parse(StringUtils.trim(legacyEndTimes[i]));
 			academicSessions.add(cmAdmin.createAcademicSession(termId,termId,
 					termId, startDate, endDate));
 		}

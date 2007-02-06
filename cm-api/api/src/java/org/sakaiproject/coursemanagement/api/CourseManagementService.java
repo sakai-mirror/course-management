@@ -21,6 +21,7 @@
 package org.sakaiproject.coursemanagement.api;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -318,6 +319,27 @@ public interface CourseManagementService {
 	 */
 	public Set<Enrollment> getEnrollments(String enrollmentSetEid) throws IdNotFoundException;
 
+	/**
+	 * Gets the known enrollment status codes and descriptions for Enrollments.
+	 * 
+	 * @return
+	 */
+	public Map<String, String> getEnrollmentStatusDescriptions(Locale locale);
+	
+	/**
+	 * Gets the known grading scheme codes and descriptions for Enrollments.
+	 * 
+	 * @return
+	 */
+	public Map<String, String> getGradingSchemeDescriptions(Locale locale);
+
+	/**
+	 * Gets the known membership status codes and descriptions for Memberships.
+	 * 
+	 * @return
+	 */
+	public Map<String, String> getMembershipStatusDescriptions(Locale locale);
+	
 	/**
 	 * Gets the set of user ids that are, according to the enterprise, responsible for
 	 * the EnrollmentSet.  Responsibilities usually include submitting the final grades
