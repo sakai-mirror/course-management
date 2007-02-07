@@ -139,7 +139,7 @@ public class SampleDataLoader {
 		// Academic Sessions
 		List<AcademicSession> academicSessions = new ArrayList<AcademicSession>();
 		for(int i = 0; i < legacyTerms.length; i++) {
-			String termId =StringUtils.trim(legacyTerms[i]) + " " + StringUtils.trim(legacyYears[i]);
+			String termId =StringUtils.trim(StringUtils.trim(legacyTerms[i]) + " " + StringUtils.trim(legacyYears[i])); // See SAK-8299
 			Date startDate = sdf.parse(StringUtils.trim(legacyStartTimes[i]));
 			Date endDate = sdf.parse(StringUtils.trim(legacyEndTimes[i]));
 			academicSessions.add(cmAdmin.createAcademicSession(termId,termId,
