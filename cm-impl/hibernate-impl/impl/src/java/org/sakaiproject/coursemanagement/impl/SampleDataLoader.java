@@ -47,8 +47,15 @@ import org.sakaiproject.event.cover.EventTrackingService;
 import org.sakaiproject.event.cover.UsageSessionService;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.cover.SessionManager;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class SampleDataLoader {
+public class SampleDataLoader implements BeanFactoryAware {
 	private static final Log log = LogFactory.getLog(SampleDataLoader.class);
 
 	// Begin Dependency Injection //
@@ -66,6 +73,11 @@ public class SampleDataLoader {
 	public void setCmService(CourseManagementService cmService) {
 		this.cmService = cmService;
 	}
+
+	protected BeanFactory beanFactory;
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
+	}
 	
 	/** A flag for disabling the sample data load */
 	protected boolean loadSampleData;
@@ -81,10 +93,19 @@ public class SampleDataLoader {
 		}
 		if(loadSampleData) {
 			loginToSakai();
+			PlatformTransactionManager tm = (PlatformTransactionManager)beanFactory.getBean("org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager");
+			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+			TransactionStatus status = tm.getTransaction(def);
 			try {
 				load();
 			} catch (Exception e) {
 				log.error("Unable to load CM data", e);
+				tm.rollback(status);
+			} finally {
+				if(!status.isCompleted()) {
+					tm.commit(status);
+				}
 			}
 			logoutFromSakai();
 		}
@@ -245,5 +266,4 @@ public class SampleDataLoader {
 		}
 		if(log.isInfoEnabled()) log.info("Finished loading sample CM data");
 	}
-
 }

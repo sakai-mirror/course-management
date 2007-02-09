@@ -11,7 +11,7 @@
 		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" lazy="false" index="CM_SECTION_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl" />
 		<many-to-one name="parent" column="PARENT_SECTION" lazy="false" index="CM_SECTION_PARENT_IDX" class="org.sakaiproject.coursemanagement.impl.SectionCmImpl" />
 
-		<set name="meetings" inverse="true" cascade="all-delete-orphan" lazy="false">
+		<set name="meetings" inverse="true" cascade="all" lazy="false">
 		    <key column="SECTION_ID"/>
 		    <one-to-many class="org.sakaiproject.coursemanagement.impl.MeetingCmImpl"/>
 		</set>
