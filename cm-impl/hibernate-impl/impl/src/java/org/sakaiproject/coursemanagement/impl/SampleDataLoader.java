@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -213,12 +215,21 @@ public class SampleDataLoader implements BeanFactoryAware {
 			cmAdmin.addOrUpdateCourseOfferingMembership("instructor1","I", co1.getEid(), null);
 			cmAdmin.addOrUpdateCourseOfferingMembership("instructor2","I", co2.getEid(), null);
 		}
+		
+		Map<String, String> enrollmentStatuses = cmService.getEnrollmentStatusDescriptions(Locale.US);
+		Map<String, String> gradingSchemes = cmService.getGradingSchemeDescriptions(Locale.US);
 
+		List<String> enrollmentEntries = new ArrayList<String>(enrollmentStatuses.keySet());
+		List<String> gradingEntries = new ArrayList<String>(gradingSchemes.keySet());
+		int enrollmentIndex = 0;
+		int gradingIndex = 0;
+		
 		// Enrollment sets and sections
 		Set<String> instructors = new HashSet<String>();
 		instructors.add("admin");
 		instructors.add("instructor");
 
+		
 		Set<CourseOffering> courseOfferings = cmService.getCourseOfferingsInCourseSet("SMPL");
 		for(Iterator<CourseOffering> iter = courseOfferings.iterator(); iter.hasNext();) {
 			CourseOffering co = iter.next();
@@ -228,7 +239,17 @@ public class SampleDataLoader implements BeanFactoryAware {
 			
 			// Enrollments
 			for(int enrollmentCounter = 1; enrollmentCounter <= 180; enrollmentCounter++) {
-				cmAdmin.addOrUpdateEnrollment("student" + enrollmentCounter, es.getEid(), "enrolled", "3", "standard");
+				if(++gradingIndex == gradingEntries.size()) {
+					gradingIndex = 0;
+				}
+				String gradingScheme = gradingEntries.get(gradingIndex);
+
+				if(++enrollmentIndex == enrollmentEntries.size()) {
+					enrollmentIndex = 0;
+				}
+				String enrollmentStatus = enrollmentEntries.get(enrollmentIndex);
+
+				cmAdmin.addOrUpdateEnrollment("student" + enrollmentCounter, es.getEid(), enrollmentStatus, "3", gradingScheme);
 			}
 
 			// Sections
