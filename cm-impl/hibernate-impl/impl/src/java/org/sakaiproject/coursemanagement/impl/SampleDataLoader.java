@@ -93,7 +93,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 		if(cmAdmin == null) {
 			return;
 		}
-		if(loadSampleData) {
+		if(loadSampleData && scs.getBoolean("auto.ddl", true)) {
 			loginToSakai();
 			PlatformTransactionManager tm = (PlatformTransactionManager)beanFactory.getBean("org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager");
 			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -102,7 +102,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 			try {
 				load();
 			} catch (Exception e) {
-				log.error("Unable to load CM data", e);
+				log.error("Unable to load CM data");
 				tm.rollback(status);
 			} finally {
 				if(!status.isCompleted()) {
@@ -110,6 +110,8 @@ public class SampleDataLoader implements BeanFactoryAware {
 				}
 			}
 			logoutFromSakai();
+		} else {
+			if(log.isInfoEnabled()) log.info("Skipped CM data load");
 		}
 	}
 	
