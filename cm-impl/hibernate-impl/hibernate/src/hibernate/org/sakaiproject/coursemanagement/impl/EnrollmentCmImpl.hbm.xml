@@ -20,13 +20,13 @@
 		<property name="createdBy" column="CREATED_BY" />
 		<property name="createdDate" type="date" column="CREATED_DATE" />
 
-		<property name="userId" column="USER_ID" type="string" not-null="true" />
+		<property name="userId" column="USER_ID" type="string" not-null="true" unique-key="CM_ENR" index="CM_ENR_USER"/>
 		<property name="enrollmentStatus" column="STATUS" type="string" not-null="true" />
 		<property name="credits" column="CREDITS" type="string" not-null="true" />
 		<property name="gradingScheme" column="GRADING_SCHEME" type="string" not-null="true" />
 		<property name="dropped" column="DROPPED" type="boolean" />
 
-		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" index="CM_ENR_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl" />
+		<many-to-one name="enrollmentSet" column="ENROLLMENT_SET" unique-key="CM_ENR" index="CM_ENR_ENR_SET_IDX" class="org.sakaiproject.coursemanagement.impl.EnrollmentSetCmImpl" />
 
 	</class>
 	

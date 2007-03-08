@@ -15,10 +15,10 @@
 
 		<version name="version" type="integer" column="VERSION" />
 
-		<property name="userId" column="USER_ID" type="string" not-null="true" />
+		<property name="userId" column="USER_ID" unique-key="CM_MBR" not-null="true" index="CM_MBR_USER" />
 		<property name="role" column="ROLE" type="string" not-null="true" />
 
-		<many-to-one name="memberContainer" column="MEMBER_CONTAINER_ID" class="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl" />
+		<many-to-one name="memberContainer" column="MEMBER_CONTAINER_ID" unique-key="CM_MBR" index="CM_MBR_CTR" class="org.sakaiproject.coursemanagement.impl.AbstractMembershipContainerCmImpl" />
                 <property name="status" column="STATUS" type="string" />
 
 	</class>

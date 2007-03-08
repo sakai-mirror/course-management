@@ -39,6 +39,7 @@ import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
+import org.sakaiproject.coursemanagement.impl.EnrollmentCmImpl;
 
 public class CourseManagementAdministrationTest extends CourseManagementTestBase {
 	private static final Log log = LogFactory.getLog(CourseManagementAdministrationTest.class);
@@ -262,6 +263,12 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		
 		// Ensure that the enrollment has been dropped
 		Assert.assertTrue(((Enrollment)cm.getEnrollments("es1").iterator().next()).isDropped());
+		
+		// Add the same enrollment again
+		cmAdmin.addOrUpdateEnrollment("josh", "es1", "enrolled", "4", "pass/fail");
+		
+		// Ensure that the hibernate version has been incremented
+		Assert.assertNotSame(new Integer(0), ((EnrollmentCmImpl)cm.getEnrollments("es1").iterator().next()).getVersion());
 	}
 	
 	public void testAddCourseSetMembership() throws Exception {
