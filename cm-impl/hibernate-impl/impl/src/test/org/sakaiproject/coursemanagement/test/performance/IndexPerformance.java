@@ -30,6 +30,8 @@ import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.Enrollment;
 import org.sakaiproject.coursemanagement.api.Membership;
+import org.sakaiproject.coursemanagement.api.Section;
+import org.sakaiproject.coursemanagement.api.SectionCategory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -84,9 +86,9 @@ public class IndexPerformance {
 			for(int i = 1; i <= secCount; i++) {
 				String esId = esPrefix + i;
 				Set<String> instructors = new HashSet<String>();
-				instructors.add("instructor1");
-				instructors.add("instructor2");
-				instructors.add("instructor3");
+				instructors.add("instructor_A_" + i);
+				instructors.add("instructor_B_" + i);
+				instructors.add("instructor_C_" + i);
 				cmAdmin.createEnrollmentSet(esId, esId, esId, "lecture", "3", coId, instructors);
 			}
 			
@@ -128,7 +130,14 @@ public class IndexPerformance {
 		long end = System.currentTimeMillis();
 		return end - start;
 	}
-	
+
+	public long getTimeToSelectInstructors(String instructorEid) {
+		long start = System.currentTimeMillis();
+		Set<Section> sections = cmService.findInstructingSections(instructorEid);
+		long end = System.currentTimeMillis();
+		return end - start;
+	}
+
 	// Static methods
 
 	public static void main(String[] args) {
@@ -136,6 +145,7 @@ public class IndexPerformance {
 		indexPerf.loadLotsOfData();
 		logEnrollmentSelects(indexPerf);
 		logMemberSelects(indexPerf);
+		logInstructorSelects(indexPerf);
 	}
 
 	private static void logEnrollmentSelects(IndexPerformance indexPerf) {
@@ -157,4 +167,15 @@ public class IndexPerformance {
 		double secMean = (double)total / (double)membersPerSection;
 		log.info("Mean time (in milliseconds) to select Memberships:\t" + secMean);
 	}
+
+	private static void logInstructorSelects(IndexPerformance indexPerf) {
+		long total = 0;
+		for(int i = 1; i <= secCount; i++) {
+			long thisRun = indexPerf.getTimeToSelectInstructors("instructor_B_" + i);
+			total += thisRun;
+		}
+		double secMean = (double)total / (double)secCount;
+		log.info("Mean time (in milliseconds) to select Instructors:\t" + secMean);
+	}
+
 }

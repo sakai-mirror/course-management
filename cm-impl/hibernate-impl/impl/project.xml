@@ -56,6 +56,12 @@
 
  		<dependency>
 			<groupId>sakaiproject</groupId>
+			<artifactId>sakai-db-api</artifactId>
+			<version>${sakai.version}</version>
+		</dependency>
+
+ 		<dependency>
+			<groupId>sakaiproject</groupId>
 			<artifactId>sakai-user-api</artifactId>
 			<version>${sakai.version}</version>
 		</dependency>
@@ -221,6 +227,13 @@
 				<directory>src/java</directory>
 				<includes>
 					<include>**/*.xml</include>
+				</includes>
+			</resource>
+
+			<resource>
+				<directory>src/sql</directory>
+				<includes>
+					<include>**/*.sql</include>
 				</includes>
 			</resource>
 		</resources>
