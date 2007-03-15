@@ -20,7 +20,7 @@
 	<classpathentry kind="var" path="MAVEN_REPO/dom4j/jars/dom4j-1.6.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-collections/jars/commons-collections-3.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/odmg/jars/odmg-3.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/net.sf.ehcache/jars/ehcache-1.2.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.7.3.3.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/authz-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/site-api"/>
