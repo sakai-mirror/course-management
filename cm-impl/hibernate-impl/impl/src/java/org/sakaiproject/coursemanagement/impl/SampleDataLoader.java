@@ -20,9 +20,12 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.cover.AuthzGroupService;
@@ -59,6 +61,55 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 public class SampleDataLoader implements BeanFactoryAware {
 	private static final Log log = LogFactory.getLog(SampleDataLoader.class);
+
+	protected static final String[] ACADEMIC_SESSION_EIDS = new String[4];
+	protected static final Date[] ACADEMIC_SESSION_START_DATES = new Date[4];
+	protected static final Date[] ACADEMIC_SESSION_END_DATES = new Date[4];
+
+	protected static final String CS = "SMPL";
+
+	protected static final String CC1 = "SMPL101";
+	protected static final String CC2 = "SMPL202";
+
+	protected static final String CO1_PREFIX = CC1 + " ";
+	protected static final String CO2_PREFIX = CC2 + " ";
+
+	protected static final String ENROLLMENT_SET_SUFFIX = "es";
+	
+	protected static final SimpleDateFormat sdf;
+	static {
+		ACADEMIC_SESSION_EIDS[0] = "Winter 2007";
+		ACADEMIC_SESSION_EIDS[1] = "Spring 2007";
+		ACADEMIC_SESSION_EIDS[2] = "Summer 2007";
+		ACADEMIC_SESSION_EIDS[3] = "Fall 2007";
+		
+		GregorianCalendar startCal = new GregorianCalendar();
+		GregorianCalendar endCal = new GregorianCalendar();
+
+		startCal.set(2007, 0, 1);
+		endCal.set(2007, 3, 1);
+		ACADEMIC_SESSION_START_DATES[0] = startCal.getTime();
+		ACADEMIC_SESSION_END_DATES[0] = endCal.getTime();
+		
+		startCal.set(2007, 3, 1);
+		endCal.set(2007, 5, 1);
+		ACADEMIC_SESSION_START_DATES[1] = startCal.getTime();
+		ACADEMIC_SESSION_END_DATES[1] = endCal.getTime();
+
+		startCal.set(2007, 5, 1);
+		endCal.set(2007, 8, 1);
+		ACADEMIC_SESSION_START_DATES[2] = startCal.getTime();
+		ACADEMIC_SESSION_END_DATES[2] = endCal.getTime();
+		
+		startCal.set(2007, 8, 1);
+		endCal.set(2008, 0, 1);
+		ACADEMIC_SESSION_START_DATES[3] = startCal.getTime();
+		ACADEMIC_SESSION_END_DATES[3] = endCal.getTime();		
+		
+		sdf = new SimpleDateFormat("HH:mma");
+	}
+	
+	protected int studentCount;
 
 	// Begin Dependency Injection //
 	protected CourseManagementAdministration cmAdmin;
@@ -102,7 +153,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 			try {
 				load();
 			} catch (Exception e) {
-				log.error("Unable to load CM data");
+				log.error("Unable to load CM data: " + e);
 				tm.rollback(status);
 			} finally {
 				if(!status.isCompleted()) {
@@ -143,18 +194,11 @@ public class SampleDataLoader implements BeanFactoryAware {
 	}
 
 	public void load() throws Exception {
-		String[] legacyTerms = scs.getStrings("termterm");
-		String[] legacyYears = scs.getStrings("termyear");
-		String[] legacyStartTimes = scs.getStrings("termstarttime");		
-		String[] legacyEndTimes = scs.getStrings("termendtime");
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		
 		// Don't do anything if we've got data already.  The existence of an
 		// AcademicSession for the first legacy term will be our indicator for existing
 		// data.
 		try {
-			cmService.getAcademicSession(StringUtils.trim(legacyTerms[0]) + " " + StringUtils.trim(legacyYears[0]));
+			cmService.getAcademicSession(ACADEMIC_SESSION_EIDS[0]);
 			if(log.isInfoEnabled()) log.info("CM data exists, skipping data load.");
 			return;
 		} catch (IdNotFoundException ide) {
@@ -163,45 +207,31 @@ public class SampleDataLoader implements BeanFactoryAware {
 
 		// Academic Sessions
 		List<AcademicSession> academicSessions = new ArrayList<AcademicSession>();
-		for(int i = 0; i < legacyTerms.length; i++) {
-			String termId =StringUtils.trim(StringUtils.trim(legacyTerms[i]) + " " + StringUtils.trim(legacyYears[i])); // See SAK-8299
-			Date startDate = sdf.parse(StringUtils.trim(legacyStartTimes[i]));
-			Date endDate = sdf.parse(StringUtils.trim(legacyEndTimes[i]));
-			academicSessions.add(cmAdmin.createAcademicSession(termId,termId,
-					termId, startDate, endDate));
+		for(int i = 0; i < ACADEMIC_SESSION_EIDS.length; i++) {
+			String academicSessionEid = ACADEMIC_SESSION_EIDS[i];
+			academicSessions.add(cmAdmin.createAcademicSession(academicSessionEid,academicSessionEid,
+					academicSessionEid, ACADEMIC_SESSION_START_DATES[i], ACADEMIC_SESSION_END_DATES[i]));
 		}
 
-		// Section Categories (these are returned in alpha order, so we can control the order here)
-		SectionCategory lectureCategory = cmAdmin.addSectionCategory("01.lct", "Lecture");
-		SectionCategory discussionCategory = cmAdmin.addSectionCategory("03.dsc", "Discussion");
-		cmAdmin.addSectionCategory("02.lab", "Lab");
-		cmAdmin.addSectionCategory("04.rec", "Recitation");
-		cmAdmin.addSectionCategory("05.sto", "Studio");
-
 		// Course Sets
-		cmAdmin.createCourseSet("SMPL", "Sample Department",
+		cmAdmin.createCourseSet(CS, "Sample Department",
 				"We study wet things in the Sample Dept", "DEPT", null);
-		cmAdmin.addOrUpdateCourseSetMembership("da1","DeptAdmin", "SMPL", "active");
+		cmAdmin.addOrUpdateCourseSetMembership("da1","DeptAdmin", CS, "active");
 		
 		// Cross-listed Canonical Courses
 		Set<CanonicalCourse> cc = new HashSet<CanonicalCourse>();
-		cc.add(cmAdmin.createCanonicalCourse("SMPL101", "Sample 101", "A survey of samples"));
-		cc.add(cmAdmin.createCanonicalCourse("SMPL202", "Sample 202", "An in depth study of samples"));
+		cc.add(cmAdmin.createCanonicalCourse(CC1, "Sample 101", "A survey of samples"));
+		cc.add(cmAdmin.createCanonicalCourse(CC2, "Sample 202", "An in depth study of samples"));
 		cmAdmin.setEquivalentCanonicalCourses(cc);
 		
-		// Only work with the last two academic sessions, since the data load is so slow
-		int startIndex = 0;
-		if(academicSessions.size() > 2) {
-			startIndex = academicSessions.size() - 2;
-		}
-		for(int i = startIndex; i < academicSessions.size(); i++) {
-			AcademicSession as = academicSessions.get(i);
-			CourseOffering co1 = cmAdmin.createCourseOffering("SMPL101 "+ as.getEid(),
-					"SMPL 101", "Sample course offering #1, " + as.getEid(), "open", as.getEid(),
-					"SMPL101", as.getStartDate(), as.getEndDate());
-			CourseOffering co2 = cmAdmin.createCourseOffering("SMPL202 "+ as.getEid(),
-					"SMPL 202", "Sample course offering #2, " + as.getEid(), "open", as.getEid(),
-					"SMPL202", as.getStartDate(), as.getEndDate());
+		for(Iterator<AcademicSession> iter = academicSessions.iterator(); iter.hasNext();) {
+			AcademicSession as = iter.next();
+			CourseOffering co1 = cmAdmin.createCourseOffering(CO1_PREFIX + as.getEid(),
+					CC1, "Sample course offering #1, " + as.getEid(), "open", as.getEid(),
+					CC1, as.getStartDate(), as.getEndDate());
+			CourseOffering co2 = cmAdmin.createCourseOffering(CO2_PREFIX + as.getEid(),
+					CC2, "Sample course offering #2, " + as.getEid(), "open", as.getEid(),
+					CC2, as.getStartDate(), as.getEndDate());
 
 			Set<CourseOffering> courseOfferingSet = new HashSet<CourseOffering>();
 			courseOfferingSet.add(co1);
@@ -210,8 +240,8 @@ public class SampleDataLoader implements BeanFactoryAware {
 			// Cross list these course offerings
 			cmAdmin.setEquivalentCourseOfferings(courseOfferingSet);
 
-			cmAdmin.addCourseOfferingToCourseSet("SMPL", co1.getEid());
-			cmAdmin.addCourseOfferingToCourseSet("SMPL", co2.getEid());
+			cmAdmin.addCourseOfferingToCourseSet(CS, co1.getEid());
+			cmAdmin.addCourseOfferingToCourseSet(CS, co2.getEid());
 						
 			// And add some other instructors at the offering level (this should help with testing cross listings)
 			cmAdmin.addOrUpdateCourseOfferingMembership("instructor1","I", co1.getEid(), null);
@@ -232,10 +262,10 @@ public class SampleDataLoader implements BeanFactoryAware {
 		instructors.add("instructor");
 
 		
-		Set<CourseOffering> courseOfferings = cmService.getCourseOfferingsInCourseSet("SMPL");
+		Set<CourseOffering> courseOfferings = cmService.getCourseOfferingsInCourseSet(CS);
 		for(Iterator<CourseOffering> iter = courseOfferings.iterator(); iter.hasNext();) {
 			CourseOffering co = iter.next();
-			EnrollmentSet es = cmAdmin.createEnrollmentSet(co.getEid() + "es",
+			EnrollmentSet es = cmAdmin.createEnrollmentSet(co.getEid() + ENROLLMENT_SET_SUFFIX,
 					co.getTitle() + " Enrollment Set", co.getDescription() + " Enrollment Set",
 					"lecture", "3", co.getEid(), instructors);
 			
@@ -253,40 +283,161 @@ public class SampleDataLoader implements BeanFactoryAware {
 
 				cmAdmin.addOrUpdateEnrollment("student" + enrollmentCounter, es.getEid(), enrollmentStatus, "3", gradingScheme);
 			}
-
-			// Sections
-			Section lec = cmAdmin.createSection(co.getEid() + " Lecture",
-					co.getEid() + " Lecture", "Samples Lecture", lectureCategory.getCategoryCode(),
-					null, co.getEid(), es.getEid());
-			
-			// Meetings
-			Set<Meeting> lecMeetings = new HashSet<Meeting>();
-			lecMeetings.add(cmAdmin.newSectionMeeting(lec.getEid(), "The location for " + lec.getTitle(), null, null, null));
-			lec.setMeetings(lecMeetings);
-			cmAdmin.updateSection(lec);
-
-			for(int sectionCounter = 1; sectionCounter <= 6; sectionCounter++) {
-				Section discussion = cmAdmin.createSection(co.getEid() + " Discussion " + sectionCounter,
-						"Discussion " + sectionCounter, "Samples, Discussion " + sectionCounter,
-						discussionCategory.getCategoryCode(), null, co.getEid(), null);
-
-				// Discussion section memberships: students
-				for(int studentCounter = (30 * sectionCounter); studentCounter < 30 * (sectionCounter+1); studentCounter++) {
-					cmAdmin.addOrUpdateSectionMembership("student" + studentCounter, "S",discussion.getEid(), "member");
-				}
-
-				// Discussion section memberships: intructor
-				cmAdmin.addOrUpdateSectionMembership("instructor", "I",discussion.getEid(), "section_leader");
-				cmAdmin.addOrUpdateSectionMembership("admin", "I",discussion.getEid(), "section_leader");
-
-				// Meetings
-				Set<Meeting> discMeetings = new HashSet<Meeting>();
-				discMeetings.add(cmAdmin.newSectionMeeting(discussion.getEid(), "The llocation for " + discussion.getTitle(), null, null, null));
-				lec.setMeetings(lecMeetings);
-				cmAdmin.updateSection(lec);
-
-			}
 		}
+
+		// Don't load the sections in a loop, since we need to define specific data for each
+		// Section Categories (these are returned in alpha order, so we can control the order here)
+		SectionCategory lectureCategory = cmAdmin.addSectionCategory("01.lct", "Lecture");
+		SectionCategory discussionCategory = cmAdmin.addSectionCategory("03.dsc", "Discussion");
+		cmAdmin.addSectionCategory("02.lab", "Lab");
+		cmAdmin.addSectionCategory("04.rec", "Recitation");
+		cmAdmin.addSectionCategory("05.sto", "Studio");
+
+		for(Iterator<AcademicSession> iter = cmService.getAcademicSessions().iterator(); iter.hasNext();) {
+			AcademicSession as = iter.next();
+
+			// Clear the student count for this academic session
+			resetStudentCount();
+
+			// Lecture Sections
+			String co1Eid = CO1_PREFIX + as.getEid();
+			String lec1Eid = co1Eid;
+			Section lec1 = cmAdmin.createSection(lec1Eid, lec1Eid, lec1Eid + " Lecture",
+				lectureCategory.getCategoryCode(), null, co1Eid, co1Eid + ENROLLMENT_SET_SUFFIX);
+			Set<Meeting> lec1Meetings = new HashSet<Meeting>();
+			Meeting mtg1 = cmAdmin.newSectionMeeting(lec1.getEid(), "A Building 11", getTime("10:30am"), getTime("11:00am"), null);
+			mtg1.setMonday(true);
+			mtg1.setWednesday(true);
+			mtg1.setFriday(true);
+			lec1Meetings.add(mtg1);
+			lec1.setMeetings(lec1Meetings);
+			cmAdmin.updateSection(lec1);
+			if(log.isDebugEnabled()) log.debug("Created section " + lec1Eid);
+
+			String co2Eid = CO2_PREFIX + as.getEid();
+			String lec2Eid = co2Eid;
+			Section lec2 = cmAdmin.createSection(lec2Eid, lec2Eid, lec2Eid + " Lecture",
+				lectureCategory.getCategoryCode(), null, co2Eid, co2Eid + ENROLLMENT_SET_SUFFIX);
+			Set<Meeting> lec2Meetings = new HashSet<Meeting>();
+			Meeting mtg2 = cmAdmin.newSectionMeeting(lec2.getEid(), "A Building 11", getTime("10:30am"), getTime("11:00am"), null);
+			mtg2.setMonday(true);
+			mtg2.setWednesday(true);
+			mtg2.setFriday(true);
+			lec2Meetings.add(mtg2);
+			lec2.setMeetings(lec2Meetings);
+			cmAdmin.updateSection(lec2);
+			if(log.isDebugEnabled()) log.debug("Created section " + lec2Eid);
+			
+			// Discussion sections, first Course Offering
+			
+			loadDiscussionSection("Discussion 1 " + CC1, as.getEid(), co1Eid,
+					discussionCategory.getCategoryCode(), null, null, null,
+					new boolean[]{false, false, false, false, false, false, false}, studentCount, incrementStudentCount());
+
+			loadDiscussionSection("Discussion 2 " + CC1, as.getEid(), co1Eid,
+					discussionCategory.getCategoryCode(), "B Building 202",
+					getTime("10:00AM"), getTime("11:30AM"),
+					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+
+			loadDiscussionSection("Discussion 3 " + CC1, as.getEid(), co1Eid,
+					discussionCategory.getCategoryCode(), "B Hall 11",
+					getTime("9:00AM"), getTime("10:30AM"),
+					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+
+			loadDiscussionSection("Discussion 4 " + CC1, as.getEid(), co1Eid,
+					discussionCategory.getCategoryCode(), "C Building 100",
+					getTime("1:30PM"), getTime("3:00PM"),
+					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+			
+			loadDiscussionSection("Discussion 5 " + CC1, as.getEid(), co1Eid,
+					discussionCategory.getCategoryCode(), "Building 10",
+					getTime("9:00AM"), getTime("10:00AM"),
+					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+
+			loadDiscussionSection("Discussion 6 " + CC1, as.getEid(), co1Eid,
+					discussionCategory.getCategoryCode(), "Hall 200",
+					getTime("4:00PM"), getTime("5:00PM"),
+					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+			
+			// Discussion sections, second Course Offering
+			
+			loadDiscussionSection("Discussion 1 " + CC2, as.getEid(), co2Eid,
+					discussionCategory.getCategoryCode(), null, null, null,
+					new boolean[]{false, false, false, false, false, false, false}, studentCount, incrementStudentCount());
+			
+			loadDiscussionSection("Discussion 2 " + CC2, as.getEid(), co2Eid,
+					discussionCategory.getCategoryCode(), "2 Building A",
+					getTime("11:30AM"), getTime("1:00PM"),
+					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+
+			loadDiscussionSection("Discussion 3 " + CC2, as.getEid(), co2Eid,
+					discussionCategory.getCategoryCode(), "101 Hall A",
+					getTime("10:00AM"), getTime("11:00AM"),
+					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+
+			loadDiscussionSection("Discussion 4 " + CC2, as.getEid(), co2Eid,
+					discussionCategory.getCategoryCode(), "202 Building",
+					getTime("8:00AM"), getTime("9:00AM"),
+					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+
+			loadDiscussionSection("Discussion 5 " + CC2, as.getEid(), co2Eid,
+					discussionCategory.getCategoryCode(), "11 Hall B",
+					getTime("2:00PM"), getTime("3:30PM"),
+					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+
+			loadDiscussionSection("Discussion 6 " + CC2, as.getEid(), co2Eid,
+					discussionCategory.getCategoryCode(), "100 Building C",
+					getTime("3:00PM"), getTime("4:00PM"),
+					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+		}
+		
 		if(log.isInfoEnabled()) log.info("Finished loading sample CM data");
+	}
+
+	protected Time getTime(String timeString) {
+		Date date = null;
+		try {
+			date = sdf.parse(timeString);
+		} catch (ParseException pe) {
+			log.error("Can not parse time " + timeString);
+			date = new Date();
+		}
+		return new Time(date.getTime());
+	}
+
+	protected void loadDiscussionSection(String secEidPrefix, String asEid, String coEid, String categoryCode,
+			String location, Time startTime, Time endTime, boolean[] days, int studentStart, int studentEnd) {
+		String secEid = secEidPrefix + " " + asEid;
+		Section sec = cmAdmin.createSection(secEid, secEidPrefix, secEid,
+				categoryCode, null, coEid, null);
+		for(int studentCounter = studentStart; studentCounter < studentEnd ; studentCounter++) {
+			cmAdmin.addOrUpdateSectionMembership("student" + studentCounter, "S", secEid, "member");
+		}
+		cmAdmin.addOrUpdateSectionMembership("instructor", "I", secEid, "section_leader");
+		cmAdmin.addOrUpdateSectionMembership("admin", "I", secEid, "section_leader");
+
+		Set<Meeting> meetings = new HashSet<Meeting>();
+		Meeting mtg = cmAdmin.newSectionMeeting(secEid, location, startTime, endTime, null);
+		mtg.setMonday(days[0]);
+		mtg.setTuesday(days[1]);
+		mtg.setWednesday(days[2]);
+		mtg.setThursday(days[3]);
+		mtg.setFriday(days[4]);
+		mtg.setSaturday(days[5]);
+		mtg.setSunday(days[6]);
+		meetings.add(mtg);
+		sec.setMeetings(meetings);
+		cmAdmin.updateSection(sec);
+		
+		if(log.isDebugEnabled()) log.debug("Created section " + secEid);
+	}
+	
+	protected int incrementStudentCount() {
+		studentCount += 30;
+		return studentCount;
+	}
+	
+	protected void resetStudentCount() {
+		studentCount = 1;
 	}
 }
