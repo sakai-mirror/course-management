@@ -36,7 +36,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.cover.AuthzGroupService;
-import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
@@ -117,11 +116,6 @@ public class SampleDataLoader implements BeanFactoryAware {
 		this.cmAdmin = cmAdmin;
 	}
 
-	protected ServerConfigurationService scs;
-	public void setScs(ServerConfigurationService scs) {
-		this.scs = scs;
-	}
-	
 	protected CourseManagementService cmService;
 	public void setCmService(CourseManagementService cmService) {
 		this.cmService = cmService;
@@ -144,7 +138,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 		if(cmAdmin == null) {
 			return;
 		}
-		if(loadSampleData && scs.getBoolean("auto.ddl", true)) {
+		if(loadSampleData) {
 			loginToSakai();
 			PlatformTransactionManager tm = (PlatformTransactionManager)beanFactory.getBean("org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager");
 			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -197,12 +191,10 @@ public class SampleDataLoader implements BeanFactoryAware {
 		// Don't do anything if we've got data already.  The existence of an
 		// AcademicSession for the first legacy term will be our indicator for existing
 		// data.
-		try {
-			cmService.getAcademicSession(ACADEMIC_SESSION_EIDS[0]);
+		List<AcademicSession> existingAcademicSessions = cmService.getAcademicSessions();
+		if(existingAcademicSessions != null && ! existingAcademicSessions.isEmpty()) {
 			if(log.isInfoEnabled()) log.info("CM data exists, skipping data load.");
 			return;
-		} catch (IdNotFoundException ide) {
-			if(log.isInfoEnabled()) log.info("Starting sample CM data load");
 		}
 
 		// Academic Sessions
