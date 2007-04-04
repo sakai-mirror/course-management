@@ -45,7 +45,6 @@ import org.sakaiproject.coursemanagement.api.EnrollmentSet;
 import org.sakaiproject.coursemanagement.api.Meeting;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.SectionCategory;
-import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.event.cover.EventTrackingService;
 import org.sakaiproject.event.cover.UsageSessionService;
 import org.sakaiproject.tool.api.Session;
@@ -74,6 +73,10 @@ public class SampleDataLoader implements BeanFactoryAware {
 	protected static final String CO2_PREFIX = CC2 + " ";
 
 	protected static final String ENROLLMENT_SET_SUFFIX = "es";
+
+	protected static final int ENROLLMENT_SETS_PER_ACADEMIC_SESSION = 2;
+	protected static final int ENROLLMENTS_PER_SET = 180;
+	
 	
 	protected static final SimpleDateFormat sdf;
 	static {
@@ -108,7 +111,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 		sdf = new SimpleDateFormat("HH:mma");
 	}
 	
-	protected int studentCount;
+	protected int studentMemberCount;
 
 	// Begin Dependency Injection //
 	protected CourseManagementAdministration cmAdmin;
@@ -215,6 +218,9 @@ public class SampleDataLoader implements BeanFactoryAware {
 		cc.add(cmAdmin.createCanonicalCourse(CC1, "Sample 101", "A survey of samples"));
 		cc.add(cmAdmin.createCanonicalCourse(CC2, "Sample 202", "An in depth study of samples"));
 		cmAdmin.setEquivalentCanonicalCourses(cc);
+
+		// Keep an ordered list of COs for use in building enrollment sets & adding enrollments
+		List<CourseOffering> courseOfferingsList = new ArrayList<CourseOffering>();
 		
 		for(Iterator<AcademicSession> iter = academicSessions.iterator(); iter.hasNext();) {
 			AcademicSession as = iter.next();
@@ -224,6 +230,9 @@ public class SampleDataLoader implements BeanFactoryAware {
 			CourseOffering co2 = cmAdmin.createCourseOffering(CO2_PREFIX + as.getEid(),
 					CC2, "Sample course offering #2, " + as.getEid(), "open", as.getEid(),
 					CC2, as.getStartDate(), as.getEndDate());
+
+			courseOfferingsList.add(co1);
+			courseOfferingsList.add(co2);
 
 			Set<CourseOffering> courseOfferingSet = new HashSet<CourseOffering>();
 			courseOfferingSet.add(co1);
@@ -254,15 +263,19 @@ public class SampleDataLoader implements BeanFactoryAware {
 		instructors.add("instructor");
 
 		
-		Set<CourseOffering> courseOfferings = cmService.getCourseOfferingsInCourseSet(CS);
-		for(Iterator<CourseOffering> iter = courseOfferings.iterator(); iter.hasNext();) {
+		int enrollmentOffset = 1;
+		for(Iterator<CourseOffering> iter = courseOfferingsList.iterator(); iter.hasNext();) {
+			if(enrollmentOffset > (ENROLLMENT_SETS_PER_ACADEMIC_SESSION * ENROLLMENTS_PER_SET )) {
+				enrollmentOffset = 1;
+			}
+			
 			CourseOffering co = iter.next();
 			EnrollmentSet es = cmAdmin.createEnrollmentSet(co.getEid() + ENROLLMENT_SET_SUFFIX,
 					co.getTitle() + " Enrollment Set", co.getDescription() + " Enrollment Set",
 					"lecture", "3", co.getEid(), instructors);
 			
 			// Enrollments
-			for(int enrollmentCounter = 1; enrollmentCounter <= 180; enrollmentCounter++) {
+			for(int enrollmentCounter = enrollmentOffset; enrollmentCounter < (enrollmentOffset + ENROLLMENTS_PER_SET ); enrollmentCounter++) {
 				if(++gradingIndex == gradingEntries.size()) {
 					gradingIndex = 0;
 				}
@@ -275,6 +288,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 
 				cmAdmin.addOrUpdateEnrollment("student" + enrollmentCounter, es.getEid(), enrollmentStatus, "3", gradingScheme);
 			}
+			enrollmentOffset += ENROLLMENTS_PER_SET;
 		}
 
 		// Don't load the sections in a loop, since we need to define specific data for each
@@ -289,7 +303,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 			AcademicSession as = iter.next();
 
 			// Clear the student count for this academic session
-			resetStudentCount();
+			resetStudentMemberCount();
 
 			// Lecture Sections
 			String co1Eid = CO1_PREFIX + as.getEid();
@@ -324,63 +338,63 @@ public class SampleDataLoader implements BeanFactoryAware {
 			
 			loadDiscussionSection("Discussion 1 " + CC1, as.getEid(), co1Eid,
 					discussionCategory.getCategoryCode(), null, null, null,
-					new boolean[]{false, false, false, false, false, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{false, false, false, false, false, false, false}, studentMemberCount, incrementStudentCount());
 
 			loadDiscussionSection("Discussion 2 " + CC1, as.getEid(), co1Eid,
 					discussionCategory.getCategoryCode(), "B Building 202",
 					getTime("10:00AM"), getTime("11:30AM"),
-					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{false, true, false, true, false, false, false}, studentMemberCount, incrementStudentCount());
 
 			loadDiscussionSection("Discussion 3 " + CC1, as.getEid(), co1Eid,
 					discussionCategory.getCategoryCode(), "B Hall 11",
 					getTime("9:00AM"), getTime("10:30AM"),
-					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{false, true, false, true, false, false, false}, studentMemberCount, incrementStudentCount());
 
 			loadDiscussionSection("Discussion 4 " + CC1, as.getEid(), co1Eid,
 					discussionCategory.getCategoryCode(), "C Building 100",
 					getTime("1:30PM"), getTime("3:00PM"),
-					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{false, true, false, true, false, false, false}, studentMemberCount, incrementStudentCount());
 			
 			loadDiscussionSection("Discussion 5 " + CC1, as.getEid(), co1Eid,
 					discussionCategory.getCategoryCode(), "Building 10",
 					getTime("9:00AM"), getTime("10:00AM"),
-					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{true, false, true, false, true, false, false}, studentMemberCount, incrementStudentCount());
 
 			loadDiscussionSection("Discussion 6 " + CC1, as.getEid(), co1Eid,
 					discussionCategory.getCategoryCode(), "Hall 200",
 					getTime("4:00PM"), getTime("5:00PM"),
-					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{true, false, true, false, true, false, false}, studentMemberCount, incrementStudentCount());
 			
 			// Discussion sections, second Course Offering
 			
 			loadDiscussionSection("Discussion 1 " + CC2, as.getEid(), co2Eid,
 					discussionCategory.getCategoryCode(), null, null, null,
-					new boolean[]{false, false, false, false, false, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{false, false, false, false, false, false, false}, studentMemberCount, incrementStudentCount());
 			
 			loadDiscussionSection("Discussion 2 " + CC2, as.getEid(), co2Eid,
 					discussionCategory.getCategoryCode(), "2 Building A",
 					getTime("11:30AM"), getTime("1:00PM"),
-					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{false, true, false, true, false, false, false}, studentMemberCount, incrementStudentCount());
 
 			loadDiscussionSection("Discussion 3 " + CC2, as.getEid(), co2Eid,
 					discussionCategory.getCategoryCode(), "101 Hall A",
 					getTime("10:00AM"), getTime("11:00AM"),
-					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{true, false, true, false, true, false, false}, studentMemberCount, incrementStudentCount());
 
 			loadDiscussionSection("Discussion 4 " + CC2, as.getEid(), co2Eid,
 					discussionCategory.getCategoryCode(), "202 Building",
 					getTime("8:00AM"), getTime("9:00AM"),
-					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{true, false, true, false, true, false, false}, studentMemberCount, incrementStudentCount());
 
 			loadDiscussionSection("Discussion 5 " + CC2, as.getEid(), co2Eid,
 					discussionCategory.getCategoryCode(), "11 Hall B",
 					getTime("2:00PM"), getTime("3:30PM"),
-					new boolean[]{false, true, false, true, false, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{false, true, false, true, false, false, false}, studentMemberCount, incrementStudentCount());
 
 			loadDiscussionSection("Discussion 6 " + CC2, as.getEid(), co2Eid,
 					discussionCategory.getCategoryCode(), "100 Building C",
 					getTime("3:00PM"), getTime("4:00PM"),
-					new boolean[]{true, false, true, false, true, false, false}, studentCount, incrementStudentCount());
+					new boolean[]{true, false, true, false, true, false, false}, studentMemberCount, incrementStudentCount());
 		}
 		
 		if(log.isInfoEnabled()) log.info("Finished loading sample CM data");
@@ -425,11 +439,11 @@ public class SampleDataLoader implements BeanFactoryAware {
 	}
 	
 	protected int incrementStudentCount() {
-		studentCount += 30;
-		return studentCount;
+		studentMemberCount += 30;
+		return studentMemberCount;
 	}
 	
-	protected void resetStudentCount() {
-		studentCount = 1;
+	protected void resetStudentMemberCount() {
+		studentMemberCount = 1;
 	}
 }
