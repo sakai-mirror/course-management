@@ -110,7 +110,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set<Membership> getCourseSetMemberships(String courseSetEid) throws IdNotFoundException {
-		return getMemberships((CourseSetCmImpl)getCourseSet(courseSetEid));
+		return getMemberships((AbstractMembershipContainerCmImpl)getCourseSet(courseSetEid));
 	}
 
 	public CanonicalCourse getCanonicalCourse(String eid) throws IdNotFoundException {
@@ -171,7 +171,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set<Membership> getCourseOfferingMemberships(String courseOfferingEid) throws IdNotFoundException {
-		return getMemberships((CourseOfferingCmImpl)getCourseOffering(courseOfferingEid));
+		return getMemberships((AbstractMembershipContainerCmImpl)getCourseOffering(courseOfferingEid));
 	}
 
 	/**
@@ -221,7 +221,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public Set<Membership> getSectionMemberships(String sectionEid) throws IdNotFoundException {
-		return getMemberships((SectionCmImpl)getSection(sectionEid));
+		return getMemberships((AbstractMembershipContainerCmImpl)getSection(sectionEid));
 	}
 
 	public EnrollmentSet getEnrollmentSet(String eid) throws IdNotFoundException {
