@@ -21,6 +21,7 @@
 package org.sakaiproject.coursemanagement.impl;
 
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,6 +80,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 	
 	
 	protected static final SimpleDateFormat sdf;
+	protected static DecimalFormat df;
 	static {
 		ACADEMIC_SESSION_EIDS[0] = "Winter 2007";
 		ACADEMIC_SESSION_EIDS[1] = "Spring 2007";
@@ -109,6 +111,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 		ACADEMIC_SESSION_END_DATES[3] = endCal.getTime();		
 		
 		sdf = new SimpleDateFormat("HH:mma");
+		df = new DecimalFormat("0000");
 	}
 	
 	protected int studentMemberCount;
@@ -286,7 +289,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 				}
 				String enrollmentStatus = enrollmentEntries.get(enrollmentIndex);
 
-				cmAdmin.addOrUpdateEnrollment("student" + enrollmentCounter, es.getEid(), enrollmentStatus, "3", gradingScheme);
+				cmAdmin.addOrUpdateEnrollment("student" + df.format(enrollmentCounter), es.getEid(), enrollmentStatus, "3", gradingScheme);
 			}
 			enrollmentOffset += ENROLLMENTS_PER_SET;
 		}
@@ -417,7 +420,8 @@ public class SampleDataLoader implements BeanFactoryAware {
 		Section sec = cmAdmin.createSection(secEid, secEidPrefix, secEid,
 				categoryCode, null, coEid, null);
 		for(int studentCounter = studentStart; studentCounter < studentEnd ; studentCounter++) {
-			cmAdmin.addOrUpdateSectionMembership("student" + studentCounter, "S", secEid, "member");
+			String zeroPaddedId = df.format(studentCounter);
+			cmAdmin.addOrUpdateSectionMembership("student" + zeroPaddedId, "S", secEid, "member");
 		}
 		cmAdmin.addOrUpdateSectionMembership("instructor", "I", secEid, "section_leader");
 		cmAdmin.addOrUpdateSectionMembership("admin", "I", secEid, "section_leader");
