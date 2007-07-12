@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>master</artifactId>
+    <artifactId>course-management-base</artifactId>
     <groupId>org.sakaiproject</groupId>
     <version>M2</version>
-    <relativePath>../../../master/pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <name>sakai-coursemanagement-hibernate-pack</name>
   <groupId>org.sakaiproject</groupId>
@@ -21,27 +21,38 @@
   </properties>
   <dependencies>
     <dependency>
-      
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-coursemanagement-hibernate-impl</artifactId>
       <version>${sakai.version}</version>
-    </dependency>
-    <dependency>
-      
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-coursemanagement-hibernate-model</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
+      <exclusions>
+	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-coursemanagement-hibernate-model</artifactId>
+	</exclusion>
+        <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-mock</artifactId>
+        </exclusion>
+        <exclusion>
+                <groupId>aopalliance</groupId>
+                <artifactId>aopalliance</artifactId>
+        </exclusion>
+        <exclusion>
+                <groupId>odmg</groupId>
+                <artifactId>odmg</artifactId>
+        </exclusion>
+        <exclusion>
+                <groupId>commons-digester</groupId>
+                <artifactId>commons-digester</artifactId>
+        </exclusion>
+        <exclusion>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
-    
-    
-    
-    
-    
-    
     <resources/>
-    
   </build>
 </project>
