@@ -4,17 +4,17 @@
  ***********************************************************************************
  *
  * Copyright (c) 2007 The Sakai Foundation.
- * 
- * Licensed under the Educational Community License, Version 1.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Educational Community License, Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.opensource.org/licenses/ecl1.php
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  *
  **********************************************************************************/
@@ -77,8 +77,8 @@ public class SampleDataLoader implements BeanFactoryAware {
 
 	protected static final int ENROLLMENT_SETS_PER_ACADEMIC_SESSION = 2;
 	protected static final int ENROLLMENTS_PER_SET = 180;
-	
-	
+
+
 	protected static final SimpleDateFormat sdf;
 	protected static DecimalFormat df;
 	static {
@@ -86,7 +86,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 		ACADEMIC_SESSION_EIDS[1] = "Spring 2007";
 		ACADEMIC_SESSION_EIDS[2] = "Summer 2007";
 		ACADEMIC_SESSION_EIDS[3] = "Fall 2007";
-		
+
 		GregorianCalendar startCal = new GregorianCalendar();
 		GregorianCalendar endCal = new GregorianCalendar();
 
@@ -94,7 +94,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 		endCal.set(2007, 3, 1);
 		ACADEMIC_SESSION_START_DATES[0] = startCal.getTime();
 		ACADEMIC_SESSION_END_DATES[0] = endCal.getTime();
-		
+
 		startCal.set(2007, 3, 1);
 		endCal.set(2007, 5, 1);
 		ACADEMIC_SESSION_START_DATES[1] = startCal.getTime();
@@ -104,16 +104,16 @@ public class SampleDataLoader implements BeanFactoryAware {
 		endCal.set(2007, 8, 1);
 		ACADEMIC_SESSION_START_DATES[2] = startCal.getTime();
 		ACADEMIC_SESSION_END_DATES[2] = endCal.getTime();
-		
+
 		startCal.set(2007, 8, 1);
 		endCal.set(2008, 0, 1);
 		ACADEMIC_SESSION_START_DATES[3] = startCal.getTime();
-		ACADEMIC_SESSION_END_DATES[3] = endCal.getTime();		
-		
-		sdf = new SimpleDateFormat("HH:mma");
+		ACADEMIC_SESSION_END_DATES[3] = endCal.getTime();
+
+		sdf = new SimpleDateFormat("hh:mma");
 		df = new DecimalFormat("0000");
 	}
-	
+
 	protected int studentMemberCount;
 
 	// Begin Dependency Injection //
@@ -131,7 +131,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
-	
+
 	/** A flag for disabling the sample data load */
 	protected boolean loadSampleData;
 	public void setLoadSampleData(boolean loadSampleData) {
@@ -165,11 +165,11 @@ public class SampleDataLoader implements BeanFactoryAware {
 			if(log.isInfoEnabled()) log.info("Skipped CM data load");
 		}
 	}
-	
+
 	public void destroy() {
 		log.info("Destroying " + getClass().getName());
 	}
-	
+
 	private void loginToSakai() {
 	    Session sakaiSession = SessionManager.getCurrentSession();
 		sakaiSession.setUserId("admin");
@@ -177,7 +177,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 
 		// establish the user's session
 		UsageSessionService.startSession("admin", "127.0.0.1", "CMSync");
-		
+
 		// update the user's externally provided realm definitions
 		AuthzGroupService.refreshUser("admin");
 
@@ -188,7 +188,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 	private void logoutFromSakai() {
 	    Session sakaiSession = SessionManager.getCurrentSession();
 		sakaiSession.invalidate();
-		
+
 		// post the logout event
 		EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGOUT, null, true));
 	}
@@ -215,7 +215,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 		cmAdmin.createCourseSet(CS, "Sample Department",
 				"We study wet things in the Sample Dept", "DEPT", null);
 		cmAdmin.addOrUpdateCourseSetMembership("da1","DeptAdmin", CS, "active");
-		
+
 		// Cross-listed Canonical Courses
 		Set<CanonicalCourse> cc = new HashSet<CanonicalCourse>();
 		cc.add(cmAdmin.createCanonicalCourse(CC1, "Sample 101", "A survey of samples"));
@@ -224,7 +224,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 
 		// Keep an ordered list of COs for use in building enrollment sets & adding enrollments
 		List<CourseOffering> courseOfferingsList = new ArrayList<CourseOffering>();
-		
+
 		for(Iterator<AcademicSession> iter = academicSessions.iterator(); iter.hasNext();) {
 			AcademicSession as = iter.next();
 			CourseOffering co1 = cmAdmin.createCourseOffering(CO1_PREFIX + as.getEid(),
@@ -240,18 +240,18 @@ public class SampleDataLoader implements BeanFactoryAware {
 			Set<CourseOffering> courseOfferingSet = new HashSet<CourseOffering>();
 			courseOfferingSet.add(co1);
 			courseOfferingSet.add(co2);
-			
+
 			// Cross list these course offerings
 			cmAdmin.setEquivalentCourseOfferings(courseOfferingSet);
 
 			cmAdmin.addCourseOfferingToCourseSet(CS, co1.getEid());
 			cmAdmin.addCourseOfferingToCourseSet(CS, co2.getEid());
-						
+
 			// And add some other instructors at the offering level (this should help with testing cross listings)
 			cmAdmin.addOrUpdateCourseOfferingMembership("instructor1","I", co1.getEid(), null);
 			cmAdmin.addOrUpdateCourseOfferingMembership("instructor2","I", co2.getEid(), null);
 		}
-		
+
 		Map<String, String> enrollmentStatuses = cmService.getEnrollmentStatusDescriptions(Locale.US);
 		Map<String, String> gradingSchemes = cmService.getGradingSchemeDescriptions(Locale.US);
 
@@ -259,24 +259,24 @@ public class SampleDataLoader implements BeanFactoryAware {
 		List<String> gradingEntries = new ArrayList<String>(gradingSchemes.keySet());
 		int enrollmentIndex = 0;
 		int gradingIndex = 0;
-		
+
 		// Enrollment sets and sections
 		Set<String> instructors = new HashSet<String>();
 		instructors.add("admin");
 		instructors.add("instructor");
 
-		
+
 		int enrollmentOffset = 1;
 		for(Iterator<CourseOffering> iter = courseOfferingsList.iterator(); iter.hasNext();) {
 			if(enrollmentOffset > (ENROLLMENT_SETS_PER_ACADEMIC_SESSION * ENROLLMENTS_PER_SET )) {
 				enrollmentOffset = 1;
 			}
-			
+
 			CourseOffering co = iter.next();
 			EnrollmentSet es = cmAdmin.createEnrollmentSet(co.getEid() + ENROLLMENT_SET_SUFFIX,
 					co.getTitle() + " Enrollment Set", co.getDescription() + " Enrollment Set",
 					"lecture", "3", co.getEid(), instructors);
-			
+
 			// Enrollments
 			for(int enrollmentCounter = enrollmentOffset; enrollmentCounter < (enrollmentOffset + ENROLLMENTS_PER_SET ); enrollmentCounter++) {
 				if(++gradingIndex == gradingEntries.size()) {
@@ -336,9 +336,9 @@ public class SampleDataLoader implements BeanFactoryAware {
 			lec2.setMeetings(lec2Meetings);
 			cmAdmin.updateSection(lec2);
 			if(log.isDebugEnabled()) log.debug("Created section " + lec2Eid);
-			
+
 			// Discussion sections, first Course Offering
-			
+
 			loadDiscussionSection("Discussion 1 " + CC1, as.getEid(), co1Eid,
 					discussionCategory.getCategoryCode(), null, null, null,
 					new boolean[]{false, false, false, false, false, false, false}, studentMemberCount, incrementStudentCount());
@@ -357,7 +357,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 					discussionCategory.getCategoryCode(), "C Building 100",
 					getTime("1:30PM"), getTime("3:00PM"),
 					new boolean[]{false, true, false, true, false, false, false}, studentMemberCount, incrementStudentCount());
-			
+
 			loadDiscussionSection("Discussion 5 " + CC1, as.getEid(), co1Eid,
 					discussionCategory.getCategoryCode(), "Building 10",
 					getTime("9:00AM"), getTime("10:00AM"),
@@ -367,13 +367,13 @@ public class SampleDataLoader implements BeanFactoryAware {
 					discussionCategory.getCategoryCode(), "Hall 200",
 					getTime("4:00PM"), getTime("5:00PM"),
 					new boolean[]{true, false, true, false, true, false, false}, studentMemberCount, incrementStudentCount());
-			
+
 			// Discussion sections, second Course Offering
-			
+
 			loadDiscussionSection("Discussion 1 " + CC2, as.getEid(), co2Eid,
 					discussionCategory.getCategoryCode(), null, null, null,
 					new boolean[]{false, false, false, false, false, false, false}, studentMemberCount, incrementStudentCount());
-			
+
 			loadDiscussionSection("Discussion 2 " + CC2, as.getEid(), co2Eid,
 					discussionCategory.getCategoryCode(), "2 Building A",
 					getTime("11:30AM"), getTime("1:00PM"),
@@ -399,7 +399,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 					getTime("3:00PM"), getTime("4:00PM"),
 					new boolean[]{true, false, true, false, true, false, false}, studentMemberCount, incrementStudentCount());
 		}
-		
+
 		if(log.isInfoEnabled()) log.info("Finished loading sample CM data");
 	}
 
@@ -438,15 +438,15 @@ public class SampleDataLoader implements BeanFactoryAware {
 		meetings.add(mtg);
 		sec.setMeetings(meetings);
 		cmAdmin.updateSection(sec);
-		
+
 		if(log.isDebugEnabled()) log.debug("Created section " + secEid);
 	}
-	
+
 	protected int incrementStudentCount() {
 		studentMemberCount += 30;
 		return studentMemberCount;
 	}
-	
+
 	protected void resetStudentMemberCount() {
 		studentMemberCount = 1;
 	}
