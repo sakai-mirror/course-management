@@ -253,7 +253,7 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 				return q.iterate().next();
 			}
 		};
-		Integer i = (Integer)getHibernateTemplate().execute(hc);
+		Long i = (Long)getHibernateTemplate().execute(hc);
 		if(log.isDebugEnabled()) log.debug(userId + " is enrolled in " + i + " of these " + enrollmentSetEids.size() + " EnrollmentSets" );
 		return i.intValue() > 0;
 	}
@@ -394,27 +394,27 @@ public class CourseManagementServiceHibernateImpl extends HibernateDaoSupport im
 	}
 
 	public boolean isAcademicSessionDefined(String eid) {
-		return ((Integer)getHibernateTemplate().findByNamedQueryAndNamedParam("isAcademicSessionDefined", "eid", eid).get(0)).intValue() == 1;
+		return ((Long)getHibernateTemplate().findByNamedQueryAndNamedParam("isAcademicSessionDefined", "eid", eid).get(0)).intValue() == 1;
 	}
 
 	public boolean isCanonicalCourseDefined(String eid) {
-		return ((Integer)getHibernateTemplate().findByNamedQueryAndNamedParam("isCanonicalCourseDefined", "eid", eid).get(0)).intValue() == 1;
+		return ((Long)getHibernateTemplate().findByNamedQueryAndNamedParam("isCanonicalCourseDefined", "eid", eid).get(0)).intValue() == 1;
 	}
 
 	public boolean isCourseOfferingDefined(String eid) {
-		return ((Integer)getHibernateTemplate().findByNamedQueryAndNamedParam("isCourseOfferingDefined", "eid", eid).get(0)).intValue() == 1;
+		return ((Long)getHibernateTemplate().findByNamedQueryAndNamedParam("isCourseOfferingDefined", "eid", eid).get(0)).intValue() == 1;
 	}
 
 	public boolean isCourseSetDefined(String eid) {
-		return ((Integer)getHibernateTemplate().findByNamedQueryAndNamedParam("isCourseSetDefined", "eid", eid).get(0)).intValue() == 1;
+		return ((Long)getHibernateTemplate().findByNamedQueryAndNamedParam("isCourseSetDefined", "eid", eid).get(0)).intValue() == 1;
 	}
 
 	public boolean isEnrollmentSetDefined(String eid) {
-		return ((Integer)getHibernateTemplate().findByNamedQueryAndNamedParam("isEnrollmentSetDefined", "eid", eid).get(0)).intValue() == 1;
+		return ((Long)getHibernateTemplate().findByNamedQueryAndNamedParam("isEnrollmentSetDefined", "eid", eid).get(0)).intValue() == 1;
 	}
 
 	public boolean isSectionDefined(String eid) {
-		return ((Integer)getHibernateTemplate().findByNamedQueryAndNamedParam("isSectionDefined", "eid", eid).get(0)).intValue() == 1;
+		return ((Long)getHibernateTemplate().findByNamedQueryAndNamedParam("isSectionDefined", "eid", eid).get(0)).intValue() == 1;
 	}
 
 	public List<String> getSectionCategories() {
