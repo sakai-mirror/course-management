@@ -482,7 +482,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 		// that hibernate understands.
 		final String className = Hibernate.getClass(container).getName();
 
-		final StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
+		final StringBuilder sb = new StringBuilder("select mbr from MembershipCmImpl as mbr, ");
 		sb.append(className);
         sb.append(" as container where mbr.memberContainer=container ");
         sb.append("and container.eid=:eid ");
@@ -627,7 +627,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 	private Object getObjectByEid(final String eid, final String className) throws IdNotFoundException {
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				StringBuffer hql = new StringBuffer();
+				StringBuilder hql = new StringBuilder();
 				hql.append("from ").append(className).append(" as obj where obj.eid=:eid");
 				Query q = session.createQuery(hql.toString());
 				q.setParameter("eid", eid);
@@ -656,7 +656,7 @@ public class CourseManagementAdministrationHibernateImpl extends
 
 		HibernateCallback hc = new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException {
-				StringBuffer sb = new StringBuffer("select mbr from MembershipCmImpl as mbr, ");
+				StringBuilder sb = new StringBuilder("select mbr from MembershipCmImpl as mbr, ");
 					sb.append(className);
 					sb.append(" as container where mbr.memberContainer=container ");
 					sb.append("and container.eid=:eid");
