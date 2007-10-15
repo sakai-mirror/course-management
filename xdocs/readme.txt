@@ -2,45 +2,70 @@ $URL: $
 $Id: $
 
 I. Introduction
+	From its inception, Sakai has maintained a strong separation between the concept of
+	a generic "site" and an academic "course".  This allows the framework to maintain
+	flexibility and to offer non-course-related worksites.  The Course Management project
+	provides course-oriented tools and services the ability to utilize course-specific
+	data that can not be modeled in generic site -> member relationships while maintaining
+	Sakai's generic site-orientation.
 
+II. Related Projects and Components
 	The /course-management module contains the Course Management API, a hibernate
-	implementation, and a federating implementation that allows for federating from
-	multiple data sources.  See the section on federating CM implementations below.
+	implementation, and a federating implementation that allows for federating course
+	data from multiple sources.  See the section on federating CM implementations below.
 
-II. Supplying CM with data
+	The /providers module contains Sakai's default GroupProvider, which makes use of
+	the CourseManagementService to resolve users memberships.
 
-	There are several options for supplying Sakai with CM data via the
-	CourseManagement APIs.
+	The /roster module contains the Roster tool, which is a client of the CourseManagementService.
+
+	The /site-manage module contains the Worksite Setup and Site Info tools.  Like the Roster
+	tool, these tools are also clients of the CourseManagementService.  Additionally, these tools
+	also play an important role in associating sites with "Sections".  CM is the source-of-authority
+	for official Sections, and Site Info / WS Setup provides the "glue" that allows us to map
+	between Sakai's Site & Group "providerIds" and CourseManagement's Section "enterpriseIds".
+
+III. Supplying CM with data
+
+	There are several options for supplying Sakai with CM data via the CourseManagement APIs.
 	
-	A. Loading test data
-		To load data into the default hibernate implementation:
-		1) Modify cm-impl/hibernate-impl/src/test/hibernate.dataload.properties to match
-		your database connection info.
-		2) cd course-management/cm-impl/hibernate-impl/impl ; maven load-data;
-		3) You may customize this dataloading procedure here:
-		org.sakaiproject.coursemanagement.test.CourseManagementAdministrationDataLoader.
+	A. Loading sample data
+		To load sample data into the default hibernate implementation, simply start tomcat
+		with -Dsakai.demo=true.  You may customize the sample dataloading procedure here:
+		/cm-impl/hibernate-impl/impl/src/java/org/sakaiproject/coursemanagement/impl/SampleDataLoader.java
+
+		Note that the presence of existing CM data will cause the SampleDataLoader
+		to fail.  If you have existing sample data but would like to update the database
+		with a new data set, empty the CM_* tables before running Sakai with -Dsakai.demo=true.
+
+		Using -Dsakai.demo=true also loads the sample UserDirectoryProvider.  Keep in
+		mind that the CM data and the user data must be kept in sync.  If CM returns
+		a member of a section where the member's EID is 'foo', the UserDirectoryProvider
+		should be able to resolve user 'foo'.
 
 	B.Reconciiation
 		In order to use the hibernate implementation, you need some way to populate
 		the hibernate tables with your enterprise data.  This can be accomplished by
-		preiodically running a quartz job to add, update, or remove CM objects from
-		the hibernate tables.  A sample job is distributed with Sakai 2.3:
-		org.sakaiproject.coursemanagement.impl.job.SampleCMSyncJob.  This job
-		reads in simulated enterprise data from an xml file and reconciles the data with
-		entries in the hibernate-managed tables.  As of code freeze, this sample
-		job is incomplete, so consider it just as a template to use in constructing your
-		own reconciliation job.
+		using the CourseManagementAdministration APIs.  Preiodically running a quartz
+		job to add, update, or remove CM objects via this API is a common practice.
+		A sample job is distributed with Sakai:
+		/cm-impl/hibernate-impl/impl/src/java/org/sakaiproject/coursemanagement/impl/job/ClassPathCMSyncJob.java
+		This job reads in simulated enterprise data from an xml file and reconciles the
+		data with entries in the hibernate-managed tables.  Consider this job as just
+		a sample to use in constructing your own reconciliation jobs.
 
 	C. Re-implementation
 		If you prefer to access your enterprise data directly and avoid reconciliation,
 		you should write your own implementation of
-		org.sakaiproject.coursemanagement.api.CourseManagementService.  As of
-		Sakai 2.3, the CourseManagementService is called only via the CM implementation
-		of Sakai's GroupProvider.  As more tools start to make direct use of the
-		CourseManagementService, the performance requirements of a CM Service
-		implementation will change.  This is something to keep in mind when deciding
-		on an implementation technology.   If some kind of remoting is used in your
-		CM implementation, you should consider adding a caching mechanism as well.
+		org.sakaiproject.coursemanagement.api.CourseManagementService.  Not all
+		CourseManagementService methods are called in Sakai.  As of the 2.5 release,
+		there are three CM clients: the GroupProvider, the Roster tool, and WS Setup /
+		Site Info.  Depending on the specific tools and/or group provider you have deployed,
+		you may choose to implement a subset of the CourseManagementService's methods.
+
+		If some kind of remoting (e.g. webservices) is used in your CM implementation,
+		you should consider adding a caching mechanism to avoid excessive latency in CM
+		service calls.
 
 	D. Federating multiple data sources
 		Some institutions may use a custom CM Service implementation to connect
@@ -55,32 +80,22 @@ II. Supplying CM with data
 		for more details on writing an implementation that can participate in a federated
 		configuration.
 
-III. Configuring Sakai to use CM
-	A. CourseManagementProvider
-		The legacy org.sakaiproject.site.api.CourseManagementProvider interface delivers
-		course information to the legacy org.sakaiproject.site.api.CourseManagement
-		service, and hence to the Site Info and Worksite Setup tools.  To avoid reworking
-		these tools to utilize the new CourseManagementService, we've simply added
-		an adapter to translate calls from the legacy provider to the new service.  See
-		org.sakaiproject.coursemanagement.impl.provider.CourseManagementProviderCMImpl.
-		Because there is a mis-match between the two APIs, this adapter makes some
-		assumptions about the data returned by the CM service.  The most eggregious
-		is in getInstructorCourses(), where AcademicSessionEids are expected to
-		contain the termYear and termTerm strings as substrings.  Please review this
-		implementation to ensure that it adequately converts between the legacy and
-		the current crop of CM objects.
+IV. Configuring Sakai to use CM
+	A. SectionFieldProvider
+		The CourseManagementService delivers course information the Site Info and Worksite
+		Setup tools.  These tools provide multiple UI widgets for specifying courses, one
+		of which is a free-text entry.  Some institutions want to provide a single text box
+		for users to specify an section's enterprise ID, while others want multiple text boxes.
+		Editing or re-implementing the OOTB SectionFieldProvider implementation allows an
+		institution to change the default section selection behavior of WS Setup and Site Info.
 
 	B. GroupProvider
 		The CourseManagementGroupProvider uses memberships, enrollments,
 		and official instructing status to determine what role, if any, a user has in a site.
 		It uses an ordered list of resolvers to check for roles at different levels of the
-		CM hierarchy.  To configure Sakai to use this GroupProvider:
-		1) Uncomment the block of xml containing the bean for class
-		org.sakaiproject.coursemanagement.impl.provider.CourseManagementGroupProvider
-		in /providers/component/src/webapp/WEB-INF/components.xml
-		2) Configure the role resolvers you want to use in resolving users memberships
-		in sites linked to CM-defined Sections.
-		
+		CM hierarchy.  As of 2.4, this is Sakai's default group provider.  To configure the
+		CM-based group provider, edit /providers/component/src/webapp/WEB-INF/components.xml
+
 		In the following example, only the SectionRoleResolver will be used to find users
 		and their memberships in Sections.  Any memberships defined above this level
 		in the CM hierarchy will not be resolved, and hence will not be added to sites
@@ -124,3 +139,8 @@ III. Configuring Sakai to use CM
 		getStatus() will be compared to keys in this map, and the map's entries define the Sakai
 		role to grant to this user.  If the Enrollment status is not found in the map, the user will
 		not be 'provided' to Sakai.
+
+	C. User Directory Provider
+		Ensure that the active UDP implementation can resolve all user EIDs provided by the
+		active CourseManagementService implementation.
+
