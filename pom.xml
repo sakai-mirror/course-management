@@ -11,6 +11,14 @@
   <groupId>org.sakaiproject</groupId>
   <artifactId>course-management-base</artifactId>
   <packaging>pom</packaging>
+  
+  <scm>
+    <connection>scm:svn:https://source.sakaiproject.org/svn/course-management/trunk</connection>
+    <developerConnection>scm:svn:https://source.sakaiproject.org/svn/course-management/trunk</developerConnection>
+    <url>https://source.sakaiproject.org/svn/course-management/trunk</url>
+  </scm>
+  
+
   <modules>
     <module>cm-api/api</module>
     <module>cm-impl/hibernate-impl/hibernate</module>
