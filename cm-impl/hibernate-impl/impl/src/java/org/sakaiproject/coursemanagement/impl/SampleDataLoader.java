@@ -3,7 +3,7 @@
  * $Id$
  ***********************************************************************************
  *
- * Copyright (c) 2007 The Sakai Foundation.
+ * Copyright (c) 2008 The Sakai Foundation.
  *
  * Licensed under the Educational Community License, Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -61,6 +62,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class SampleDataLoader implements BeanFactoryAware {
 	private static final Log log = LogFactory.getLog(SampleDataLoader.class);
 
+	protected static final int ACADEMIC_SESSION_YEAR;
 	protected static final String[] ACADEMIC_SESSION_EIDS = new String[4];
 	protected static final Date[] ACADEMIC_SESSION_START_DATES = new Date[4];
 	protected static final Date[] ACADEMIC_SESSION_END_DATES = new Date[4];
@@ -82,31 +84,32 @@ public class SampleDataLoader implements BeanFactoryAware {
 	protected static final SimpleDateFormat sdf;
 	protected static DecimalFormat df;
 	static {
-		ACADEMIC_SESSION_EIDS[0] = "Winter 2007";
-		ACADEMIC_SESSION_EIDS[1] = "Spring 2007";
-		ACADEMIC_SESSION_EIDS[2] = "Summer 2007";
-		ACADEMIC_SESSION_EIDS[3] = "Fall 2007";
-
 		GregorianCalendar startCal = new GregorianCalendar();
 		GregorianCalendar endCal = new GregorianCalendar();
+		ACADEMIC_SESSION_YEAR = startCal.get(Calendar.YEAR);
+		
+		ACADEMIC_SESSION_EIDS[0] = "Winter " + ACADEMIC_SESSION_YEAR;
+		ACADEMIC_SESSION_EIDS[1] = "Spring " + ACADEMIC_SESSION_YEAR;
+		ACADEMIC_SESSION_EIDS[2] = "Summer " + ACADEMIC_SESSION_YEAR;
+		ACADEMIC_SESSION_EIDS[3] = "Fall " + ACADEMIC_SESSION_YEAR;
 
-		startCal.set(2007, 0, 1);
-		endCal.set(2007, 3, 1);
+		startCal.set(ACADEMIC_SESSION_YEAR, 0, 1);
+		endCal.set(ACADEMIC_SESSION_YEAR, 3, 1);
 		ACADEMIC_SESSION_START_DATES[0] = startCal.getTime();
 		ACADEMIC_SESSION_END_DATES[0] = endCal.getTime();
 
-		startCal.set(2007, 3, 1);
-		endCal.set(2007, 5, 1);
+		startCal.set(ACADEMIC_SESSION_YEAR, 3, 1);
+		endCal.set(ACADEMIC_SESSION_YEAR, 5, 1);
 		ACADEMIC_SESSION_START_DATES[1] = startCal.getTime();
 		ACADEMIC_SESSION_END_DATES[1] = endCal.getTime();
 
-		startCal.set(2007, 5, 1);
-		endCal.set(2007, 8, 1);
+		startCal.set(ACADEMIC_SESSION_YEAR, 5, 1);
+		endCal.set(ACADEMIC_SESSION_YEAR, 8, 1);
 		ACADEMIC_SESSION_START_DATES[2] = startCal.getTime();
 		ACADEMIC_SESSION_END_DATES[2] = endCal.getTime();
 
-		startCal.set(2007, 8, 1);
-		endCal.set(2008, 0, 1);
+		startCal.set(ACADEMIC_SESSION_YEAR, 8, 1);
+		endCal.set(ACADEMIC_SESSION_YEAR + 1, 0, 1);
 		ACADEMIC_SESSION_START_DATES[3] = startCal.getTime();
 		ACADEMIC_SESSION_END_DATES[3] = endCal.getTime();
 
