@@ -28,7 +28,7 @@ II. Related Projects and Components
 III. Supplying CM with data
 
 	There are several options for supplying Sakai with CM data via the CourseManagement APIs.
-	
+
 	A. Loading sample data
 		To load sample data into the default hibernate implementation, simply start tomcat
 		with -Dsakai.demo=true.  You may customize the sample dataloading procedure here:
@@ -43,7 +43,7 @@ III. Supplying CM with data
 		a member of a section where the member's EID is 'foo', the UserDirectoryProvider
 		should be able to resolve user 'foo'.
 
-	B.Reconciiation
+	B.Reconciliation
 		In order to use the hibernate implementation, you need some way to populate
 		the hibernate tables with your enterprise data.  This can be accomplished by
 		using the CourseManagementAdministration APIs.  Preiodically running a quartz
@@ -100,7 +100,7 @@ IV. Configuring Sakai to use CM
 		and their memberships in Sections.  Any memberships defined above this level
 		in the CM hierarchy will not be resolved, and hence will not be added to sites
 		linked to a Section.
-		
+
 		<property name="roleResolvers">
 			<list>
 				<bean class="org.sakaiproject.coursemanagement.impl.provider.SectionRoleResolver">
@@ -125,7 +125,7 @@ IV. Configuring Sakai to use CM
 		You may add as many RoleResolvers as you like.  Sakai's default configuration
 		includes a SectionRoleResolver, a CourseOfferingRoleResolver, and a
 		CourseSetRoleResolver.
-		
+
 		3) Configure the roleMap for each role resolver.  In the example above, if a
 		Section member in CM has a role of 'I', this will be translated to the 'Instructor'
 		Sakai role for this site.  The ordering of the RoleResolvers is important.  Earlier
