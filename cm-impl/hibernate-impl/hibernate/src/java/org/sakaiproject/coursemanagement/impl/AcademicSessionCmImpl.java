@@ -32,6 +32,7 @@ public class AcademicSessionCmImpl extends AbstractNamedCourseManagementObjectCm
 
 	private Date startDate;
 	private Date endDate;
+	private boolean current;
 	
 	public AcademicSessionCmImpl() {}
 	
@@ -54,5 +55,11 @@ public class AcademicSessionCmImpl extends AbstractNamedCourseManagementObjectCm
 	}
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+	public boolean isCurrent() {
+		return current;
+	}
+	public void setCurrent(boolean current) {
+		this.current = current;
 	}
 }

@@ -26,6 +26,7 @@
         <property name="description" column="DESCRIPTION" type="string" not-null="true" />
         <property name="startDate" column="START_DATE" type="date" not-null="false" />
         <property name="endDate" column="END_DATE" type="date" not-null="false" />
+        <property name="current" column="IS_CURRENT" type="boolean" not-null="true" />
 
     </class>
     
@@ -44,8 +45,7 @@
     <query name="findCurrentAcademicSessions">
         <![CDATA[
         from AcademicSessionCmImpl as term where
-        	(term.startDate is null or term.startDate <= current_date()) and
-        	(term.endDate is null or term.endDate >= current_date())
+        	term.current=true
         	order by term.startDate
         ]]>
     </query>

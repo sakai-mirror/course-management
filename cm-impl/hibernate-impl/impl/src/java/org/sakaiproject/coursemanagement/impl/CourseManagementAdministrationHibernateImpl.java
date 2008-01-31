@@ -27,13 +27,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
@@ -668,5 +667,28 @@ public class CourseManagementAdministrationHibernateImpl extends
 		return new HashSet<Membership>(getHibernateTemplate().executeFind(hc));
 	}
 
+	public void setCurrentAcademicSessions(final List<String> academicSessionEids) {
+		HibernateCallback hc = new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException {
+				List<AcademicSessionCmImpl> academicSessions = session.createQuery(
+					"from AcademicSessionCmImpl")
+					.list();
+				for (AcademicSessionCmImpl academicSession : academicSessions) {
+					if (academicSessionEids.contains(academicSession.getEid())) {
+						if (!academicSession.isCurrent()) {
+							academicSession.setCurrent(true);
+						}
+					} else {
+						if (academicSession.isCurrent()) {
+							academicSession.setCurrent(false);
+						}						
+					}
+				}
+				return null;
+			}
+		};
+		getHibernateTemplate().executeFind(hc);
+		
+	}
 
 }

@@ -298,4 +298,10 @@ public class ClassPathCMSyncJobTest extends CourseManagementTestBase {
 		// Ensure that the reconciliation added the instructor
 		Assert.assertTrue(cmService.getInstructorsOfRecordIds("biology_101_01_lec01_es").contains("instructor1"));
 	}
+	
+	public void testCurrentAcademicSessions() throws Exception {
+		List<AcademicSession> currentAcademicSessions = cmService.getCurrentAcademicSessions();
+		Assert.assertEquals(1, currentAcademicSessions.size());
+		Assert.assertEquals("winter_2007", currentAcademicSessions.get(0).getEid());
+	}
 }

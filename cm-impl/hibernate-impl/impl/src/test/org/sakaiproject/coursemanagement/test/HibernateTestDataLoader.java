@@ -87,6 +87,7 @@ public class HibernateTestDataLoader extends HibernateDaoSupport implements Data
 		term.setEid("F2006");
 		term.setTitle("Fall 2006");
 		term.setDescription("Fall 2006, starts Sept 1, 2006");
+		term.setCurrent(true);
 		getHibernateTemplate().save(term);
 	}
 	

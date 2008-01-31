@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <cm-data>
 	<academic-sessions>
 		<academic-session>
@@ -14,10 +14,14 @@
 			<title>Winter 2007</title>
 			<description>The winter semester for the year 2007</description>
 			<start-date>1/1/2007</start-date>
-			<end-date>4/30/2007</end-date>			
+			<end-date>4/30/2007</end-date>
 		</academic-session>
 	</academic-sessions>
-	
+
+	<current-academic-sessions>
+		<academic-session-eid>winter_2007</academic-session-eid>
+	</current-academic-sessions>
+
 	<canonical-courses>
 		<canonical-course>
 			<eid>biology_101</eid>
@@ -31,7 +35,7 @@
 			<description>Introduction to Inorganic Chemistry</description>
 		</canonical-course>
 	</canonical-courses>
-	
+
 	<course-offerings>
 		<course-offering>
 			<eid>biology_101_01</eid>
@@ -68,7 +72,7 @@
 			<category>Lecture</category>
 			<parent-section-eid/>
 			<enrollment-set-eid>biology_101_01_lec01_es</enrollment-set-eid>
-			
+
 			<meetings>
 				<meeting>
 					<location>Lecture Hall A</location>
@@ -81,14 +85,14 @@
 					<notes></notes>
 				</meeting>
 			</meetings>
-			
+
 			<members>
 				<member userEid="sec_member_1" role="assistant"/>
 				<member userEid="sec_member_2" role="assistant"/>
 			</members>
 		</section>
 	</sections>
-	
+
 	<enrollment-sets>
 		<enrollment-set>
 			<eid>biology_101_01_lec01_es</eid>
@@ -106,18 +110,18 @@
 					<userEid>student1</userEid>
 					<status>enrolled</status>
 					<credits>3</credits>
-					<grading-scheme>letter_grade</grading-scheme>					
+					<grading-scheme>letter_grade</grading-scheme>
 				</enrollment>
 				<enrollment>
 					<userEid>student2</userEid>
 					<status>waitlisted</status>
 					<credits>2</credits>
-					<grading-scheme>pass_fail</grading-scheme>					
+					<grading-scheme>pass_fail</grading-scheme>
 				</enrollment>
 			</enrollments>
 		</enrollment-set>
 	</enrollment-sets>
-	
+
 	<course-sets>
 		<course-set>
 			<eid>ucb</eid>

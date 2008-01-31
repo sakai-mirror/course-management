@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,6 +92,7 @@ public abstract class CmSynchronizer {
 
 		try {
 			reconcileAcademicSessions(doc);
+			reconcileCurrentAcademicSessions(doc);
 			reconcileCanonicalCourses(doc);
 			reconcileCourseOfferings(doc);
 			reconcileSections(doc);
@@ -144,6 +146,21 @@ public abstract class CmSynchronizer {
 		}
 		
 		if(log.isInfoEnabled()) log.info("Finished reconciling AcademicSessions in " + (System.currentTimeMillis()-start) + " ms");
+	}
+	
+	protected void reconcileCurrentAcademicSessions(Document doc) {
+		try {
+			List<String> academicSessionEids = new ArrayList<String>();
+			XPath docsPath = XPath.newInstance("/cm-data/current-academic-sessions/academic-session-eid");
+			List<Element> items = docsPath.selectNodes(doc);
+			for (Element element : items) {
+				academicSessionEids.add(element.getText());
+			}
+			if(log.isDebugEnabled()) log.debug("Found current academic sessions to reconcile: " + academicSessionEids);
+			cmAdmin.setCurrentAcademicSessions(academicSessionEids);
+		} catch (JDOMException jde) {
+			log.error(jde);
+		}
 	}
 	
 	protected void addAcademicSession(Element element) {

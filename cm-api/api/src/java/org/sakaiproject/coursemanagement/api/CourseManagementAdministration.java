@@ -22,6 +22,7 @@ package org.sakaiproject.coursemanagement.api;
 
 import java.sql.Time;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.coursemanagement.api.exception.IdExistsException;
@@ -377,4 +378,11 @@ public interface CourseManagementAdministration {
 	 * @return Whether the user was a member of the Section and was removed.
 	 */
 	public boolean removeSectionMembership(String userId, String sectionEid);
+	
+	/**
+	 * Determines which sessions will be returned by getCurrentAcademicSessions().
+	 * 
+	 * @param academicSessionEids
+	 */
+	public void setCurrentAcademicSessions(List<String> academicSessionEids);
 }

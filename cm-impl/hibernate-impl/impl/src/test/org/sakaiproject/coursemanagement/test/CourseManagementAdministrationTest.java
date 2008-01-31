@@ -21,14 +21,17 @@
 package org.sakaiproject.coursemanagement.test;
 
 import java.sql.Time;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.coursemanagement.api.AcademicSession;
 import org.sakaiproject.coursemanagement.api.CanonicalCourse;
 import org.sakaiproject.coursemanagement.api.CourseManagementAdministration;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
@@ -142,7 +145,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCanonicalCourse("cc3", "cc3", "cc3");
 		
 		// Add them to a set
-		Set courses = new HashSet();
+		Set<CanonicalCourse> courses = new HashSet<CanonicalCourse>();
 		courses.add(cm.getCanonicalCourse("cc1"));
 		courses.add(cm.getCanonicalCourse("cc2"));
 		courses.add(cm.getCanonicalCourse("cc3"));
@@ -151,7 +154,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.setEquivalentCanonicalCourses(courses);
 		
 		// Ensure that CM sees them as crosslisted
-		Set equivalents = cm.getEquivalentCanonicalCourses("cc1");
+		Set<CanonicalCourse> equivalents = cm.getEquivalentCanonicalCourses("cc1");
 		Assert.assertTrue(equivalents.contains(cm.getCanonicalCourse("cc2")));
 		Assert.assertTrue(equivalents.contains(cm.getCanonicalCourse("cc3")));
 		
@@ -170,7 +173,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.createCanonicalCourse("cc3", "cc3", "cc3");
 		
 		// Add them to a set
-		Set courses = new HashSet();
+		Set<CanonicalCourse> courses = new HashSet<CanonicalCourse>();
 		courses.add(cm.getCanonicalCourse("cc1"));
 		courses.add(cm.getCanonicalCourse("cc2"));
 
@@ -200,7 +203,7 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 		cmAdmin.setEquivalentCourseOfferings(courses);
 		
 		// Ensure that CM sees them as crosslisted
-		Set equivalents = cm.getEquivalentCourseOfferings("co1");
+		Set<CourseOffering> equivalents = cm.getEquivalentCourseOfferings("co1");
 		Assert.assertTrue(equivalents.contains(cm.getCourseOffering("co2")));
 	}
 
@@ -504,13 +507,28 @@ public class CourseManagementAdministrationTest extends CourseManagementTestBase
 			fail();
 		} catch (IdNotFoundException ide) {}
 	}
-
-	public void testRemoveCanonicalCourse() throws Exception {
+	
+	public void testSetCurrentAcademicSessions() throws Exception {
+		long oneWeekMs = 1000 * 60 * 60 * 24 * 7;
+		long nowMs = System.currentTimeMillis();
 		
-	}
-
-	public void testRemoveCourseSet() throws Exception {
+		cmAdmin.createAcademicSession("previousTerm", "previous term", "", new Date(nowMs - (oneWeekMs * 2)), new Date(nowMs - oneWeekMs));
+		cmAdmin.createAcademicSession("nowTerm", "now term", "", new Date(nowMs - oneWeekMs), new Date(nowMs + oneWeekMs));
+		cmAdmin.createAcademicSession("nextTerm", "next term", "", new Date(nowMs + oneWeekMs), new Date(nowMs + (oneWeekMs * 2)));
 		
+		List<AcademicSession> academicSessions = cm.getCurrentAcademicSessions();
+		Assert.assertEquals(0, academicSessions.size());		
+		
+		cmAdmin.setCurrentAcademicSessions(Arrays.asList(new String[] {"previousTerm"}));
+		academicSessions = cm.getCurrentAcademicSessions();
+		Assert.assertEquals(1, academicSessions.size());
+		Assert.assertEquals("previousTerm", academicSessions.get(0).getEid());
+		
+		cmAdmin.setCurrentAcademicSessions(Arrays.asList(new String[] {"nowTerm", "nextTerm"}));
+		academicSessions = cm.getCurrentAcademicSessions();
+		Assert.assertEquals(2, academicSessions.size());
+		Assert.assertEquals("nowTerm", academicSessions.get(0).getEid());
+		Assert.assertEquals("nextTerm", academicSessions.get(1).getEid());
 	}
 
 }

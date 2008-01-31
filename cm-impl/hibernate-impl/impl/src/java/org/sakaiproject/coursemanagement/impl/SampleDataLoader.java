@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -213,6 +214,10 @@ public class SampleDataLoader implements BeanFactoryAware {
 			academicSessions.add(cmAdmin.createAcademicSession(academicSessionEid,academicSessionEid,
 					academicSessionEid, ACADEMIC_SESSION_START_DATES[i], ACADEMIC_SESSION_END_DATES[i]));
 		}
+		
+		// Current Academic Sessions
+		// 4 sample academic sessions have been created. Make the middle 2 "current".
+		cmAdmin.setCurrentAcademicSessions(Arrays.asList(new String[] {ACADEMIC_SESSION_EIDS[1], ACADEMIC_SESSION_EIDS[2]}));
 
 		// Course Sets
 		cmAdmin.createCourseSet(CS, "Sample Department",
