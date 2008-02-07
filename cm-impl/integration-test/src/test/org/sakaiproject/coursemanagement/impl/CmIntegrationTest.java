@@ -4,17 +4,17 @@
  ***********************************************************************************
  *
  * Copyright (c) 2006 The Sakai Foundation.
- * 
- * Licensed under the Educational Community License, Version 1.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Educational Community License, Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.opensource.org/licenses/ecl1.php
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  *
  **********************************************************************************/
@@ -44,20 +44,21 @@ import org.sakaiproject.user.api.UserDirectoryService;
 /**
  * Integration tests for the CM services.  The CmGroupProvider must be registered
  * with the component manager for these tests to pass.
- * 
+ *
  * @author <a href="mailto:jholtzman@berkeley.edu">Josh Holtzman</a>
  *
  */
 public class CmIntegrationTest extends SakaiTestBase {
 	private static final Log log = LogFactory.getLog(CmIntegrationTest.class);
-	
+
 	private AuthzGroupService authzGroupService;
 	private SiteService siteService;
 	private CourseManagementAdministration cmAdmin;
 	private UserDirectoryService uds;
-	
+	private SessionManager sessionManager;
+
 	private Site site;
-	
+
 	public static Test suite() {
 		TestSetup setup = new TestSetup(new TestSuite(CmIntegrationTest.class)) {
 			protected void setUp() throws Exception {
@@ -74,24 +75,24 @@ public class CmIntegrationTest extends SakaiTestBase {
 
 	public void setUp() throws Exception {
 		log.debug("Setting up a CmIntegrationTest test");
-		
+
 		// Connect to the required services
 		authzGroupService = (AuthzGroupService)getService(AuthzGroupService.class.getName());
 		siteService = (SiteService)getService(SiteService.class.getName());
 		cmAdmin = (CourseManagementAdministration)getService(CourseManagementAdministration.class.getName());
 		uds = (UserDirectoryService)getService(UserDirectoryService.class.getName());
-		
+
 		// Log in
-		SessionManager sessionManager = (SessionManager)getService(SessionManager.class.getName());
+		sessionManager = (SessionManager)getService(SessionManager.class.getName());
 		Session session = sessionManager.getCurrentSession();
 		session.setUserId("admin");
-		
+
 		// Create some Sakai users (who will be added to the site by the CMGroupProvider)
 		uds.addUser("cm-student1", "cm-student1", "cm-student", "CM-one", "cm-student1@foo.bar", "cm-student1", null, null);
 		uds.addUser("cm-student2", "cm-student2", "cm-student", "CM-two", "cm-student2@foo.bar", "cm-student2", null, null);
 		uds.addUser("cm-instructor1", "cm-instructor1", "cm-instructor", "CM-one", "cm-instructor1@foo.bar", "cm-instructor1", null, null);
 		uds.addUser("cm-instructor2", "cm-instructor2", "cm-instructor", "CM-two", "cm-instructor2@foo.bar", "cm-instructor2", null, null);
-		
+
 		// Create CM objects
 		cmAdmin.createAcademicSession("CM-AS1","CM-AS1", "CM-AS1", null, null);
 		cmAdmin.createCanonicalCourse("CM-CC1", "CM-CC1", "CM-CC1");
@@ -100,17 +101,17 @@ public class CmIntegrationTest extends SakaiTestBase {
 		instructors.add("cm-instructor1");
 		cmAdmin.createEnrollmentSet("CM-ES1", "CM-ES1", "CM-ES1", "lecture", "3", "CM-CO1", instructors);
 		cmAdmin.createSection("CM-SEC1", "CM-SEC1", "CM-SEC1", "lecture", null, "CM-CO1", "CM-ES1");
-		
+
 		// Create some CM memberships, etc
 		cmAdmin.addOrUpdateCourseOfferingMembership("cm-instructor2", "Just helping out with guest lectures", "CM-CO1","active");
-		cmAdmin.addOrUpdateEnrollment("cm-student1", "CM-ES1", "waitlisted", "4", "letter grade");
-		
+		cmAdmin.addOrUpdateEnrollment("cm-student1", "CM-ES1", "wait", "4", "letter grade");
+
 		// Create a site
 		site = siteService.addSite("CM1", "course");
 		site.setTitle("CM Integration Test Site");
 		site.setProviderGroupId("CM-SEC1");
 		siteService.save(site);
-		
+
 		// This (or something similar) is needed to trigger the authz provider update, I think
 		String siteRef = site.getReference();
 		AuthzGroup azg = authzGroupService.getAuthzGroup(siteRef);
@@ -118,15 +119,15 @@ public class CmIntegrationTest extends SakaiTestBase {
 		Assert.assertEquals("CM-SEC1", azg.getProviderGroupId());
 		azg.addMember("cm-student2", "Student", true, false);
 		authzGroupService.save(azg);
-		
+
 		// Now we have all of our users as members of the site: student1 is enrolled,
 		// student2 was manually added, instructor1 is an official instructor, and
 		// instructor2 has a membership in the course offering.
 	}
-	
+
 	public void tearDown() throws Exception {
 		log.debug("Tearing down an AuthzIntegrationTest test");
-		
+
 		// Remove the objects created for testing
 		uds.removeUser(uds.editUser("cm-student1"));
 		uds.removeUser(uds.editUser("cm-student2"));
@@ -155,6 +156,20 @@ public class CmIntegrationTest extends SakaiTestBase {
 		Member student = site.getMember("cm-student1");
 		Assert.assertNotNull(student);
 		Assert.assertEquals("Student", student.getRole().getId());
+	}
 
+	public void testCmAdminAuthz() throws Exception {
+		sessionManager.getCurrentSession().invalidate();
+		sessionManager.getCurrentSession().setUserId("cm-student1");
+		
+		try {
+			cmAdmin.createCanonicalCourse("CM-CC2", "CM-CC2", "CM-CC2");
+			fail();
+		} catch (Exception e) {
+			log.debug("Trying to create a course as a student threw exception ", e);
+		}
+
+		sessionManager.getCurrentSession().invalidate();
+		sessionManager.getCurrentSession().setUserId("admin");
 	}
 }

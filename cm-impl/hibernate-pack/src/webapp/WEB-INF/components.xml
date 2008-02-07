@@ -128,15 +128,10 @@
 	</bean>
 
 	<!-- AOP Advisor performs Authz checks for the CM Admin service -->
-	<bean id="cmAdminAuthzAdvisor"
-	    class="org.springframework.aop.support.DefaultPointcutAdvisor">
-	    <property name="advice">
-	    	<bean class="org.sakaiproject.coursemanagement.impl.aop.CourseManagementAdministrationAuthzAdvisor">
-				<property name="securityService">
-					<ref bean="org.sakaiproject.authz.api.SecurityService" />
-				</property>
-	    	</bean>
-	    </property>
+	<bean id="cmAdminAuthzAdvisor" class="org.sakaiproject.coursemanagement.impl.aop.CourseManagementAdministrationAuthzAdvisor">
+		<property name="securityService">
+			<ref bean="org.sakaiproject.authz.api.SecurityService" />
+		</property>
 	</bean>
 
 	<!--  Reconciliation Job for CM data -->
