@@ -82,7 +82,10 @@ public class SampleDataLoader implements BeanFactoryAware {
 	protected static final int ENROLLMENTS_PER_SET = 180;
 
 
-	protected static final SimpleDateFormat sdf;
+	protected static final SimpleDateFormat sdf()
+	{
+		return new SimpleDateFormat("hh:mma");
+	}
 	protected static DecimalFormat df;
 	static {
 		GregorianCalendar startCal = new GregorianCalendar();
@@ -114,7 +117,6 @@ public class SampleDataLoader implements BeanFactoryAware {
 		ACADEMIC_SESSION_START_DATES[3] = startCal.getTime();
 		ACADEMIC_SESSION_END_DATES[3] = endCal.getTime();
 
-		sdf = new SimpleDateFormat("hh:mma");
 		df = new DecimalFormat("0000");
 	}
 
@@ -414,7 +416,7 @@ public class SampleDataLoader implements BeanFactoryAware {
 	protected Time getTime(String timeString) {
 		Date date = null;
 		try {
-			date = sdf.parse(timeString);
+			date = sdf().parse(timeString);
 		} catch (ParseException pe) {
 			log.error("Can not parse time " + timeString);
 			date = new Date();
