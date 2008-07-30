@@ -25,29 +25,29 @@
       <artifactId>sakai-coursemanagement-hibernate-impl</artifactId>
       <version>${sakai.version}</version>
       <exclusions>
-	<exclusion>
-      		<groupId>org.sakaiproject</groupId>
-      		<artifactId>sakai-coursemanagement-hibernate-model</artifactId>
-	</exclusion>
         <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-mock</artifactId>
+          <groupId>org.sakaiproject</groupId>
+          <artifactId>sakai-coursemanagement-hibernate-model</artifactId>
         </exclusion>
         <exclusion>
-                <groupId>aopalliance</groupId>
-                <artifactId>aopalliance</artifactId>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-mock</artifactId>
         </exclusion>
         <exclusion>
-                <groupId>odmg</groupId>
-                <artifactId>odmg</artifactId>
+          <groupId>aopalliance</groupId>
+          <artifactId>aopalliance</artifactId>
         </exclusion>
         <exclusion>
-                <groupId>commons-digester</groupId>
-                <artifactId>commons-digester</artifactId>
+          <groupId>odmg</groupId>
+          <artifactId>odmg</artifactId>
         </exclusion>
         <exclusion>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
+          <groupId>commons-digester</groupId>
+          <artifactId>commons-digester</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
