@@ -22,18 +22,18 @@
     <module>cm-impl/hibernate-impl/impl</module>
     <module>cm-impl/hibernate-pack</module>
   </modules>
-<dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-coursemanagement-hibernate-model</artifactId>
-      <version>2.6.0RC1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-coursemanagement-hibernate-impl</artifactId>
-      <version>2.6.0RC1-SNAPSHOT</version>
-     </dependency>
-   </dependencies>
-</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.sakaiproject</groupId>
+        <artifactId>sakai-coursemanagement-hibernate-model</artifactId>
+        <version>2.6.0RC1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sakaiproject</groupId>
+        <artifactId>sakai-coursemanagement-hibernate-impl</artifactId>
+        <version>2.6.0RC1-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
