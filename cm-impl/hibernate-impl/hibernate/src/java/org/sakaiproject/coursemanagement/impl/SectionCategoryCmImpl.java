@@ -20,8 +20,6 @@
  **********************************************************************************/
 package org.sakaiproject.coursemanagement.impl;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sakaiproject.coursemanagement.api.SectionCategory;
 
 public class SectionCategoryCmImpl implements SectionCategory {
@@ -48,20 +46,53 @@ public class SectionCategoryCmImpl implements SectionCategory {
 		this.categoryDescription = categoryDescription;
 	}
 
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).append(categoryCode).append(categoryDescription).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((categoryCode == null) ? 0 : categoryCode.hashCode());
+        result = prime * result
+                + ((categoryDescription == null) ? 0 : categoryDescription.hashCode());
+        return result;
+    }
 
-	public boolean equals(Object obj) {
-		SectionCategoryCmImpl other = null;
-		try {
-			other = (SectionCategoryCmImpl)obj;
-		} catch (ClassCastException cce) {
-			return false;
-		}
-		
-		return new EqualsBuilder().append(categoryCode, other.getCategoryCode()).
-			append(categoryDescription, other.getCategoryDescription()).isEquals();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SectionCategoryCmImpl other = (SectionCategoryCmImpl) obj;
+        if (categoryCode == null) {
+            if (other.categoryCode != null)
+                return false;
+        } else if (!categoryCode.equals(other.categoryCode))
+            return false;
+        if (categoryDescription == null) {
+            if (other.categoryDescription != null)
+                return false;
+        } else if (!categoryDescription.equals(other.categoryDescription))
+            return false;
+        return true;
+    }
+
+	// replaced builders with eclipse equals/hashcode
+//	public int hashCode() {
+//		return new HashCodeBuilder(17, 37).append(categoryCode).append(categoryDescription).toHashCode();
+//	}
+//
+//	public boolean equals(Object obj) {
+//		SectionCategoryCmImpl other = null;
+//		try {
+//			other = (SectionCategoryCmImpl)obj;
+//		} catch (ClassCastException cce) {
+//			return false;
+//		}
+//		
+//		return new EqualsBuilder().append(categoryCode, other.getCategoryCode()).
+//			append(categoryDescription, other.getCategoryDescription()).isEquals();
+//	}
 	
 }
